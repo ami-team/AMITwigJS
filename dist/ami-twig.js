@@ -23,10 +23,12 @@ ami.twig = {};
 /* NodeJS                                                                  */
 /*-------------------------------------------------------------------------*/
 
-if(typeof exports !== 'undefined')
+if(typeof exports === 'undefined')
 {
-	exports.ami = ami;
+	exports = {};
 }
+
+exports.ami = ami;
 
 /*-------------------------------------------------------------------------*/
 /*
@@ -1946,7 +1948,7 @@ ami.twig.expr.interpreter = {
 							return '(typeof(' + left + ')!==\'undefined\')';
 
 						case ami.twig.expr.tokens.NULL:
-							return '(/****/(' + left + ')===null)';
+							return '((' + left + ')===null)';
 
 						case ami.twig.expr.tokens.EMPTY:
 							return 'ami.twig.stdlib.isEmpty(' + left + ')';
