@@ -247,10 +247,34 @@ ami.twig.engine = {
 			}
 
 			/*-------------------------------------------------*/
+			/* SET KEYWORD                                     */
+			/*-------------------------------------------------*/
+
+			/**/ if(keyword === 'set')
+			{
+				/*-----------------------------------------*/
+
+				var parts = expression.split('=');
+
+				/*-----------------------------------------*/
+
+				var symb = parts[0].trim();
+				var expr = parts[1].trim();
+
+				var value = ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expr, line), dict);
+
+				/*-----------------------------------------*/
+
+				dict[symb] = value;
+
+				/*-----------------------------------------*/
+			}
+
+			/*-------------------------------------------------*/
 			/* IF KEYWORD                                      */
 			/*-------------------------------------------------*/
 
-			/**/ if(keyword === 'if')
+			else if(keyword === 'if')
 			{
 				stack.push(this._newStackItem(ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expression, line), dict) ? this.STACK_ITEM_IF_TRUE_TODO : this.STACK_ITEM_IF_TRY_AGAIN));
 			}

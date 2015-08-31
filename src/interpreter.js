@@ -90,7 +90,7 @@ ami.twig.expr.interpreter = {
 					switch(node.nodeRight.nodeType)
 					{
 						case ami.twig.expr.tokens.DEFINED:
-							return '((' + left + ')!==undefined)';
+							return '(typeof(' + left + ')!==\'undefined\')';
 
 						case ami.twig.expr.tokens.NULL:
 							return '((' + left + ')===null)';

@@ -10,6 +10,14 @@
 
 /*-------------------------------------------------------------------------*/
 
+var ami = require('../dist/ami-twig.min.js').ami;
 
+/*-------------------------------------------------------------------------*/
+
+var dict = {};
+
+console.log(ami.twig.engine.render('{% set a = 1 + 1 %}', dict));
+console.log(ami.twig.engine.render('{{ a }}', dict));
+console.log(ami.twig.engine.render('{{ 1..9 }}', dict));
 
 /*-------------------------------------------------------------------------*/
