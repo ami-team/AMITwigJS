@@ -23,12 +23,10 @@ ami.twig = {};
 /* NodeJS                                                                  */
 /*-------------------------------------------------------------------------*/
 
-if(typeof exports === 'undefined')
+if(typeof exports !== 'undefined')
 {
-	exports = {};
+	exports.ami = ami;
 }
-
-exports.ami = ami;
 
 /*-------------------------------------------------------------------------*/
 /*
@@ -1692,6 +1690,20 @@ ami.twig.stdlib = {
 	/* VARIABLES                                                       */
 	/*-----------------------------------------------------------------*/
 
+	isDefined: function(x)
+	{
+		return typeof(x) !== 'undefined';
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	isNull: function(x)
+	{
+		return x === null;
+	},
+
+	/*-----------------------------------------------------------------*/
+
 	isEmpty: function(x)
 	{
 		return x === null || x === false || x === '' || x === [] || x === {};
@@ -1707,6 +1719,20 @@ ami.twig.stdlib = {
 		       ||
 		       (typeof(x) === 'string')
 		;
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	isEven: function(x)
+	{
+		return (x & 1) === 0;
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	isOdd: function(x)
+	{
+		return (x & 1) === 1;
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -1945,10 +1971,10 @@ ami.twig.expr.interpreter = {
 					switch(node.nodeRight.nodeType)
 					{
 						case ami.twig.expr.tokens.DEFINED:
-							return '(typeof(' + left + ')!==\'undefined\')';
+							return 'ami.twig.stdlib.isDefined(' + left + ')';
 
 						case ami.twig.expr.tokens.NULL:
-							return '((' + left + ')===null)';
+							return 'ami.twig.stdlib.isNull(' + left + ')';
 
 						case ami.twig.expr.tokens.EMPTY:
 							return 'ami.twig.stdlib.isEmpty(' + left + ')';
@@ -1957,10 +1983,10 @@ ami.twig.expr.interpreter = {
 							return 'ami.twig.stdlib.isIterable(' + left + ')';
 
 						case ami.twig.expr.tokens.EVEN:
-							return '((' + left + ')&1===0)';
+							return 'ami.twig.stdlib.isEven(' + left + ')';
 
 						case ami.twig.expr.tokens.ODD:
-							return '((' + left + ')&1===1)';
+							return 'ami.twig.stdlib.isOdd(' + left + ')';
 					}
 
 					throw 'internal error';

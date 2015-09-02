@@ -23,11 +23,9 @@ ami.twig = {};
 /* NodeJS                                                                  */
 /*-------------------------------------------------------------------------*/
 
-if(typeof exports === 'undefined')
+if(typeof exports !== 'undefined')
 {
-	exports = {};
+	exports.ami = ami;
 }
-
-exports.ami = ami;
 
 /*-------------------------------------------------------------------------*/

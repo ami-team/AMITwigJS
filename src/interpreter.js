@@ -90,10 +90,10 @@ ami.twig.expr.interpreter = {
 					switch(node.nodeRight.nodeType)
 					{
 						case ami.twig.expr.tokens.DEFINED:
-							return '(typeof(' + left + ')!==\'undefined\')';
+							return 'ami.twig.stdlib.isDefined(' + left + ')';
 
 						case ami.twig.expr.tokens.NULL:
-							return '((' + left + ')===null)';
+							return 'ami.twig.stdlib.isNull(' + left + ')';
 
 						case ami.twig.expr.tokens.EMPTY:
 							return 'ami.twig.stdlib.isEmpty(' + left + ')';
@@ -102,10 +102,10 @@ ami.twig.expr.interpreter = {
 							return 'ami.twig.stdlib.isIterable(' + left + ')';
 
 						case ami.twig.expr.tokens.EVEN:
-							return '((' + left + ')&1===0)';
+							return 'ami.twig.stdlib.isEven(' + left + ')';
 
 						case ami.twig.expr.tokens.ODD:
-							return '((' + left + ')&1===1)';
+							return 'ami.twig.stdlib.isOdd(' + left + ')';
 					}
 
 					throw 'internal error';
