@@ -117,6 +117,8 @@ ami.twig.stdlib = {
 
 	range: function(x1, x2, step)
 	{
+		var i;
+
 		var result = [];
 
 		if(!step)
@@ -128,7 +130,7 @@ ami.twig.stdlib = {
 		        &&
 		        typeof(x2) === 'number'
 		 ) {
-			for(var i = (((((((x1))))))); i <= (((((((x2))))))); i += step)
+			for(i = (((((((x1))))))); i <= (((((((x2))))))); i += step)
 			{
 				result.push(/*---------------*/(i));
 			}
@@ -137,7 +139,7 @@ ami.twig.stdlib = {
 		        &&
 		        typeof(x2) === 'string' && x2.length === 1
 		 ) {
-			for(var i = x1.charCodeAt(0); i <= x2.charCodeAt(0); i += step)
+			for(i = x1.charCodeAt(0); i <= x2.charCodeAt(0); i += step)
 			{
 				result.push(String.fromCharCode(i));
 			}

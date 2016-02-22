@@ -86,6 +86,8 @@ ami.twig.engine = {
 
 	render: function(s, dict)
 	{
+		var parts, symb, expr, i;
+
 		var result = '';
 
 		var stack = [];
@@ -124,7 +126,7 @@ ami.twig.engine = {
 				/* GET LINE NUMBER                         */
 				/*-----------------------------------------*/
 
-				for(var i in s)
+				for(i in s)
 				{
 					if(s[i] === '\n')
 					{
@@ -152,7 +154,7 @@ ami.twig.engine = {
 
 				var msg = [];
 
-				for(var i = 1; i < stack.length; i++)
+				for(i = 1; i < stack.length; i++)
 				{
 					var x = stack[i].type;
 
@@ -197,7 +199,7 @@ ami.twig.engine = {
 			var column_nr = m.index + 0x0000000000;
 			var COLUMN_NR = m.index + match.length;
 
-			for(var i in match)
+			for(i in match)
 			{
 				if(match[i] === '\n')
 				{
@@ -218,12 +220,12 @@ ami.twig.engine = {
 				{
 					var DICT = {};
 
-					for(var symb in dict)
+					for(symb in dict)
 					{
 						DICT[symb] = dict[symb];
 					}
 
-					for(var i in ITER)
+					for(i in ITER)
 					{
 						DICT[SYMB] = ITER[i];
 
@@ -254,12 +256,12 @@ ami.twig.engine = {
 			{
 				/*-----------------------------------------*/
 
-				var parts = expression.split('=');
+				parts = expression.split('=');
 
 				/*-----------------------------------------*/
 
-				var symb = parts[0].trim();
-				var expr = parts[1].trim();
+				symb = parts[0].trim();
+				expr = parts[1].trim();
 
 				var value = ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expr, line), dict);
 
@@ -355,12 +357,12 @@ ami.twig.engine = {
 			{
 				/*-----------------------------------------*/
 
-				var parts = expression.split('in');
+				parts = expression.split('in');
 
 				/*-----------------------------------------*/
 
-				var symb = parts[0].trim();
-				var expr = parts[1].trim();
+				symb = parts[0].trim();
+				expr = parts[1].trim();
 
 				var iter = ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expr, line), dict);
 

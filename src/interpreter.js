@@ -21,6 +21,11 @@ ami.twig.expr.interpreter = {
 
 	_getJS: function(node)
 	{
+		var left;
+		var right;
+
+		var operator;
+
 		/*---------------------------------------------------------*/
 		/* FUNCTIONS, VARIABLES, TERMINALS                         */
 		/*---------------------------------------------------------*/
@@ -61,7 +66,7 @@ ami.twig.expr.interpreter = {
 		   &&
 		   node.nodeRight === null
 		 ) {
-			var operator = (node.nodeType !== ami.twig.expr.tokens.NOT) ? node.nodeValue : '!';
+			operator = (node.nodeType !== ami.twig.expr.tokens.NOT) ? node.nodeValue : '!';
 
 			return operator + '(' + this._getJS(node.nodeLeft) + ')';
 		}
@@ -74,11 +79,6 @@ ami.twig.expr.interpreter = {
 		   &&
 		   node.nodeRight !== null
 		 ) {
-			var left;
-			var right;
-
-			var operator;
-
 			switch(node.nodeType)
 			{
 				/*-----------------------------------------*/

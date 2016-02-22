@@ -182,15 +182,17 @@ ami.twig.tokenizer = {
 
 	_match: function(s, stringOrRegExp)
 	{
+		var m;
+
 		if(stringOrRegExp instanceof RegExp)
 		{
-			var m = s.match(stringOrRegExp);
+			m = s.match(stringOrRegExp);
 
 			return m !== null && this._checkNextChar(s, (((((m[0])))))) ? (((((m[0]))))) : null;
 		}
 		else
 		{
-			var m = s.indexOf(stringOrRegExp);
+			m = s.indexOf(stringOrRegExp);
 
 			return m === 0x00 && this._checkNextChar(s, stringOrRegExp) ? stringOrRegExp : null;
 		}
