@@ -434,8 +434,8 @@ ami.twig.expr.Compiler = function(code, line) {
 				node = new ami.twig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 				this.tokenizer.next();
 
-				node.nodeLeft = swap;
-				node.nodeRight = null;
+				node.nodeLeft = null;
+				node.nodeRight = swap;
 			}
 
 			if(this.tokenizer.checkType(ami.twig.expr.tokens.IS_XXX))
@@ -620,7 +620,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	this.parseNotPlusMinus = function()
 	{
-		var left = this.parseY(), right, node;
+		var left = null, right, node;
 
 		/*---------------------------------------------------------*/
 		/* NotPlusMinus : ('not' | '-' | '+') Y                    */
@@ -632,7 +632,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			node = new ami.twig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
 
-			right = null;
+			right = this.parseY();
 
 			node.nodeLeft = left;
 			node.nodeRight = right;
@@ -642,7 +642,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		/*---------------------------------------------------------*/
 
-		return left;
+		return this.parseY();
 	};
 
 	/*-----------------------------------------------------------------*/

@@ -71,6 +71,15 @@ ami.twig.expr.interpreter = {
 			return operator + '(' + this._getJS(node.nodeLeft) + ')';
 		}
 
+		if(node.nodeLeft === null
+		   &&
+		   node.nodeRight !== null
+		 ) {
+			operator = (node.nodeType !== ami.twig.expr.tokens.NOT) ? node.nodeValue : '!';
+
+			return operator + '(' + this._getJS(node.nodeRight) + ')';
+		}
+
 		/*---------------------------------------------------------*/
 		/* BINARY OPERATORS                                        */
 		/*---------------------------------------------------------*/

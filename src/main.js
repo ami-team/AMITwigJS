@@ -16,7 +16,7 @@
 
 if(typeof ami === 'undefined')
 {
-	ami = {};
+	var ami = {};
 }
 
 ami.twig = {};
