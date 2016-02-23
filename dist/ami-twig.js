@@ -95,7 +95,11 @@ ami.twig.tokenizer = {
 		var l = code.length;
 
 		var word = '', c;
+
 		var found;
+		var token;
+		var type;
+		var idx;
 
 		while(i < l)
 		{
@@ -141,9 +145,9 @@ ami.twig.tokenizer = {
 
 			found = false;
 
-			for(var idx in tokenDefs)
+			for(idx in tokenDefs)
 			{
-				var token = this._match(code, tokenDefs[idx]);
+				token = this._match(code, tokenDefs[idx]);
 
 				if(token)
 				{
@@ -160,7 +164,7 @@ ami.twig.tokenizer = {
 						word = '';
 					}
 
-					var type = tokenTypes[idx];
+					type = tokenTypes[idx];
 
 					result_tokens.push(token);
 					result_types.push(type);
@@ -1462,9 +1466,9 @@ ami.twig.engine = {
 				{
 					var DICT = {};
 
-					for(symb in dict)
+					for(i in dict)
 					{
-						DICT[symb] = dict[symb];
+						DICT[i] = dict[i];
 					}
 
 					for(i in ITER)
@@ -1774,7 +1778,6 @@ ami.twig.stdlib = {
 
 	isInRange: function(x, x1, x2)
 	{
-
 		/**/ if(typeof(x1) === 'number'
 		        &&
 		        typeof(x2) === 'number'
@@ -1918,6 +1921,10 @@ ami.twig.expr.interpreter = {
 
 	_getJS: function(node)
 	{
+		var i;
+		var x;
+		var L;
+
 		var left;
 		var right;
 
@@ -1933,9 +1940,9 @@ ami.twig.expr.interpreter = {
 		 ) {
 			if(node.list.length > 0)
 			{
-				var L = [];
+				L = [];
 
-				for(var i in node.list)
+				for(i in node.list)
 				{
 					L.push(this._getJS(node.list[i]));
 				}
@@ -2029,7 +2036,7 @@ ami.twig.expr.interpreter = {
 					}
 					else
 					{
-					 	var x = this._getJS(node.nodeLeft);
+					 	x = this._getJS(node.nodeLeft);
 
 						left = node.nodeRight.nodeLeft.nodeValue;
 						right = node.nodeRight.nodeRight.nodeValue;

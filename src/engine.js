@@ -220,9 +220,9 @@ ami.twig.engine = {
 				{
 					var DICT = {};
 
-					for(symb in dict)
+					for(i in dict)
 					{
-						DICT[symb] = dict[symb];
+						DICT[i] = dict[i];
 					}
 
 					for(i in ITER)

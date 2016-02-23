@@ -90,7 +90,6 @@ ami.twig.stdlib = {
 
 	isInRange: function(x, x1, x2)
 	{
-
 		/**/ if(typeof(x1) === 'number'
 		        &&
 		        typeof(x2) === 'number'

@@ -62,7 +62,11 @@ ami.twig.tokenizer = {
 		var l = code.length;
 
 		var word = '', c;
+
 		var found;
+		var token;
+		var type;
+		var idx;
 
 		while(i < l)
 		{
@@ -108,9 +112,9 @@ ami.twig.tokenizer = {
 
 			found = false;
 
-			for(var idx in tokenDefs)
+			for(idx in tokenDefs)
 			{
-				var token = this._match(code, tokenDefs[idx]);
+				token = this._match(code, tokenDefs[idx]);
 
 				if(token)
 				{
@@ -127,7 +131,7 @@ ami.twig.tokenizer = {
 						word = '';
 					}
 
-					var type = tokenTypes[idx];
+					type = tokenTypes[idx];
 
 					result_tokens.push(token);
 					result_types.push(type);

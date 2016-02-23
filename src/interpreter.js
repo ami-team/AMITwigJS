@@ -21,6 +21,10 @@ ami.twig.expr.interpreter = {
 
 	_getJS: function(node)
 	{
+		var i;
+		var x;
+		var L;
+
 		var left;
 		var right;
 
@@ -36,9 +40,9 @@ ami.twig.expr.interpreter = {
 		 ) {
 			if(node.list.length > 0)
 			{
-				var L = [];
+				L = [];
 
-				for(var i in node.list)
+				for(i in node.list)
 				{
 					L.push(this._getJS(node.list[i]));
 				}
@@ -132,7 +136,7 @@ ami.twig.expr.interpreter = {
 					}
 					else
 					{
-					 	var x = this._getJS(node.nodeLeft);
+					 	x = this._getJS(node.nodeLeft);
 
 						left = node.nodeRight.nodeLeft.nodeValue;
 						right = node.nodeRight.nodeRight.nodeValue;
