@@ -1,0 +1,32 @@
+{
+	"env": {
+		"browser": true,
+		"node": true
+	},
+
+	"extends": "eslint:recommended",
+
+	"globals": {
+		"ami": 1
+	},
+
+	"rules": {
+		"comma-dangle": [
+			2,
+			"only-multiline"
+		],
+
+		"no-constant-condition": 1,
+		"no-mixed-spaces-and-tabs": 0,
+
+		"no-unused-vars": [
+			1,
+			{"vars": "local", "args": "after-used"}
+		],
+
+		"quotes": [
+			2,
+			"single"
+		]
+	}
+}
