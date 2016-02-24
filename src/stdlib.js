@@ -77,7 +77,7 @@ ami.twig.stdlib = {
 		 ) {
 		 	return y.indexOf(x) >= 0;
 		}
-		
+
 		if(x instanceof Object)
 		{
 			return x in y;

@@ -484,7 +484,7 @@ ami.twig.expr.Tokenizer = function(code, line) {
 
 			return (type instanceof Array) ? (type.indexOf(TYPE) >= 0) : (type === TYPE);
 		}
-		
+
 		return false;
 	};
 
@@ -1332,19 +1332,33 @@ ami.twig.engine = {
 
 	render: function(s, dict)
 	{
-		var parts, symb, expr, i;
+		/*---------------------------------------------------------*/
 
 		var result = '';
-
-		var stack = [];
-
-		var line = 1;
 
 		/*---------------------------------------------------------*/
 		/*                                                         */
 		/*---------------------------------------------------------*/
 
-		stack.push(this._newStackItem(this.STACK_ITEM_0));
+		var stack = [this._newStackItem(this.STACK_ITEM_0)], lastStackItem;
+
+		/*---------------------------------------------------------*/
+
+		var m;
+		var match;
+		var keyword;
+		var expression;
+
+		/*---------------------------------------------------------*/
+
+		var column_nr = 0;
+		var COLUMN_NR = 0;
+
+		var line = 1;
+
+		/*---------------------------------------------------------*/
+
+		var parts, symb, expr, i;
 
 		/*---------------------------------------------------------*/
 		/*                                                         */
@@ -1356,13 +1370,13 @@ ami.twig.engine = {
 			/*                                                 */
 			/*-------------------------------------------------*/
 
-			var lastStackItem = stack[stack.length - 1];
+			lastStackItem = stack[stack.length - 1];
 
 			/*-------------------------------------------------*/
 			/*                                                 */
 			/*-------------------------------------------------*/
 
-			var m = s.match(this.STATEMENT_RE);
+			m = s.match(this.STATEMENT_RE);
 
 			/*-------------------------------------------------*/
 
@@ -1388,9 +1402,9 @@ ami.twig.engine = {
 				{
 					result += s.replace(this.VARIABLE_RE, function(match, expression) {
 
-						var EXPRESSION = new ami.twig.expr.Compiler(expression, line);
-
-						return ami.twig.expr.interpreter.eval(EXPRESSION, dict);
+						return ami.twig.expr.interpreter.eval(
+							new ami.twig.expr.Compiler(expression, line), dict
+						);
 					});
 				}
 
@@ -1434,16 +1448,16 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			var match = m[0];
-			var keyword = m[1];
-			var expression = m[2];
+			match = m[0];
+			keyword = m[1];
+			expression = m[2];
 
 			/*-------------------------------------------------*/
 			/* GET POSITION AND LINE NUMBER                    */
 			/*-------------------------------------------------*/
 
-			var column_nr = m.index + 0x0000000000;
-			var COLUMN_NR = m.index + match.length;
+			column_nr = m.index + 0x0000000000;
+			COLUMN_NR = m.index + match.length;
 
 			for(i in match)
 			{
@@ -1477,9 +1491,9 @@ ami.twig.engine = {
 
 						result += s.substr(0, column_nr).replace(this.VARIABLE_RE, function(match, expression) {
 
-							var EXPRESSION = new ami.twig.expr.Compiler(expression, line);
-
-							return ami.twig.expr.interpreter.eval(EXPRESSION, DICT);
+							return ami.twig.expr.interpreter.eval(
+								new ami.twig.expr.Compiler(expression, line), DICT
+							);
 						});
 					}
 				}
@@ -1487,9 +1501,9 @@ ami.twig.engine = {
 				{
 					result += s.substr(0, column_nr).replace(this.VARIABLE_RE, function(match, expression) {
 
-						var EXPRESSION = new ami.twig.expr.Compiler(expression, line);
-
-						return ami.twig.expr.interpreter.eval(EXPRESSION, dict);
+						return ami.twig.expr.interpreter.eval(
+							new ami.twig.expr.Compiler(expression, line), dict
+						);
 					});
 				}
 			}
@@ -1765,7 +1779,7 @@ ami.twig.stdlib = {
 		 ) {
 		 	return y.indexOf(x) >= 0;
 		}
-		
+
 		if(x instanceof Object)
 		{
 			return x in y;

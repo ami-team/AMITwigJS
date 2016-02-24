@@ -205,7 +205,7 @@ ami.twig.expr.Tokenizer = function(code, line) {
 
 			return (type instanceof Array) ? (type.indexOf(TYPE) >= 0) : (type === TYPE);
 		}
-		
+
 		return false;
 	};
 
