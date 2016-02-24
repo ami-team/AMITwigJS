@@ -136,7 +136,7 @@ ami.twig.expr.interpreter = {
 					}
 					else
 					{
-					 	x = this._getJS(node.nodeLeft);
+						x = this._getJS(node.nodeLeft);
 
 						left = node.nodeRight.nodeLeft.nodeValue;
 						right = node.nodeRight.nodeRight.nodeValue;

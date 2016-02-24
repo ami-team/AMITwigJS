@@ -1631,7 +1631,7 @@ ami.twig.engine = {
 				if(!(iter instanceof Array)
 				   &&
 				   !(iter instanceof Object)
-			           &&
+				   &&
 				   !(typeof(iter) === 'string')
 				 ) {
 					throw 'runtime error, line `' + line + '`, `' + symb + '` must be iterable';
@@ -2050,7 +2050,7 @@ ami.twig.expr.interpreter = {
 					}
 					else
 					{
-					 	x = this._getJS(node.nodeLeft);
+						x = this._getJS(node.nodeLeft);
 
 						left = node.nodeRight.nodeLeft.nodeValue;
 						right = node.nodeRight.nodeRight.nodeValue;
