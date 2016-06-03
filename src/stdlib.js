@@ -191,6 +191,30 @@ ami.twig.stdlib = {
 	},
 
 	/*-----------------------------------------------------------------*/
+
+	escape: function(s, mode)
+	{
+		/**/ if(!mode
+		        ||
+			mode === 'html'
+			||
+			mode === 'html_attr'
+		 ) {
+			s = s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+		}
+		else if(mode === 'js')
+		{
+			s = s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/"/g, '\\\"').replace(/'/g, '\\\'');
+		}
+		else if(mode === 'url')
+		{
+			s = encodeURIComponent(s);
+		}
+
+		return s;
+	},
+
+	/*-----------------------------------------------------------------*/
 	/* NUMBERS                                                         */
 	/*-----------------------------------------------------------------*/
 

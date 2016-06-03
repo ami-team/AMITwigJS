@@ -351,12 +351,13 @@ ami.twig.expr.tokens = {
 	NOT: 120,
 	DOT: 121,
 	COMMA: 122,
-	LP: 123,
-	RP: 124,
-	LB: 125,
-	RB: 126,
-	TERMINAL: 127,
-	SID: 128,
+	PIPE: 123,
+	LP: 124,
+	RP: 125,
+	LB: 126,
+	RB: 127,
+	TERMINAL: 128,
+	SID: 129,
 
 	/*-----------------------------------------------------------------*/
 	/* VIRTUAL TOKENS                                                  */
@@ -395,7 +396,7 @@ ami.twig.expr.Tokenizer = function(code, line) {
 		'in',
 		'+', '-', '**', '*', '//', '/', '%',
 		'not',
-		'..', '.', ',',
+		'..', '.', ',', '|',
 		'(', ')', '[', ']',
 		/^[0-9]+\.[0-9]+/, /^[0-9]+/, /^'(\\'|[^\'])*'/, /^"(\\"|[^\"])*"/,
 		/^[a-zA-Z_$][a-zA-Z0-9_$]*/,
@@ -415,7 +416,7 @@ ami.twig.expr.Tokenizer = function(code, line) {
 		ami.twig.expr.tokens.IN,
 		ami.twig.expr.tokens.PLUS, ami.twig.expr.tokens.MINUS, ami.twig.expr.tokens.POWER, ami.twig.expr.tokens.MUL, ami.twig.expr.tokens.FLDIV, ami.twig.expr.tokens.DIV, ami.twig.expr.tokens.MOD,
 		ami.twig.expr.tokens.NOT,
-		ami.twig.expr.tokens.RANGE, ami.twig.expr.tokens.DOT, ami.twig.expr.tokens.COMMA,
+		ami.twig.expr.tokens.RANGE, ami.twig.expr.tokens.DOT, ami.twig.expr.tokens.COMMA, ami.twig.expr.tokens.PIPE,
 		ami.twig.expr.tokens.LP, ami.twig.expr.tokens.RP, ami.twig.expr.tokens.LB, ami.twig.expr.tokens.RB,
 		ami.twig.expr.tokens.TERMINAL, ami.twig.expr.tokens.TERMINAL, ami.twig.expr.tokens.TERMINAL, ami.twig.expr.tokens.TERMINAL,
 		ami.twig.expr.tokens.SID,
@@ -522,7 +523,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		/*---------------------------------------------------------*/
 
-		this.rootNode = this.parseLogicalOr();
+		this.rootNode = this.parseFilter();
 
 		if(!this.tokenizer.isEmpty())
 		{
@@ -543,6 +544,33 @@ ami.twig.expr.Compiler = function(code, line) {
 	{
 		return this.rootNode.dump();
 	};
+
+	/*-----------------------------------------------------------------*/
+
+	this.parseFilter = function()
+	{
+		var left = this.parseLogicalOr(), node;
+
+		/*---------------------------------------------------------*/
+		/* Filter : LogicalOr '|' FunVar                           */
+		/*        | LogicalOr                                      */
+		/*---------------------------------------------------------*/
+
+		if(this.tokenizer.checkType(ami.twig.expr.tokens.PIPE))
+		{
+			this.tokenizer.next();
+
+			node = this.parseFunVar(true);
+
+			node.list.unshift(left);
+
+			left = node;
+		}
+
+		/*---------------------------------------------------------*/
+
+		return left;
+	},
 
 	/*-----------------------------------------------------------------*/
 
@@ -992,7 +1020,7 @@ ami.twig.expr.Compiler = function(code, line) {
 		{
 			this.tokenizer.next();
 
-			node = this.parseLogicalOr();
+			node = this.parseFilter();
 
 			if(this.tokenizer.checkType(ami.twig.expr.tokens.RP))
 			{
@@ -1013,7 +1041,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseFunVar = function()
+	this.parseFunVar = function(isFilter)
 	{
 		var L, qid, node;
 
@@ -1096,7 +1124,14 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			/*-------------------------------------------------*/
 
-			return new ami.twig.expr.Node(ami.twig.expr.tokens.VAR, ((((((('_'))))))) + qid);
+			if(isFilter)
+			{
+				return new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'ami.twig.stdlib' + qid);
+			}
+			else
+			{
+				return new ami.twig.expr.Node(ami.twig.expr.tokens.VAR, ((((((('_'))))))) + qid);
+			}
 
 			/*-------------------------------------------------*/
 		}
@@ -1114,7 +1149,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		while(this.tokenizer.checkType(ami.twig.expr.tokens.RX) === false)
 		{
-			result.push(this.parseLogicalOr());
+			result.push(this.parseFilter());
 
 			if(this.tokenizer.checkType(ami.twig.expr.tokens.COMMA) === true)
 			{
@@ -1890,6 +1925,30 @@ ami.twig.stdlib = {
 			,
 			regex.substring(idx + 1, len)
 		).test(s);
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	escape: function(s, mode)
+	{
+		/**/ if(!mode
+		        ||
+			mode === 'html'
+			||
+			mode === 'html_attr'
+		 ) {
+			s = s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+		}
+		else if(mode === 'js')
+		{
+			s = s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/"/g, '\\\"').replace(/'/g, '\\\'');
+		}
+		else if(mode === 'url')
+		{
+			s = encodeURIComponent(s);
+		}
+
+		return s;
 	},
 
 	/*-----------------------------------------------------------------*/
