@@ -2383,6 +2383,8 @@ ami.twig.expr.interpreter = {
 			   ||
 			   node.nodeType === ami.twig.expr.tokens.VARIABLE
 			 ) {
+			 	/*-----------------------------------------*/
+
 				s = '';
 
 				for(i in node.list)
@@ -2395,9 +2397,11 @@ ami.twig.expr.interpreter = {
 					s = s.substr(1);
 				}
 
+			 	/*-----------------------------------------*/
+
 				/**/ if(node.nodeType === ami.twig.expr.tokens.ARRAY)
 				{
-					return /*------------*/ '[' + s + ']';
+					return '[' + s + ']';
 				}
 				else if(node.nodeType === ami.twig.expr.tokens.FUNCTION)
 				{
@@ -2408,11 +2412,13 @@ ami.twig.expr.interpreter = {
 					return node.nodeValue + '[' + s + ']';
 				}
 
-				throw 'internal error';
+			 	/*-----------------------------------------*/
 			}
 
 			if(node.nodeType === ami.twig.expr.tokens.OBJECT)
 			{
+			 	/*-----------------------------------------*/
+
 				s = '';
 
 				for(i in node.dict)
@@ -2425,7 +2431,11 @@ ami.twig.expr.interpreter = {
 					s = s.substr(1);
 				}
 
+			 	/*-----------------------------------------*/
+
 				return '{' + s + '}';
+
+			 	/*-----------------------------------------*/
 			}
 
 			return node.nodeValue;
