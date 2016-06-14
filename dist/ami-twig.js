@@ -1684,9 +1684,7 @@ ami.twig.engine = {
 				   &&
 				   !(iter instanceof Object)
 				   &&
-				   !(iter instanceof String)
-				   &&
-				   !(typeof iter === 'string')
+				   !(iter instanceof String) && !(typeof iter === 'string')
 				 ) {
 					throw 'runtime error, line `' + line + '`, `' + symb + '` must be iterable';
 				}
