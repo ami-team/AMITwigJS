@@ -22,7 +22,7 @@ ami.twig.stdlib = {
 
 	isDefined: function(x)
 	{
-		return typeof(x) !== 'undefined';
+		return typeof x !== 'undefined';
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -41,13 +41,27 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
+	isNumber: function(x)
+	{
+		return x instanceof Number || typeof x === 'number';
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	isString: function(x)
+	{
+		return x instanceof String || typeof x === 'string';
+	},
+
+	/*-----------------------------------------------------------------*/
+
 	isIterable: function(x)
 	{
-		return (x instanceof Array)
+		return x instanceof Array
 		       ||
-		       (x instanceof Object)
+		       x instanceof Object
 		       ||
-		       (typeof(x) === 'string')
+		       x instanceof String || typeof x === 'string'
 		;
 	},
 
@@ -55,14 +69,14 @@ ami.twig.stdlib = {
 
 	isEven: function(x)
 	{
-		return (x & 1) === 0;
+		return this.isNumber(x) && (x & 1) === 0;
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	isOdd: function(x)
 	{
-		return (x & 1) === 1;
+		return this.isNumber(x) && (x & 1) === 1;
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -73,12 +87,12 @@ ami.twig.stdlib = {
 	{
 		if(y instanceof Array
 		   ||
-		   typeof(y) === 'string'
+		   y instanceof String || typeof y === 'string'
 		 ) {
 		 	return y.indexOf(x) >= 0;
 		}
 
-		if(x instanceof Object)
+		if(y instanceof Object)
 		{
 			return x in y;
 		}
@@ -90,18 +104,18 @@ ami.twig.stdlib = {
 
 	isInRange: function(x, x1, x2)
 	{
-		/**/ if(typeof(x1) === 'number'
+		/**/ if(this.isNumber(x1)
 		        &&
-		        typeof(x2) === 'number'
+		        this.isNumber(x2)
 		 ) {
 			return ((((((((x))))))) >= (((((((x1))))))))
 			       &&
 			       ((((((((x))))))) <= (((((((x2))))))))
 			;
 		}
-		else if(typeof(x1) === 'string' && x1.length === 1
+		else if(this.isString(x1) && x1.length === 1
 		        &&
-		        typeof(x2) === 'string' && x2.length === 1
+		        this.isString(x2) && x2.length === 1
 		 ) {
 			return (x.charCodeAt(0) >= x1.charCodeAt(0))
 			       &&
@@ -125,18 +139,18 @@ ami.twig.stdlib = {
 			step = 1;
 		}
 
-		/**/ if(typeof(x1) === 'number'
+		/**/ if(this.isNumber(x1)
 		        &&
-		        typeof(x2) === 'number'
+		        this.isNumber(x2)
 		 ) {
 			for(i = (((((((x1))))))); i <= (((((((x2))))))); i += step)
 			{
 				result.push(/*---------------*/(i));
 			}
 		}
-		else if(typeof(x1) === 'string' && x1.length === 1
+		else if(this.isString(x1) && x1.length === 1
 		        &&
-		        typeof(x2) === 'string' && x2.length === 1
+		        this.isString(x2) && x2.length === 1
 		 ) {
 			for(i = x1.charCodeAt(0); i <= x2.charCodeAt(0); i += step)
 			{
@@ -148,67 +162,140 @@ ami.twig.stdlib = {
 	},
 
 	/*-----------------------------------------------------------------*/
+
+	length: function(x)
+	{
+		return this.isIterable(x) ? x.length : 0;
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	first: function(x)
+	{
+		return this.isIterable(x) && x.length > 0 ? x[0x0000000000] : '';
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	last: function(x)
+	{
+		return this.isIterable(x) && x.length > 0 ? x[x.length - 1] : '';
+	},
+
+	/*-----------------------------------------------------------------*/
 	/* STRINGS                                                         */
+	/*-----------------------------------------------------------------*/
+
+	'default': function(s1, s2)
+	{
+		if(this.isString(s1)
+		   &&
+		   this.isString(s2)
+		 ) {
+			return this.isEmpty(s1) === false ? s1 : s2;
+		}
+
+		return '';
+	},
+
 	/*-----------------------------------------------------------------*/
 
 	startsWith: function(s1, s2)
 	{
-		var base = 0x0000000000000000000;
+		if(this.isString(s1)
+		   &&
+		   this.isString(s2)
+		 ) {
+			var base = 0x0000000000000000000;
 
-		return s1.indexOf(s2, base) === base;
+			return s1.indexOf(s2, base) === base;
+		}
+
+		return false;
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	endsWith: function(s1, s2)
 	{
-		var base = s1.length - s2.length;
+		if(this.isString(s1)
+		   &&
+		   this.isString(s2)
+		 ) {
+			var base = s1.length - s2.length;
 
-		return s1.indexOf(s2, base) === base;
+			return s1.indexOf(s2, base) === base;
+		}
+
+		return false;
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	match: function(s, regex)
 	{
-		var len = regex.     length     ;
-		var idx = regex.lastIndexOf('/');
-
-		if(len < 2
-		   ||
-		   idx < 0
-		   ||
-		   regex.charAt(0) !== '/'
+		if(this.isString(s)
+		   &&
+		   this.isString(regex)
 		 ) {
-			throw 'invalid regular expression `' + regex + '`';
+			var len = regex.     length     ;
+			var idx = regex.lastIndexOf('/');
+
+			if(len < 2
+			   ||
+			   idx < 0
+			   ||
+			   regex.charAt(0) !== '/'
+			 ) {
+				throw 'invalid regular expression `' + regex + '`';
+			}
+
+			return new RegExp(
+				regex.substring(0x1, idx + 0)
+				,
+				regex.substring(idx + 1, len)
+			).test(s);
 		}
 
-		return new RegExp(
-			regex.substring(0x1, idx + 0)
-			,
-			regex.substring(idx + 1, len)
-		).test(s);
+		return false;
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	lower: function(s)
+	{
+		return this.isString(s) ? s.toLowerCase() : '';
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	upper: function(s)
+	{
+		return this.isString(s) ? s.toUpperCase() : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	escape: function(s, mode)
 	{
-		/**/ if(!mode
-		        ||
-			mode === 'html'
-			||
-			mode === 'html_attr'
-		 ) {
-			s = s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-		}
-		else if(mode === 'js')
+		if(this.isString(s))
 		{
-			s = s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/"/g, '\\\"').replace(/'/g, '\\\'');
-		}
-		else if(mode === 'url')
-		{
-			s = encodeURIComponent(s);
+			/**/ if(!mode
+			        ||
+				mode === 'html'
+				||
+				mode === 'html_attr'
+			 ) {
+				s = s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+			}
+			else if(mode === 'js')
+			{
+				s = s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/"/g, '\\\"').replace(/'/g, '\\\'');
+			}
+			else if(mode === 'url')
+			{
+				s = encodeURIComponent(s);
+			}
 		}
 
 		return s;
@@ -218,16 +305,77 @@ ami.twig.stdlib = {
 	/* NUMBERS                                                         */
 	/*-----------------------------------------------------------------*/
 
+	abs: function(x)
+	{
+		return Math.abs(x);
+	},
+
+	/*-----------------------------------------------------------------*/
+
 	min: function()
 	{
-		return Math.min(arguments);
+		/*---------------------------------------------------------*/
+
+		var args = (arguments.length === 1) && (arguments[0] instanceof Array || arguments[0] instanceof Object) ? arguments[0]
+		                                                                                                         : arguments
+		;
+
+		/*---------------------------------------------------------*/
+
+		var result = Number.POSITIVE_INFINITY;
+
+		for(var i in args)
+		{
+			var arg = args[i];
+
+			if(this.isNumber(arg) == false)
+			{
+				return Number.NaN;
+			}
+
+			if(result > arg)
+			{
+				result = arg;
+			}
+		}
+
+		/*---------------------------------------------------------*/
+
+		return result;
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	max: function()
 	{
-		return Math.max(arguments);
+		/*---------------------------------------------------------*/
+
+		var args = (arguments.length === 1) && (arguments[0] instanceof Array || arguments[0] instanceof Object) ? arguments[0]
+		                                                                                                         : arguments
+		;
+
+		/*---------------------------------------------------------*/
+
+		var result = Number.NEGATIVE_INFINITY;
+
+		for(var i in args)
+		{
+			var arg = args[i];
+
+			if(this.isNumber(arg) == false)
+			{
+				return Number.NaN;
+			}
+
+			if(result < arg)
+			{
+				result = arg;
+			}
+		}
+
+		/*---------------------------------------------------------*/
+
+		return result;
 	},
 
 	/*-----------------------------------------------------------------*/

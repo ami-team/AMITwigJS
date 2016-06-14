@@ -232,12 +232,9 @@ ami.twig.engine = {
 
 				if(SYMB)
 				{
-					var DICT = {};
-
-					for(i in dict)
-					{
-						DICT[i] = dict[i];
-					}
+					/* CLONE */
+					var DICT = {}; for(i in dict) DICT[i] = dict[i];
+					/* CLONE */
 
 					for(i in ITER)
 					{
@@ -386,7 +383,9 @@ ami.twig.engine = {
 				   &&
 				   !(iter instanceof Object)
 				   &&
-				   !(typeof(iter) === 'string')
+				   !(iter instanceof String)
+				   &&
+				   !(typeof iter === 'string')
 				 ) {
 					throw 'runtime error, line `' + line + '`, `' + symb + '` must be iterable';
 				}

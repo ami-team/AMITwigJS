@@ -21,6 +21,10 @@ ami.twig.expr.tokens = {
 
 	$init: function()
 	{
+		/*---------------------------------------------------------*/
+		/* COMPOSITE TOKENS                                        */
+		/*---------------------------------------------------------*/
+
 		this.PLUS_MINUS = [
 			this.PLUS,
 			this.MINUS,
@@ -43,6 +47,8 @@ ami.twig.expr.tokens = {
 			this.RP,
 			this.RB,
 		];
+
+		/*---------------------------------------------------------*/
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -274,10 +280,9 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		/*---------------------------------------------------------*/
 		/* Filter : LogicalOr '|' FunVar                           */
-		/*        | LogicalOr                                      */
 		/*---------------------------------------------------------*/
 
-		if(this.tokenizer.checkType(ami.twig.expr.tokens.PIPE))
+		while(this.tokenizer.checkType(ami.twig.expr.tokens.PIPE))
 		{
 			this.tokenizer.next();
 
@@ -288,6 +293,8 @@ ami.twig.expr.Compiler = function(code, line) {
 			left = node;
 		}
 
+		/*---------------------------------------------------------*/
+		/*        | LogicalOr                                      */
 		/*---------------------------------------------------------*/
 
 		return left;
@@ -301,7 +308,6 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		/*---------------------------------------------------------*/
 		/* LogicalOr : LogicalAnd 'or' LogicalOr                   */
-		/*           | LogicalAnd                                  */
 		/*---------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.LOGICAL_OR))
@@ -318,6 +324,8 @@ ami.twig.expr.Compiler = function(code, line) {
 		}
 
 		/*---------------------------------------------------------*/
+		/*           | LogicalAnd                                  */
+		/*---------------------------------------------------------*/
 
 		return left;
 	};
@@ -330,7 +338,6 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		/*---------------------------------------------------------*/
 		/* LogicalAnd : BitwiseOr 'and' LogicalAnd                 */
-		/*            | BitwiseOr                                  */
 		/*---------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.LOGICAL_AND))
@@ -347,6 +354,8 @@ ami.twig.expr.Compiler = function(code, line) {
 		}
 
 		/*---------------------------------------------------------*/
+		/*            | BitwiseOr                                  */
+		/*---------------------------------------------------------*/
 
 		return left;
 	};
@@ -359,7 +368,6 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		/*---------------------------------------------------------*/
 		/* BitwiseOr : BitwiseXor 'b-or' BitwiseOr                 */
-		/*           | BitwiseXor                                  */
 		/*---------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.BITWISE_OR))
@@ -376,6 +384,8 @@ ami.twig.expr.Compiler = function(code, line) {
 		}
 
 		/*---------------------------------------------------------*/
+		/*           | BitwiseXor                                  */
+		/*---------------------------------------------------------*/
 
 		return left;
 	};
@@ -388,7 +398,6 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		/*---------------------------------------------------------*/
 		/* BitwiseXor : BitwiseAnd 'b-xor' parseBitwiseXor         */
-		/*            | BitwiseAnd                                 */
 		/*---------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.BITWISE_XOR))
@@ -405,6 +414,8 @@ ami.twig.expr.Compiler = function(code, line) {
 		}
 
 		/*---------------------------------------------------------*/
+		/*            | BitwiseAnd                                 */
+		/*---------------------------------------------------------*/
 
 		return left;
 	};
@@ -417,7 +428,6 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		/*---------------------------------------------------------*/
 		/* BitwiseAnd : Comp 'b-and' BitwiseAnd                    */
-		/*            | Comp                                       */
 		/*---------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.BITWISE_AND))
@@ -433,6 +443,8 @@ ami.twig.expr.Compiler = function(code, line) {
 			left = node;
 		}
 
+		/*---------------------------------------------------------*/
+		/*            | Comp                                       */
 		/*---------------------------------------------------------*/
 
 		return left;
@@ -565,7 +577,6 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		/*---------------------------------------------------------*/
 		/* AddSub : MulDiv ('+' | '-') AddSub                      */
-		/*        | MulDiv                                         */
 		/*---------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.PLUS_MINUS))
@@ -582,6 +593,8 @@ ami.twig.expr.Compiler = function(code, line) {
 		}
 
 		/*---------------------------------------------------------*/
+		/*        | MulDiv                                         */
+		/*---------------------------------------------------------*/
 
 		return left;
 	};
@@ -594,7 +607,6 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		/*---------------------------------------------------------*/
 		/* MulDiv : Power ('*' | '//' | '/' | '%') MulDiv          */
-		/*        | Power                                          */
 		/*---------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.MUL_FLDIV_DIV_MOD))
@@ -611,6 +623,8 @@ ami.twig.expr.Compiler = function(code, line) {
 		}
 
 		/*---------------------------------------------------------*/
+		/*        | Power                                          */
+		/*---------------------------------------------------------*/
 
 		return left;
 	};
@@ -623,7 +637,6 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		/*---------------------------------------------------------*/
 		/* Power : NotPlusMinus '**' Power                         */
-		/*       | NotPlusMinus                                    */
 		/*---------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.POWER))
@@ -640,6 +653,8 @@ ami.twig.expr.Compiler = function(code, line) {
 		}
 
 		/*---------------------------------------------------------*/
+		/*       | NotPlusMinus                                    */
+		/*---------------------------------------------------------*/
 
 		return left;
 	};
@@ -652,7 +667,6 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		/*---------------------------------------------------------*/
 		/* NotPlusMinus : ('not' | '-' | '+') Y                    */
-		/*              | Y                                        */
 		/*---------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.NOT_PLUS_MINUS))
@@ -668,6 +682,8 @@ ami.twig.expr.Compiler = function(code, line) {
 			return node;
 		}
 
+		/*---------------------------------------------------------*/
+		/*              | Y                                        */
 		/*---------------------------------------------------------*/
 
 		return this.parseY();
@@ -691,6 +707,8 @@ ami.twig.expr.Compiler = function(code, line) {
 			return node;
 		}
 
+		/*---------------------------------------------------------*/
+		/* SYNTAX ERROR                                            */
 		/*---------------------------------------------------------*/
 
 		throw 'syntax error, line `' + this.line + '`, syntax error or tuncated expression';
@@ -720,6 +738,8 @@ ami.twig.expr.Compiler = function(code, line) {
 			return node;
 		}
 
+		/*---------------------------------------------------------*/
+		/* SYNTAX ERROR                                            */
 		/*---------------------------------------------------------*/
 
 		throw 'syntax error, line `' + this.line + '`, syntax error or tuncated expression';

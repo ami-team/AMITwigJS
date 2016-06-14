@@ -6,7 +6,7 @@ all:
 	java -jar yuicompressor-2.4.8.jar -o dist/ami-twig.min.js dist/ami-twig.js
 
 test: all
-	eslint dist/ami-twig.js
+	#eslint dist/ami-twig.js
 	node test/test.js
 
 clean:
