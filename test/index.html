@@ -10,13 +10,13 @@
 
     <title>TWIG Expression Compiler</title>
 
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
 
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/viz.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
 
-    <script type="text/javascript" src="viz.js"></script>
     <script type="text/javascript" src="../dist/ami-twig.js"></script>
 
     <!--[if lt IE 9]>
@@ -27,9 +27,10 @@
     <script type="text/javascript">
 	/*-----------------------------------------------------------------*/
 
-	function viewExpr() {
-
-		try {
+	function viewExpr()
+	{
+		try
+		{
 			var expr = new ami.twig.expr.Compiler($('#expr').val(), 0);
 
 			var code = ami.twig.expr.interpreter.getJS(expr);
@@ -40,8 +41,9 @@
 			$('#tree').html(tree);
 
 			$('#message').empty();
-
-		} catch(e) {
+		}
+		catch(e)
+		{
 			$('#code').empty();
 			$('#tree').empty();
 
@@ -51,8 +53,8 @@
 
 	/*-----------------------------------------------------------------*/
 
-	function clearExpr() {
-
+	function clearExpr()
+	{
 		$('#code').empty();
 		$('#tree').empty();
 
@@ -65,7 +67,8 @@
 
 		document.getElementById('expr').addEventListener('keypress', function(e) {
 
-			if(e.keyCode === 13) {
+			if(e.keyCode === 13)
+			{
 				viewExpr();
 			}
 		});

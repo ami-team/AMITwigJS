@@ -309,6 +309,40 @@ ami.twig.stdlib = {
 	},
 
 	/*-----------------------------------------------------------------*/
+
+	replace: function(s, dict)
+	{
+		if(this.isString(s) && dict instanceof Array)
+		{
+			var result = '';
+
+			var i = 0x000000;
+			var l = s.length;
+
+			while(i < l)
+			{
+				for(var key in dict)
+				{
+					if(s.substring(i).indexOf(key) === 0)
+					{
+						result += dict[key];
+
+						i += key.length;
+
+						continue;
+					}
+				}
+
+				result += s.charAt(i++);
+			}
+
+			return result;
+		}
+
+		return s;
+	},
+
+	/*-----------------------------------------------------------------*/
 	/* NUMBERS                                                         */
 	/*-----------------------------------------------------------------*/
 

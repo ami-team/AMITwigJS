@@ -34,4 +34,9 @@ console.log(ami.twig.engine.render('$$$ {{ min(1, 7, 3, 5) }}', dict));
 console.log(ami.twig.engine.render('{{ "http://xyz.com/?a=12&b=55" | escape }}'));
 console.log(ami.twig.engine.render('{{ "http://xyz.com/?a=12&b=55" | escape(\'url\') }}'));
 
+console.log(ami.twig.engine.render('{% set b = [1, 2, 3] %}', dict));
+
+
+//console.log(ami.twig.engine.render('{{ min([1, 2, 3]) }}', dict));
+
 /*-------------------------------------------------------------------------*/
