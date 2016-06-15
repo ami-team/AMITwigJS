@@ -491,7 +491,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			}
 			else
 			{
-				throw 'syntax error, line `' + this.line + '`, keyword `defined` or `null` or `empty` or `iterable` or `even` or `odd` expected';
+				throw 'syntax error, line `' + this.line + '`, keyword `defined`, `null`, `empty`, `iterable`, `even` or `odd` expected';
 			}
 
 			left = node;
@@ -900,7 +900,7 @@ ami.twig.expr.Compiler = function(code, line) {
 				}
 				else
 				{
-					throw 'syntax error, line `' + this.line + '`, id expected';
+					throw 'syntax error, line `' + this.line + '`, qid expected';
 				}
 			}
 

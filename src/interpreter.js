@@ -58,7 +58,7 @@ ami.twig.expr.interpreter = {
 
 				/**/ if(node.nodeType === ami.twig.expr.tokens.ARRAY)
 				{
-					return '[' + s + ']';
+					return /*------------*/ '[' + s + ']';
 				}
 				else if(node.nodeType === ami.twig.expr.tokens.FUNCTION)
 				{
