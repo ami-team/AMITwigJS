@@ -1237,11 +1237,15 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			if(isFilter)
 			{
-				return new ami.twig.expr.Node(ami.twig.expr.tokens.FUNCTION, 'ami.twig.stdlib' + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUNCTION, 'ami.twig.stdlib' + qid);
+				node.list = [];
+				return node;
 			}
 			else
 			{
-				return new ami.twig.expr.Node(ami.twig.expr.tokens.VARIABLE, ((((((('_'))))))) + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VARIABLE, ((((((('_'))))))) + qid);
+				node.list = null;
+				return node;
 			}
 
 			/*-------------------------------------------------*/
@@ -1398,8 +1402,8 @@ ami.twig.expr.Node = function(nodeType, nodeValue) {
 		this.nodeValue = nodeValue;
 		this.nodeLeft = null;
 		this.nodeRight = null;
-		this.list = [];
-		this.dict = {};
+		this.list = null;
+		this.dict = null;
 	};
 
 	/*-----------------------------------------------------------------*/
@@ -1424,18 +1428,24 @@ ami.twig.expr.Node = function(nodeType, nodeValue) {
 			this.nodeRight._dump(nodes, edges, pCnt);
 		}
 
-		for(var i in this.list)
+		if(this.list)
 		{
-			CNT = ++pCnt[0];
-			edges.push('\tnode' + cnt + ' -> node' + CNT + ' [label="[' + i.replace(/"/g, '\\"') + ']"];');
-			this.list[i]._dump(nodes, edges, pCnt);
+			for(var i in this.list)
+			{
+				CNT = ++pCnt[0];
+				edges.push('\tnode' + cnt + ' -> node' + CNT + ' [label="[' + i.replace(/"/g, '\\"') + ']"];');
+				this.list[i]._dump(nodes, edges, pCnt);
+			}
 		}
 
-		for(var i in this.dict)
+		if(this.dict)
 		{
-			CNT = ++pCnt[0];
-			edges.push('\tnode' + cnt + ' -> node' + CNT + ' [label="[' + i.replace(/"/g, '\\"') + ']"];');
-			this.dict[i]._dump(nodes, edges, pCnt);
+			for(var i in this.dict)
+			{
+				CNT = ++pCnt[0];
+				edges.push('\tnode' + cnt + ' -> node' + CNT + ' [label="[' + i.replace(/"/g, '\\"') + ']"];');
+				this.dict[i]._dump(nodes, edges, pCnt);
+			}
 		}
 	};
 
@@ -2370,19 +2380,15 @@ ami.twig.expr.interpreter = {
 		var operator;
 
 		/*---------------------------------------------------------*/
-		/* FUNCTIONS, VARIABLES, TERMINALS                         */
+		/* ARRAY, OBJECT, FUNCTIONS, VARIABLES, TERMINALS          */
 		/*---------------------------------------------------------*/
 
 		if(node.nodeLeft === null
 		   &&
 		   node.nodeRight === null
 		 ) {
-			if(node.nodeType === ami.twig.expr.tokens.ARRAY
-			   ||
-			   node.nodeType === ami.twig.expr.tokens.FUNCTION
-			   ||
-			   node.nodeType === ami.twig.expr.tokens.VARIABLE
-			 ) {
+			if(node.list)
+			{
 			 	/*-----------------------------------------*/
 
 				s = '';
@@ -2413,9 +2419,13 @@ ami.twig.expr.interpreter = {
 				}
 
 			 	/*-----------------------------------------*/
+
+				throw 'internal error';
+
+			 	/*-----------------------------------------*/
 			}
 
-			if(node.nodeType === ami.twig.expr.tokens.OBJECT)
+			if(node.dict)
 			{
 			 	/*-----------------------------------------*/
 
@@ -2433,7 +2443,14 @@ ami.twig.expr.interpreter = {
 
 			 	/*-----------------------------------------*/
 
-				return '{' + s + '}';
+				/**/ if(node.nodeType === ami.twig.expr.tokens.OBJECT)
+				{
+					return '{' + s + '}';
+				}
+
+			 	/*-----------------------------------------*/
+
+				throw 'internal error';
 
 			 	/*-----------------------------------------*/
 			}

@@ -31,19 +31,15 @@ ami.twig.expr.interpreter = {
 		var operator;
 
 		/*---------------------------------------------------------*/
-		/* FUNCTIONS, VARIABLES, TERMINALS                         */
+		/* ARRAY, OBJECT, FUNCTIONS, VARIABLES, TERMINALS          */
 		/*---------------------------------------------------------*/
 
 		if(node.nodeLeft === null
 		   &&
 		   node.nodeRight === null
 		 ) {
-			if(node.nodeType === ami.twig.expr.tokens.ARRAY
-			   ||
-			   node.nodeType === ami.twig.expr.tokens.FUNCTION
-			   ||
-			   node.nodeType === ami.twig.expr.tokens.VARIABLE
-			 ) {
+			if(node.list)
+			{
 			 	/*-----------------------------------------*/
 
 				s = '';
@@ -74,9 +70,13 @@ ami.twig.expr.interpreter = {
 				}
 
 			 	/*-----------------------------------------*/
+
+				throw 'internal error';
+
+			 	/*-----------------------------------------*/
 			}
 
-			if(node.nodeType === ami.twig.expr.tokens.OBJECT)
+			if(node.dict)
 			{
 			 	/*-----------------------------------------*/
 
@@ -94,7 +94,14 @@ ami.twig.expr.interpreter = {
 
 			 	/*-----------------------------------------*/
 
-				return '{' + s + '}';
+				/**/ if(node.nodeType === ami.twig.expr.tokens.OBJECT)
+				{
+					return '{' + s + '}';
+				}
+
+			 	/*-----------------------------------------*/
+
+				throw 'internal error';
 
 			 	/*-----------------------------------------*/
 			}

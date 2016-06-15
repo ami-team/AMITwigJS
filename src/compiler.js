@@ -879,7 +879,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	this.parseFunVar = function(isFilter)
 	{
-		var L, qid, node;
+		var node, qid, L;
 
 		qid = '.';
 
@@ -958,11 +958,15 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			if(isFilter)
 			{
-				return new ami.twig.expr.Node(ami.twig.expr.tokens.FUNCTION, 'ami.twig.stdlib' + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUNCTION, 'ami.twig.stdlib' + qid);
+				node.list = [];
+				return node;
 			}
 			else
 			{
-				return new ami.twig.expr.Node(ami.twig.expr.tokens.VARIABLE, ((((((('_'))))))) + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VARIABLE, ((((((('_'))))))) + qid);
+				node.list = null;
+				return node;
 			}
 
 			/*-------------------------------------------------*/
@@ -1119,8 +1123,8 @@ ami.twig.expr.Node = function(nodeType, nodeValue) {
 		this.nodeValue = nodeValue;
 		this.nodeLeft = null;
 		this.nodeRight = null;
-		this.list = [];
-		this.dict = {};
+		this.list = null;
+		this.dict = null;
 	};
 
 	/*-----------------------------------------------------------------*/
@@ -1145,18 +1149,24 @@ ami.twig.expr.Node = function(nodeType, nodeValue) {
 			this.nodeRight._dump(nodes, edges, pCnt);
 		}
 
-		for(var i in this.list)
+		if(this.list)
 		{
-			CNT = ++pCnt[0];
-			edges.push('\tnode' + cnt + ' -> node' + CNT + ' [label="[' + i.replace(/"/g, '\\"') + ']"];');
-			this.list[i]._dump(nodes, edges, pCnt);
+			for(var i in this.list)
+			{
+				CNT = ++pCnt[0];
+				edges.push('\tnode' + cnt + ' -> node' + CNT + ' [label="[' + i.replace(/"/g, '\\"') + ']"];');
+				this.list[i]._dump(nodes, edges, pCnt);
+			}
 		}
 
-		for(var i in this.dict)
+		if(this.dict)
 		{
-			CNT = ++pCnt[0];
-			edges.push('\tnode' + cnt + ' -> node' + CNT + ' [label="[' + i.replace(/"/g, '\\"') + ']"];');
-			this.dict[i]._dump(nodes, edges, pCnt);
+			for(var i in this.dict)
+			{
+				CNT = ++pCnt[0];
+				edges.push('\tnode' + cnt + ' -> node' + CNT + ' [label="[' + i.replace(/"/g, '\\"') + ']"];');
+				this.dict[i]._dump(nodes, edges, pCnt);
+			}
 		}
 	};
 
