@@ -2380,7 +2380,7 @@ ami.twig.expr.interpreter = {
 		var operator;
 
 		/*---------------------------------------------------------*/
-		/* LST, DIC, FUNS, VARS, TERMINALS          */
+		/* LST, DIC, FUNS, VARS, TERMINALS                         */
 		/*---------------------------------------------------------*/
 
 		if(node.nodeLeft === null
