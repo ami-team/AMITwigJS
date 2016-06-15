@@ -1158,7 +1158,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	this.parseFunVar = function(isFilter)
 	{
-		var L, qid, node;
+		var node, qid, L;
 
 		qid = '.';
 
@@ -2236,7 +2236,7 @@ ami.twig.stdlib = {
 
 	replace: function(s, dict)
 	{
-		if(this.isString(s) && dict instanceof Array)
+		if(this.isString(s) && dict instanceof Object)
 		{
 			var result = '';
 
