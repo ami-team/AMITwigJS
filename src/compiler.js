@@ -93,10 +93,10 @@ ami.twig.expr.tokens = {
 	/* VIRTUAL TOKENS                                                  */
 	/*-----------------------------------------------------------------*/
 
-	ARRAY: 200,
-	OBJECT: 201,
-	FUNCTION: 202,
-	VARIABLE: 203,
+	LST: 200,
+	DIC: 201,
+	FUN: 202,
+	VAR: 203,
 
 	/*-----------------------------------------------------------------*/
 };
@@ -819,7 +819,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			{
 				this.tokenizer.next();
 
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.ARRAY, 'Array');
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.LST, 'Array');
 				node.list = L;
 				return node;
 
@@ -857,7 +857,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			{
 				this.tokenizer.next();
 
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.OBJECT, 'Object');
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.DIC, 'Object');
 				node.dict = D;
 				return node;
 
@@ -923,7 +923,7 @@ ami.twig.expr.Compiler = function(code, line) {
 					throw 'syntax error, line `' + this.line + '`, `)` expected';
 				}
 
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUNCTION, 'ami.twig.stdlib' + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'ami.twig.stdlib' + qid);
 				node.list = L;
 				return node;
 			}
@@ -947,7 +947,7 @@ ami.twig.expr.Compiler = function(code, line) {
 					throw 'syntax error, line `' + this.line + '`, `]` expected';
 				}
 
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VARIABLE, ((((((('_'))))))) + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VAR, ((((((('_'))))))) + qid);
 				node.list = L;
 				return node;
 			}
@@ -958,13 +958,13 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			if(isFilter)
 			{
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUNCTION, 'ami.twig.stdlib' + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'ami.twig.stdlib' + qid);
 				node.list = [];
 				return node;
 			}
 			else
 			{
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VARIABLE, ((((((('_'))))))) + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VAR, ((((((('_'))))))) + qid);
 				node.list = null;
 				return node;
 			}

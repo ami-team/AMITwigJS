@@ -31,7 +31,7 @@ ami.twig.expr.interpreter = {
 		var operator;
 
 		/*---------------------------------------------------------*/
-		/* ARRAY, OBJECT, FUNCTIONS, VARIABLES, TERMINALS          */
+		/* LST, DIC, FUNS, VARS, TERMINALS                         */
 		/*---------------------------------------------------------*/
 
 		if(node.nodeLeft === null
@@ -56,15 +56,15 @@ ami.twig.expr.interpreter = {
 
 			 	/*-----------------------------------------*/
 
-				/**/ if(node.nodeType === ami.twig.expr.tokens.ARRAY)
+				/**/ if(node.nodeType === ami.twig.expr.tokens.LST)
 				{
 					return /*------------*/ '[' + s + ']';
 				}
-				else if(node.nodeType === ami.twig.expr.tokens.FUNCTION)
+				else if(node.nodeType === ami.twig.expr.tokens.FUN)
 				{
 					return node.nodeValue + '(' + s + ')';
 				}
-				else if(node.nodeType === ami.twig.expr.tokens.VARIABLE)
+				else if(node.nodeType === ami.twig.expr.tokens.VAR)
 				{
 					return node.nodeValue + '[' + s + ']';
 				}
@@ -94,7 +94,7 @@ ami.twig.expr.interpreter = {
 
 			 	/*-----------------------------------------*/
 
-				/**/ if(node.nodeType === ami.twig.expr.tokens.OBJECT)
+				/**/ if(node.nodeType === ami.twig.expr.tokens.DIC)
 				{
 					return '{' + s + '}';
 				}
