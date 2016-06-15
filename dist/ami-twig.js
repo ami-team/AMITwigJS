@@ -770,7 +770,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			}
 			else
 			{
-				throw 'syntax error, line `' + this.line + '`, keyword `defined` or `null` or `empty` or `iterable` or `even` or `odd` expected';
+				throw 'syntax error, line `' + this.line + '`, keyword `defined`, `null`, `empty`, `iterable`, `even` or `odd` expected';
 			}
 
 			left = node;
@@ -1179,7 +1179,7 @@ ami.twig.expr.Compiler = function(code, line) {
 				}
 				else
 				{
-					throw 'syntax error, line `' + this.line + '`, id expected';
+					throw 'syntax error, line `' + this.line + '`, qid expected';
 				}
 			}
 
@@ -1944,42 +1944,42 @@ ami.twig.stdlib = {
 	/* VARIABLES                                                       */
 	/*-----------------------------------------------------------------*/
 
-	isDefined: function(x)
+	'isDefined': function(x)
 	{
 		return typeof x !== 'undefined';
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	isNull: function(x)
+	'isNull': function(x)
 	{
 		return x === null;
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	isEmpty: function(x)
+	'isEmpty': function(x)
 	{
 		return x === null || x === false || x === '' || x === [] || x === {};
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	isNumber: function(x)
+	'isNumber': function(x)
 	{
 		return x instanceof Number || typeof x === 'number';
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	isString: function(x)
+	'isString': function(x)
 	{
 		return x instanceof String || typeof x === 'string';
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	isIterable: function(x)
+	'isIterable': function(x)
 	{
 		return x instanceof Array
 		       ||
@@ -1991,14 +1991,14 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	isEven: function(x)
+	'isEven': function(x)
 	{
 		return this.isNumber(x) && (x & 1) === 0;
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	isOdd: function(x)
+	'isOdd': function(x)
 	{
 		return this.isNumber(x) && (x & 1) === 1;
 	},
@@ -2007,7 +2007,7 @@ ami.twig.stdlib = {
 	/* ITERABLES                                                       */
 	/*-----------------------------------------------------------------*/
 
-	isInObject: function(x, y)
+	'isInObject': function(x, y)
 	{
 		if(y instanceof Array
 		   ||
@@ -2026,7 +2026,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	isInRange: function(x, x1, x2)
+	'isInRange': function(x, x1, x2)
 	{
 		/**/ if(this.isNumber(x1)
 		        &&
@@ -2052,7 +2052,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	range: function(x1, x2, step)
+	'range': function(x1, x2, step)
 	{
 		var i;
 
@@ -2087,21 +2087,21 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	length: function(x)
+	'length': function(x)
 	{
 		return this.isIterable(x) ? x.length : 0;
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	first: function(x)
+	'first': function(x)
 	{
 		return this.isIterable(x) && x.length > 0 ? x[0x0000000000] : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	last: function(x)
+	'last': function(x)
 	{
 		return this.isIterable(x) && x.length > 0 ? x[x.length - 1] : '';
 	},
@@ -2124,7 +2124,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	startsWith: function(s1, s2)
+	'startsWith': function(s1, s2)
 	{
 		if(this.isString(s1)
 		   &&
@@ -2140,7 +2140,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	endsWith: function(s1, s2)
+	'endsWith': function(s1, s2)
 	{
 		if(this.isString(s1)
 		   &&
@@ -2156,7 +2156,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	match: function(s, regex)
+	'match': function(s, regex)
 	{
 		if(this.isString(s)
 		   &&
@@ -2186,21 +2186,21 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	lower: function(s)
+	'lower': function(s)
 	{
 		return this.isString(s) ? s.toLowerCase() : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	upper: function(s)
+	'upper': function(s)
 	{
 		return this.isString(s) ? s.toUpperCase() : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	escape: function(s, mode)
+	'escape': function(s, mode)
 	{
 		if(this.isString(s))
 		{
@@ -2227,14 +2227,14 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	raw: function(s)
+	'raw': function(s)
 	{
 		return s;
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	replace: function(s, dict)
+	'replace': function(s, dict)
 	{
 		if(this.isString(s) && dict instanceof Object)
 		{
@@ -2270,14 +2270,14 @@ ami.twig.stdlib = {
 	/* NUMBERS                                                         */
 	/*-----------------------------------------------------------------*/
 
-	abs: function(x)
+	'abs': function(x)
 	{
 		return Math.abs(x);
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	min: function()
+	'min': function()
 	{
 		/*---------------------------------------------------------*/
 
@@ -2311,7 +2311,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	max: function()
+	'max': function()
 	{
 		/*---------------------------------------------------------*/
 
@@ -2389,7 +2389,7 @@ ami.twig.expr.interpreter = {
 		 ) {
 			if(node.list)
 			{
-				/*-----------------------------------------*/
+			 	/*-----------------------------------------*/
 
 				s = '';
 
@@ -2407,7 +2407,7 @@ ami.twig.expr.interpreter = {
 
 				/**/ if(node.nodeType === ami.twig.expr.tokens.ARRAY)
 				{
-					return '[' + s + ']';
+					return /*------------*/ '[' + s + ']';
 				}
 				else if(node.nodeType === ami.twig.expr.tokens.FUNCTION)
 				{
