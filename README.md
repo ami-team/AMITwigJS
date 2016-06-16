@@ -21,5 +21,5 @@ starts with, ends with, matches, []
 Using AMI TWIG
 ==============
 
-  <script type="text/javascript" src="ami-twig.js"></script>
+    <script type="text/javascript" src="ami-twig.js"></script>
 
