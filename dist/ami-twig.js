@@ -14,7 +14,7 @@
 /* ami.twig                                                                */
 /*-------------------------------------------------------------------------*/
 
-if(typeof ami === 'undefined')
+if(!(ami instanceof Object))
 {
 	var ami = {};
 }
@@ -1101,9 +1101,6 @@ ami.twig.expr.Compiler = function(code, line) {
 				node = new ami.twig.expr.Node(ami.twig.expr.tokens.LST, 'Array');
 				node.list = L;
 				return node;
-
-
-				return node;
 			}
 			else
 			{
@@ -1138,9 +1135,6 @@ ami.twig.expr.Compiler = function(code, line) {
 
 				node = new ami.twig.expr.Node(ami.twig.expr.tokens.DIC, 'Object');
 				node.dict = D;
-				return node;
-
-
 				return node;
 			}
 			else
@@ -1238,7 +1232,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			if(isFilter)
 			{
 				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'ami.twig.stdlib' + qid);
-				node.list = [];
+				node.list = [  ];
 				return node;
 			}
 			else
@@ -1410,7 +1404,7 @@ ami.twig.expr.Node = function(nodeType, nodeValue) {
 
 	this._dump = function(nodes, edges, pCnt)
 	{
-		var cnt = pCnt[0], CNT;
+		var i, cnt = pCnt[0], CNT;
 
 		nodes.push('\tnode' + cnt + ' [label="' + this.nodeValue.replace(/"/g, '\\"') + '"];');
 
@@ -1430,7 +1424,7 @@ ami.twig.expr.Node = function(nodeType, nodeValue) {
 
 		if(this.list)
 		{
-			for(var i in this.list)
+			for(i in this.list)
 			{
 				CNT = ++pCnt[0];
 				edges.push('\tnode' + cnt + ' -> node' + CNT + ' [label="[' + i.replace(/"/g, '\\"') + ']"];');
@@ -1440,7 +1434,7 @@ ami.twig.expr.Node = function(nodeType, nodeValue) {
 
 		if(this.dict)
 		{
-			for(var i in this.dict)
+			for(i in this.dict)
 			{
 				CNT = ++pCnt[0];
 				edges.push('\tnode' + cnt + ' -> node' + CNT + ' [label="[' + i.replace(/"/g, '\\"') + ']"];');
@@ -2238,7 +2232,7 @@ ami.twig.stdlib = {
 	{
 		if(this.isString(s) && dict instanceof Object)
 		{
-			var result = '';
+			var t = '';
 
 			var i = 0x000000;
 			var l = s.length;
@@ -2249,7 +2243,7 @@ ami.twig.stdlib = {
 				{
 					if(s.substring(i).indexOf(key) === 0)
 					{
-						result += dict[key];
+						t += dict[key];
 
 						i += key.length;
 
@@ -2257,10 +2251,10 @@ ami.twig.stdlib = {
 					}
 				}
 
-				result += s.charAt(i++);
+				t += s.charAt(i++);
 			}
 
-			return result;
+			return t;
 		}
 
 		return s;

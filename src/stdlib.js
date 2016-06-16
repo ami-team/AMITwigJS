@@ -36,7 +36,7 @@ ami.twig.stdlib = {
 
 	'isEmpty': function(x)
 	{
-		return x === null || x === false || x === '' || x === [] || x === {};
+		return (x === null || x === false) || (x === '' || x === [] || x === {});
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -314,7 +314,7 @@ ami.twig.stdlib = {
 	{
 		if(this.isString(s) && dict instanceof Object)
 		{
-			var result = '';
+			var t = '';
 
 			var i = 0x000000;
 			var l = s.length;
@@ -325,7 +325,7 @@ ami.twig.stdlib = {
 				{
 					if(s.substring(i).indexOf(key) === 0)
 					{
-						result += dict[key];
+						t += dict[key];
 
 						i += key.length;
 
@@ -333,10 +333,10 @@ ami.twig.stdlib = {
 					}
 				}
 
-				result += s.charAt(i++);
+				t += s.charAt(i++);
 			}
 
-			return result;
+			return t;
 		}
 
 		return s;
