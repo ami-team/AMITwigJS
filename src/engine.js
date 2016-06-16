@@ -265,7 +265,7 @@ ami.twig.engine = {
 
 			/**/ if(keyword === 'include')
 			{
-
+				console.log(expression);
 			}
 
 			/*-------------------------------------------------*/
