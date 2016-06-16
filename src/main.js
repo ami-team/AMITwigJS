@@ -22,11 +22,13 @@ if(!(ami instanceof Object))
 ami.twig = {};
 
 /*-------------------------------------------------------------------------*/
-/* NodeJS                                                                  */
+/* exports.ami                                                             */
 /*-------------------------------------------------------------------------*/
 
 if(typeof exports !== 'undefined')
 {
+	ami.fs = require('fs');
+
 	exports.ami = ami;
 }
 

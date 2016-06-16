@@ -7,7 +7,7 @@ Please see the official [documentation](http://twig.sensiolabs.org/documentation
 Implemented features
 ====================
 
-__Tags__: for, if, set
+__Tags__: for, if, include, set
 
 __Filters__: abs, capitalize, default, escape, first, last, length, lower, raw, replace, trim, upper
 

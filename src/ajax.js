@@ -18,33 +18,66 @@
 ami.twig.ajax = {
 	/*-----------------------------------------------------------------*/
 
-	ajax: function(fileName)
+	get: function(fileName)
 	{
 		var result = {};
 
-		var xmlHttpRequest = new XMLHttpRequest();
-
-		xmlHttpRequest.onreadystatechange = function()
+		if(typeof exports !== 'undefined')
 		{
-			if(xmlHttpRequest.readyState === 0x4)
-			{
-				if(xmlHttpRequest.status === 200)
+			/*-------------------------------------------------*/
+			/* NODEJS                                          */
+			/*-------------------------------------------------*/
+
+			ami.fs.readFile(fileName, 'utf8', function (err, txt) {
+
+				if(!err)
 				{
 					if(result.done) {
-						result.done(xmlHttpRequest.responseText);
+						result.done(txt);
 					}
 				}
 				else
 				{
 					if(result.fail) {
-						result.fail(xmlHttpRequest.responseText);
+						result.fail(err);
 					}
 				}
-			}
-		};
+			});
 
-		xmlHttpRequest.open('GET', fileName, true);
-		xmlHttpRequest.send();
+			/*-------------------------------------------------*/
+		}
+		else
+		{
+			/*-------------------------------------------------*/
+			/* BROWSER                                         */
+			/*-------------------------------------------------*/
+
+			var xmlHttpRequest = new XMLHttpRequest();
+
+			xmlHttpRequest.onreadystatechange = function()
+			{
+				if(xmlHttpRequest.readyState === 0x4)
+				{
+					if(xmlHttpRequest.status === 200)
+					{
+						if(result.done) {
+							result.done(xmlHttpRequest.responseText);
+						}
+					}
+					else
+					{
+						if(result.fail) {
+							result.fail(xmlHttpRequest.responseText);
+						}
+					}
+				}
+			};
+
+			xmlHttpRequest.open('GET', fileName, true);
+			xmlHttpRequest.send();
+
+			/*-------------------------------------------------*/
+		}
 
 		return result;
 	},

@@ -265,7 +265,17 @@ ami.twig.engine = {
 
 			/**/ if(keyword === 'include')
 			{
-				console.log(expression);
+				var ajax = ami.twig.ajax.get(expression);
+				
+				ajax.done = function(data) {
+
+					console.log(data);
+				};
+
+				ajax.fail = function(data) {
+
+					console.log(data);
+				};
 			}
 
 			/*-------------------------------------------------*/
