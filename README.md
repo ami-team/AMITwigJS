@@ -7,15 +7,15 @@ see the official [documentation](http://twig.sensiolabs.org/documentation).
 Implemented features
 ====================
 
-Tags: for, if, set
+__Tags__: for, if, set
 
-Filters: abs, capitalize, default, escape, first, last, length, lower, raw, replace, trim, upper
+__Filters__: abs, capitalize, default, escape, first, last, length, lower, raw, replace, trim, upper
 
-Functions: min, max, range
+__Functions__: min, max, range
 
-Tests: constant, defined, empty, even, iterable, null, odd
+__Tests__: constant, defined, empty, even, iterable, null, odd
 
-Operators: in, is, +, -, /, %, //, *, **, and, or, not, (), b-and, b-xor, b-or, ==, !=, <, >, >=, <=, ===,
+__Operators__: in, is, +, -, /, %, //, *, **, and, or, not, (), b-and, b-xor, b-or, ==, !=, <, >, >=, <=, ===,
 starts with, ends with, matches, []
 
 Using AMI TWIG
