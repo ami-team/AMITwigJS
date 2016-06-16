@@ -23,3 +23,6 @@ Using AMI TWIG
 
     <script type="text/javascript" src="ami-twig.js"></script>
 
+    <script type="text/javascript">
+    	var html_code = ami.twig.engine.render(twig_code, optional_dict);
+    </script>
