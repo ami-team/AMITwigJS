@@ -1472,6 +1472,61 @@ ami.twig.expr.Node = function(nodeType, nodeValue) {
  */
 
 /*-------------------------------------------------------------------------*/
+/* ami.twig.ajax                                                           */
+/*-------------------------------------------------------------------------*/
+
+/**
+ * The AMI TWIG Ajax
+ * @namespace ami/twig/ajax
+ */
+
+ami.twig.ajax = {
+	/*-----------------------------------------------------------------*/
+
+	ajax: function(fileName)
+	{
+		var result = {};
+
+		var xmlHttpRequest = new XMLHttpRequest();
+
+		xmlHttpRequest.onreadystatechange = function()
+		{
+			if(xmlHttpRequest.readyState === 0x04)
+			{
+				if(xmlHttpRequest.status === 0xC8)
+				{
+					if(result.done) {
+						result.done(xmlHttpRequest.responseText);
+					}
+				}
+				else
+				{
+					if(result.fail) {
+						result.fail(xmlHttpRequest.responseText);
+					}
+				}
+			}
+		};
+
+		xmlHttpRequest.open('GET', fileName, true);
+		xmlHttpRequest.send();
+
+		return result;
+	},
+
+	/*-----------------------------------------------------------------*/
+};
+
+/*-------------------------------------------------------------------------*/
+/*
+ * AMI TWIG Engine
+ *
+ * Copyright (c) 2014-2015 The AMI Team
+ * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
+ *
+ */
+
+/*-------------------------------------------------------------------------*/
 /* ami.twig.engine                                                         */
 /*-------------------------------------------------------------------------*/
 
@@ -1725,10 +1780,19 @@ ami.twig.engine = {
 			}
 
 			/*-------------------------------------------------*/
+			/* INCLUDE KEYWORD                                 */
+			/*-------------------------------------------------*/
+
+			/**/ if(keyword === 'include')
+			{
+
+			}
+
+			/*-------------------------------------------------*/
 			/* SET KEYWORD                                     */
 			/*-------------------------------------------------*/
 
-			/**/ if(keyword === 'set')
+			else if(keyword === 'set')
 			{
 				/*-----------------------------------------*/
 
@@ -1954,7 +2018,7 @@ ami.twig.stdlib = {
 
 	'isEmpty': function(x)
 	{
-		return x === null || x === false || x === '' || x === [] || x === {};
+		return (x === null || x === false) || (x === '' || x === [] || x === {});
 	},
 
 	/*-----------------------------------------------------------------*/
