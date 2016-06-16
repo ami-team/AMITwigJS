@@ -26,9 +26,9 @@ ami.twig.ajax = {
 
 		xmlHttpRequest.onreadystatechange = function()
 		{
-			if(xmlHttpRequest.readyState === 0x04)
+			if(xmlHttpRequest.readyState === 0x4)
 			{
-				if(xmlHttpRequest.status === 0xC8)
+				if(xmlHttpRequest.status === 200)
 				{
 					if(result.done) {
 						result.done(xmlHttpRequest.responseText);
