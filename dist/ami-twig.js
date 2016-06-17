@@ -1529,27 +1529,23 @@ ami.twig.ajax = {
 
 			var xmlHttpRequest = new XMLHttpRequest();
 
-			xmlHttpRequest.onreadystatechange = function()
-			{
-				if(xmlHttpRequest.readyState === 0x4)
-				{
-					if(xmlHttpRequest.status === 200)
-					{
-						if(done) {
-							done(xmlHttpRequest.responseText);
-						}
-					}
-					else
-					{
-						if(fail) {
-							fail(xmlHttpRequest.responseText);
-						}
-					}
-				}
-			};
-
 			xmlHttpRequest.open('GET', fileName, false);
 			xmlHttpRequest.send();
+
+			/*-------------------------------------------------*/
+
+			if(xmlHttpRequest.status === 200)
+			{
+				if(done) {
+					done(xmlHttpRequest.responseText);
+				}
+			}
+			else
+			{
+				if(fail) {
+					fail(xmlHttpRequest.responseText);
+				}
+			}
 
 			/*-------------------------------------------------*/
 		}
