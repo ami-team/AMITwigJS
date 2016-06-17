@@ -873,9 +873,9 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	this.parseFunVar = function(isFilter)
 	{
-		var node, qid, L;
+		var node, L;
 
-		qid = '.';
+		var qid = '';
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.SID))
 		{
@@ -899,6 +899,17 @@ ami.twig.expr.Compiler = function(code, line) {
 			}
 
 			/*-------------------------------------------------*/
+			/* RESERVED IDENTIFIERS                            */
+			/*-------------------------------------------------*/
+
+			if(qid === 'true'
+			   ||
+			   qid === 'false'
+			 ) {
+				return new ami.twig.expr.Node(ami.twig.expr.tokens.TERMINAL, qid);
+			}
+
+			/*-------------------------------------------------*/
 			/* FunVar : SID ('.' SID)* '(' Singlets ')'        */
 			/*-------------------------------------------------*/
 
@@ -917,7 +928,7 @@ ami.twig.expr.Compiler = function(code, line) {
 					throw 'syntax error, line `' + this.line + '`, `)` expected';
 				}
 
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'ami.twig.stdlib' + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'ami.twig.stdlib.' + qid);
 				node.list = L;
 				return node;
 			}
@@ -941,7 +952,7 @@ ami.twig.expr.Compiler = function(code, line) {
 					throw 'syntax error, line `' + this.line + '`, `]` expected';
 				}
 
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VAR, ((((((('_'))))))) + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VAR, ((((((('_.'))))))) + qid);
 				node.list = L;
 				return node;
 			}
@@ -952,13 +963,13 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			if(isFilter)
 			{
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'ami.twig.stdlib' + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'ami.twig.stdlib.' + qid);
 				node.list = [  ];
 				return node;
 			}
 			else
 			{
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VAR, ((((((('_'))))))) + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VAR, ((((((('_.'))))))) + qid);
 				node.list = null;
 				return node;
 			}
@@ -1035,8 +1046,8 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			if(this.tokenizer.checkType(ami.twig.expr.tokens.COLON))
 			{
-				var colon = this.tokenizer.peekToken();
-				this.tokenizer.next();
+/*				var colon = this.tokenizer.peekToken();
+ */				this.tokenizer.next();
 
 				/*-----------------------------------------*/
 

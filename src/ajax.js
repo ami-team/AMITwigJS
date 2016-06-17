@@ -18,31 +18,28 @@
 ami.twig.ajax = {
 	/*-----------------------------------------------------------------*/
 
-	get: function(fileName)
+	get: function(fileName, done, fail)
 	{
-		var result = {};
-
 		if(typeof exports !== 'undefined')
 		{
 			/*-------------------------------------------------*/
 			/* NODEJS                                          */
 			/*-------------------------------------------------*/
 
-			ami.fs.readFile(fileName, 'utf8', function (err, txt) {
+			try
+			{
+				var txt = ami.fs.readFileSync(fileName, 'utf8');
 
-				if(!err)
-				{
-					if(result.done) {
-						result.done(txt);
-					}
+				if(done) {
+					done(txt);
 				}
-				else
-				{
-					if(result.fail) {
-						result.fail(err);
-					}
+			}
+			catch(err)
+			{
+				if(fail) {
+					fail(err);
 				}
-			});
+			}
 
 			/*-------------------------------------------------*/
 		}
@@ -60,26 +57,24 @@ ami.twig.ajax = {
 				{
 					if(xmlHttpRequest.status === 200)
 					{
-						if(result.done) {
-							result.done(xmlHttpRequest.responseText);
+						if(done) {
+							done(xmlHttpRequest.responseText);
 						}
 					}
 					else
 					{
-						if(result.fail) {
-							result.fail(xmlHttpRequest.responseText);
+						if(fail) {
+							fail(xmlHttpRequest.responseText);
 						}
 					}
 				}
 			};
 
-			xmlHttpRequest.open('GET', fileName, true);
+			xmlHttpRequest.open('GET', fileName, false);
 			xmlHttpRequest.send();
 
 			/*-------------------------------------------------*/
 		}
-
-		return result;
 	},
 
 	/*-----------------------------------------------------------------*/

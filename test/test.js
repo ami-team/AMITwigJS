@@ -19,9 +19,11 @@ var dict = {
 	t2: [98, 99, 100],
 };
 
+/*
 console.log(ami.twig.engine.render('{% set a = 1 + 1 %}', dict));
+console.log(ami.twig.engine.render('{% set b = {3:4} %}', dict));
 console.log(ami.twig.engine.render('{{ a }}', dict));
-console.log(ami.twig.engine.render('{{ 1..9 }}', dict));
+console.log(ami.twig.engine.render('{{ b }}', dict));
 
 console.log(ami.twig.engine.render('{{ 99 in t1 }}', dict));
 
@@ -37,7 +39,7 @@ console.log(ami.twig.engine.render('{{ "http://xyz.com/?a=12&b=55" | escape(\'ur
 console.log(ami.twig.engine.render('{% set b = [1, 2, 3] %}', dict));
 
 console.log(ami.twig.engine.render('{{ min([1, 2, 3]) }}', dict));
-
-console.log(ami.twig.engine.render('{% include \'template.html\' %}', dict));
+*/
+console.log(ami.twig.engine.render('||{% if true %} {% include \'test/template.html\' with {\'foo\': \'bar\'} %} {% endif %}||', dict));
 
 /*-------------------------------------------------------------------------*/

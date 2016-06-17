@@ -1154,9 +1154,9 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	this.parseFunVar = function(isFilter)
 	{
-		var node, qid, L;
+		var node, L;
 
-		qid = '.';
+		var qid = '';
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.SID))
 		{
@@ -1180,6 +1180,17 @@ ami.twig.expr.Compiler = function(code, line) {
 			}
 
 			/*-------------------------------------------------*/
+			/* RESERVED IDENTIFIERS                            */
+			/*-------------------------------------------------*/
+
+			if(qid === 'true'
+			   ||
+			   qid === 'false'
+			 ) {
+				return new ami.twig.expr.Node(ami.twig.expr.tokens.TERMINAL, qid);
+			}
+
+			/*-------------------------------------------------*/
 			/* FunVar : SID ('.' SID)* '(' Singlets ')'        */
 			/*-------------------------------------------------*/
 
@@ -1198,7 +1209,7 @@ ami.twig.expr.Compiler = function(code, line) {
 					throw 'syntax error, line `' + this.line + '`, `)` expected';
 				}
 
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'ami.twig.stdlib' + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'ami.twig.stdlib.' + qid);
 				node.list = L;
 				return node;
 			}
@@ -1222,7 +1233,7 @@ ami.twig.expr.Compiler = function(code, line) {
 					throw 'syntax error, line `' + this.line + '`, `]` expected';
 				}
 
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VAR, ((((((('_'))))))) + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VAR, ((((((('_.'))))))) + qid);
 				node.list = L;
 				return node;
 			}
@@ -1233,13 +1244,13 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			if(isFilter)
 			{
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'ami.twig.stdlib' + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'ami.twig.stdlib.' + qid);
 				node.list = [  ];
 				return node;
 			}
 			else
 			{
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VAR, ((((((('_'))))))) + qid);
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VAR, ((((((('_.'))))))) + qid);
 				node.list = null;
 				return node;
 			}
@@ -1316,8 +1327,8 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			if(this.tokenizer.checkType(ami.twig.expr.tokens.COLON))
 			{
-				var colon = this.tokenizer.peekToken();
-				this.tokenizer.next();
+/*				var colon = this.tokenizer.peekToken();
+ */				this.tokenizer.next();
 
 				/*-----------------------------------------*/
 
@@ -1485,31 +1496,28 @@ ami.twig.expr.Node = function(nodeType, nodeValue) {
 ami.twig.ajax = {
 	/*-----------------------------------------------------------------*/
 
-	get: function(fileName)
+	get: function(fileName, done, fail)
 	{
-		var result = {};
-
 		if(typeof exports !== 'undefined')
 		{
 			/*-------------------------------------------------*/
 			/* NODEJS                                          */
 			/*-------------------------------------------------*/
 
-			ami.fs.readFile(fileName, 'utf8', function (err, txt) {
+			try
+			{
+				var txt = ami.fs.readFileSync(fileName, 'utf8');
 
-				if(!err)
-				{
-					if(result.done) {
-						result.done(txt);
-					}
+				if(done) {
+					done(txt);
 				}
-				else
-				{
-					if(result.fail) {
-						result.fail(err);
-					}
+			}
+			catch(err)
+			{
+				if(fail) {
+					fail(err);
 				}
-			});
+			}
 
 			/*-------------------------------------------------*/
 		}
@@ -1527,14 +1535,14 @@ ami.twig.ajax = {
 				{
 					if(xmlHttpRequest.status === 200)
 					{
-						if(result.done) {
-							result.done(xmlHttpRequest.responseText);
+						if(done) {
+							done(xmlHttpRequest.responseText);
 						}
 					}
 					else
 					{
-						if(result.fail) {
-							result.fail(xmlHttpRequest.responseText);
+						if(fail) {
+							fail(xmlHttpRequest.responseText);
 						}
 					}
 				}
@@ -1545,8 +1553,6 @@ ami.twig.ajax = {
 
 			/*-------------------------------------------------*/
 		}
-
-		return result;
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -1607,7 +1613,7 @@ ami.twig.engine = {
 
 	/*-----------------------------------------------------------------*/
 
-	_hasToBeShown: function(stack)
+	_showContent: function(stack)
 	{
 		/*---------------------------------------------------------*/
 
@@ -1653,13 +1659,6 @@ ami.twig.engine = {
 
 		/*---------------------------------------------------------*/
 
-		var m;
-		var match;
-		var keyword;
-		var expression;
-
-		/*---------------------------------------------------------*/
-
 		var column_nr = 0;
 		var COLUMN_NR = 0;
 
@@ -1667,7 +1666,7 @@ ami.twig.engine = {
 
 		/*---------------------------------------------------------*/
 
-		var parts, symb, expr, i;
+		var parts, symb, expr, DICT, i;
 
 		/*---------------------------------------------------------*/
 		/*                                                         */
@@ -1685,7 +1684,7 @@ ami.twig.engine = {
 			/*                                                 */
 			/*-------------------------------------------------*/
 
-			m = s.match(this.STATEMENT_RE);
+			var m = s.match(this.STATEMENT_RE);
 
 			/*-------------------------------------------------*/
 
@@ -1707,7 +1706,7 @@ ami.twig.engine = {
 				/* GENERATE HTML                           */
 				/*-----------------------------------------*/
 
-				if(this._hasToBeShown(stack))
+				if(this._showContent(stack))
 				{
 					result += s.replace(this.VARIABLE_RE, function(match, expression) {
 
@@ -1757,9 +1756,9 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			match = m[0];
-			keyword = m[1];
-			expression = m[2];
+			var match = m[0];
+			var keyword = m[1];
+			var expression = m[2];
 
 			/*-------------------------------------------------*/
 			/* GET POSITION AND LINE NUMBER                    */
@@ -1777,10 +1776,16 @@ ami.twig.engine = {
 			}
 
 			/*-------------------------------------------------*/
+			/*                                                 */
+			/*-------------------------------------------------*/
+
+			var showContent = this._showContent(stack);
+
+			/*-------------------------------------------------*/
 			/* GENERATE HTML                                   */
 			/*-------------------------------------------------*/
 
-			if(this._hasToBeShown(stack))
+			if(showContent)
 			{
 				var SYMB = lastStackItem.symb;
 				var ITER = lastStackItem.iter;
@@ -1788,7 +1793,7 @@ ami.twig.engine = {
 				if(SYMB)
 				{
 					/* CLONE */
-					var DICT = {}; for(i in dict) DICT[i] = dict[i];
+					DICT = {}; for(i in dict) DICT[i] = dict[i];
 					/* CLONE */
 
 					for(i in ITER)
@@ -1820,17 +1825,83 @@ ami.twig.engine = {
 
 			/**/ if(keyword === 'include')
 			{
-				var ajax = ami.twig.ajax.get(expression);
-				
-				ajax.done = function(data) {
+				if(showContent)
+				{
+					/*---------------------------------*/
 
-					console.log(data);
-				};
+					var _only_expr;
 
-				ajax.fail = function(data) {
+					expression = expression.trim();
 
-					console.log(data);
-				};
+					if((m = expression.match(/(only)$/)))
+					{
+						expression = expression.substr(expression, expression.length - m[0].length - 1);
+						
+						_only_expr = m[1];
+					}
+					else
+					{
+						_only_expr = null;
+					}
+
+					/*---------------------------------*/
+
+					var _with_expr;
+
+					expression = expression.trim();
+
+					if((m = expression.match(/with\s+(([a-zA-Z_$]|{).*)/)))
+					{
+						expression = expression.substr(expression, expression.length - m[0].length - 1);
+
+						_with_expr = m[1];
+					}
+					else
+					{
+						_with_expr = null;
+					}
+
+					/*---------------------------------*/
+
+					var FILENAME = ami.twig.expr.interpreter.eval(
+						new ami.twig.expr.Compiler(expression, line), dict
+					);
+
+					if(_with_expr)
+					{
+						DICT = ami.twig.expr.interpreter.eval(
+							new ami.twig.expr.Compiler(_with_expr, line), dict
+						);
+
+						if(!(DICT instanceof Object))
+						{
+							throw 'runtime error, line `' + line + '`, dictionary expected';
+						}
+					}
+					else
+					{
+						DICT = {};
+					}
+
+					if(!_only_expr)
+					{
+						for(i in dict) DICT[i] = dict[i];
+					}
+
+					/*---------------------------------*/
+
+					ami.twig.ajax.get(
+						FILENAME,
+						function(data) {
+							result += ami.twig.engine.render(data, DICT);
+						},
+						function(data) {
+							throw 'runtime error, line `' + line + '`, could not open `' + FILENAME + '`';
+						}
+					);
+
+					/*---------------------------------*/
+				}
 			}
 
 			/*-------------------------------------------------*/
@@ -2755,7 +2826,7 @@ ami.twig.expr.interpreter = {
 
 	getJS: function(expr)
 	{
-		return this._getJS(expr.rootNode);
+		return '(function() { return ' + this._getJS(expr.rootNode) + '; }())';
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -2771,7 +2842,7 @@ ami.twig.expr.interpreter = {
 	{
 		if(!_) _ = {};
 
-		return eval(this._getJS(expr.rootNode));
+		return eval(this.getJS(expr));
 	},
 
 	/*-----------------------------------------------------------------*/

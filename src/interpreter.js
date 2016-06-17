@@ -303,7 +303,7 @@ ami.twig.expr.interpreter = {
 
 	getJS: function(expr)
 	{
-		return this._getJS(expr.rootNode);
+		return '(function() { return ' + this._getJS(expr.rootNode) + '; }())';
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -319,7 +319,7 @@ ami.twig.expr.interpreter = {
 	{
 		if(!_) _ = {};
 
-		return eval(this._getJS(expr.rootNode));
+		return eval(this.getJS(expr));
 	},
 
 	/*-----------------------------------------------------------------*/
