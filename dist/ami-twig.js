@@ -1548,7 +1548,7 @@ ami.twig.ajax = {
 				}
 			};
 
-			xmlHttpRequest.open('GET', fileName, true);
+			xmlHttpRequest.open('GET', fileName, false);
 			xmlHttpRequest.send();
 
 			/*-------------------------------------------------*/
@@ -1829,7 +1829,7 @@ ami.twig.engine = {
 				{
 					/*---------------------------------*/
 
-					var _only_expr;
+					var only_subexpr;
 
 					expression = expression.trim();
 
@@ -1837,16 +1837,16 @@ ami.twig.engine = {
 					{
 						expression = expression.substr(expression, expression.length - m[0].length - 1);
 						
-						_only_expr = m[1];
+						only_subexpr = m[1];
 					}
 					else
 					{
-						_only_expr = null;
+						only_subexpr = null;
 					}
 
 					/*---------------------------------*/
 
-					var _with_expr;
+					var with_subexpr;
 
 					expression = expression.trim();
 
@@ -1854,11 +1854,11 @@ ami.twig.engine = {
 					{
 						expression = expression.substr(expression, expression.length - m[0].length - 1);
 
-						_with_expr = m[1];
+						with_subexpr = m[1];
 					}
 					else
 					{
-						_with_expr = null;
+						with_subexpr = null;
 					}
 
 					/*---------------------------------*/
@@ -1867,10 +1867,10 @@ ami.twig.engine = {
 						new ami.twig.expr.Compiler(expression, line), dict
 					);
 
-					if(_with_expr)
+					if(with_subexpr)
 					{
 						DICT = ami.twig.expr.interpreter.eval(
-							new ami.twig.expr.Compiler(_with_expr, line), dict
+							new ami.twig.expr.Compiler(with_subexpr, line), dict
 						);
 
 						if(!(DICT instanceof Object))
@@ -1883,7 +1883,7 @@ ami.twig.engine = {
 						DICT = {};
 					}
 
-					if(!_only_expr)
+					if(!only_subexpr)
 					{
 						for(i in dict) DICT[i] = dict[i];
 					}
@@ -1895,7 +1895,7 @@ ami.twig.engine = {
 						function(data) {
 							result += ami.twig.engine.render(data, DICT);
 						},
-						function(data) {
+						function(/**/) {
 							throw 'runtime error, line `' + line + '`, could not open `' + FILENAME + '`';
 						}
 					);

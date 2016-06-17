@@ -334,7 +334,7 @@ ami.twig.engine = {
 						function(data) {
 							result += ami.twig.engine.render(data, DICT);
 						},
-						function(data) {
+						function(/**/) {
 							throw 'runtime error, line `' + line + '`, could not open `' + FILENAME + '`';
 						}
 					);
