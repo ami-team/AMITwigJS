@@ -1003,7 +1003,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			}
 			else
 			{
-				return result;
+				break;
 			}
 		}
 
@@ -1026,7 +1026,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			}
 			else
 			{
-				return result;
+				break;
 			}
 		}
 
