@@ -193,7 +193,7 @@ ami.twig.expr.interpreter = {
 
 				/*-----------------------------------------*/
 
-				case ami.twig.expr.tokens.STARTS:
+				case ami.twig.expr.tokens.STARTS_WITH:
 
 					left = this._getJS(node.nodeLeft);
 					right = this._getJS(node.nodeRight);
@@ -202,7 +202,7 @@ ami.twig.expr.interpreter = {
 
 				/*-----------------------------------------*/
 
-				case ami.twig.expr.tokens.ENDS:
+				case ami.twig.expr.tokens.ENDS_WITH:
 
 					left = this._getJS(node.nodeLeft);
 					right = this._getJS(node.nodeRight);

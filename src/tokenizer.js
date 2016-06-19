@@ -204,23 +204,6 @@ ami.twig.tokenizer = {
 
 	/*-----------------------------------------------------------------*/
 
-	_checkNextChar: function(s, token)
-	{
-		var length = token.length;
-
-		var charCode2 = s.charCodeAt(length - 0);
-		var charCode1 = s.charCodeAt(length - 1);
-
-		return isNaN(charCode2)
-		       ||
-		       this._alnum[charCode2] === 0
-		       ||
-		       this._alnum[charCode1] === 0
-		;
-	},
-
-	/*-----------------------------------------------------------------*/
-
 	_alnum: [
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -239,6 +222,21 @@ ami.twig.tokenizer = {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	],
+
+	_checkNextChar: function(s, token)
+	{
+		var length = token.length;
+
+		var charCode2 = s.charCodeAt(length - 0);
+		var charCode1 = s.charCodeAt(length - 1);
+
+		return isNaN(charCode2)
+		       ||
+		       this._alnum[charCode2] === 0
+		       ||
+		       this._alnum[charCode1] === 0
+		;
+	},
 
 	/*-----------------------------------------------------------------*/
 };

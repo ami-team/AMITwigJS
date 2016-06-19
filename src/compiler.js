@@ -25,6 +25,11 @@ ami.twig.expr.tokens = {
 		/* COMPOSITE TOKENS                                        */
 		/*---------------------------------------------------------*/
 
+		this.XXX_WITH = [
+			this.STARTS_WITH,
+			this.ENDS_WITH,
+		];
+
 		this.PLUS_MINUS = [
 			this.PLUS,
 			this.MINUS,
@@ -63,8 +68,8 @@ ami.twig.expr.tokens = {
 	IS: 105,
 	IS_XXX: 106,
 	CMP_OP: 107,
-	XXX_WITH: 108,
-	WITH: 109,
+	STARTS_WITH: 108,
+	ENDS_WITH: 109,
 	MATCHES: 110,
 	IN: 111,
 	RANGE: 112,
@@ -122,7 +127,7 @@ ami.twig.expr.Tokenizer = function(code, line) {
 		'is',
 		'defined', 'null', 'empty', 'iterable', 'even', 'odd',
 		'===', '==', '!==', '!=', '<=', '>=', '<', '>',
-		'starts', 'ends', 'with',
+		/^starts\s+with/, /^ends\s+with/,
 		'matches',
 		'in', '..',
 		'+', '-', '**', '*', '//', '/', '%',
@@ -141,7 +146,7 @@ ami.twig.expr.Tokenizer = function(code, line) {
 		ami.twig.expr.tokens.IS,
 		ami.twig.expr.tokens.IS_XXX, ami.twig.expr.tokens.IS_XXX, ami.twig.expr.tokens.IS_XXX, ami.twig.expr.tokens.IS_XXX, ami.twig.expr.tokens.IS_XXX, ami.twig.expr.tokens.IS_XXX,
 		ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP,
-		ami.twig.expr.tokens.XXX_WITH, ami.twig.expr.tokens.XXX_WITH, ami.twig.expr.tokens.WITH,
+		ami.twig.expr.tokens.STARTS_WITH, ami.twig.expr.tokens.ENDS_WITH,
 		ami.twig.expr.tokens.MATCHES,
 		ami.twig.expr.tokens.IN, ami.twig.expr.tokens.RANGE,
 		ami.twig.expr.tokens.PLUS, ami.twig.expr.tokens.MINUS, ami.twig.expr.tokens.POWER, ami.twig.expr.tokens.MUL, ami.twig.expr.tokens.FLDIV, ami.twig.expr.tokens.DIV, ami.twig.expr.tokens.MOD,
@@ -520,8 +525,8 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		else if(this.tokenizer.checkType(ami.twig.expr.tokens.XXX_WITH))
 		{
-			node = new ami.twig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken() + 'with');
-			this.tokenizer.next(2);
+			node = new ami.twig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
+			this.tokenizer.next();
 
 			right = this.parseAddSub();
 
