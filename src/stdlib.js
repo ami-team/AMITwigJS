@@ -283,6 +283,23 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
+	'capitalize': function(s)
+	{
+		if(this.isString(s))
+		{
+			if(s.length > 0)
+			{
+				s[0] = s[0].toUpperCase();
+			}
+
+			return s;
+		}
+
+		return '';
+	},
+
+	/*-----------------------------------------------------------------*/
+
 	'trim': function(s)
 	{
 		return this.isString(s) ? s.trim() : '';
