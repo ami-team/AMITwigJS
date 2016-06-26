@@ -147,6 +147,8 @@ ami.twig.expr.interpreter = {
 
 					left = this._getJS(node.nodeLeft);
 
+					alert(node.nodeRight.nodeType);
+
 					switch(node.nodeRight.nodeType)
 					{
 						case ami.twig.expr.tokens.DEFINED:
