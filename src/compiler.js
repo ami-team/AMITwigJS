@@ -26,12 +26,12 @@ ami.twig.expr.tokens = {
 		/*---------------------------------------------------------*/
 
 		this.IS_XXX = [
-			this.IS_DEFINED,
-			this.IS_NULL,
-			this.IS_EMPTY,
-			this.IS_ITERABLE,
-			this.IS_EVEN,
-			this.IS_ODD,
+			this.DEFINED,
+			this.NULL,
+			this.EMPTY,
+			this.ITERABLE,
+			this.EVEN,
+			this.ODD,
 		];
 
 		this.XXX_WITH = [
@@ -75,12 +75,12 @@ ami.twig.expr.tokens = {
 	BITWISE_XOR: 103,
 	BITWISE_AND: 104,
 	IS: 105,
-	IS_DEFINED: 106,
-	IS_NULL: 107,
-	IS_EMPTY: 108,
-	IS_ITERABLE: 109,
-	IS_EVEN: 110,
-	IS_ODD: 111,
+	DEFINED: 106,
+	NULL: 107,
+	EMPTY: 108,
+	ITERABLE: 109,
+	EVEN: 110,
+	ODD: 111,
 	CMP_OP: 112,
 	STARTS_WITH: 113,
 	ENDS_WITH: 114,
@@ -158,7 +158,7 @@ ami.twig.expr.Tokenizer = function(code, line) {
 		ami.twig.expr.tokens.LOGICAL_OR, ami.twig.expr.tokens.LOGICAL_AND,
 		ami.twig.expr.tokens.BITWISE_OR, ami.twig.expr.tokens.BITWISE_XOR, ami.twig.expr.tokens.BITWISE_AND,
 		ami.twig.expr.tokens.IS,
-		ami.twig.expr.tokens.IS_DEFINED, ami.twig.expr.tokens.IS_NULL, ami.twig.expr.tokens.IS_EMPTY, ami.twig.expr.tokens.IS_ITERABLE, ami.twig.expr.tokens.IS_EVEN, ami.twig.expr.tokens.IS_ODD,
+		ami.twig.expr.tokens.DEFINED, ami.twig.expr.tokens.NULL, ami.twig.expr.tokens.EMPTY, ami.twig.expr.tokens.ITERABLE, ami.twig.expr.tokens.EVEN, ami.twig.expr.tokens.ODD,
 		ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP,
 		ami.twig.expr.tokens.STARTS_WITH, ami.twig.expr.tokens.ENDS_WITH,
 		ami.twig.expr.tokens.MATCHES,
