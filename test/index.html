@@ -33,7 +33,7 @@
 
 		try
 		{
-			var expr = new ami.twig.expr.Compiler($('#expr').val(), 0);
+			var expr = new ami.twig.expr.Compiler($('#expr').val(), 1);
 
 			var tree = Viz(expr.dump(), 'svg', undefined);
 			$('#tree').html(tree);

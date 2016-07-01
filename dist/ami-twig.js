@@ -14,7 +14,7 @@
 /* ami.twig                                                                */
 /*-------------------------------------------------------------------------*/
 
-if(!(ami instanceof Object))
+if(typeof ami === 'undefined')
 {
 	var ami = {};
 }
@@ -1598,77 +1598,27 @@ ami.twig.engine = {
 
 	/*-----------------------------------------------------------------*/
 
-	STACK_ITEM_IF_TRY_AGAIN: 0,
-	STACK_ITEM_IF_TRUE_DONE: 1,
-	STACK_ITEM_IF_TRUE_TODO: 2,
-	STACK_ITEM_FOR: 3,
-	STACK_ITEM_FILTER: 4,
-	STACK_ITEM_0: 5,
-
-	/*-----------------------------------------------------------------*/
-
-	_newStackItem: function(type, symb, iter)
+	parse: function(s)
 	{
-		if(!symb) {
-			symb = (null);
-		}
+		/*---------------------------------------------------------*/
 
-		if(!iter) {
-			iter = [null];
-		}
-
-		return {
-			type: type,
-			symb: symb,
-			iter: iter,
+		var result = {
+			line: line,
+			keyword: '@block',
+			expression: '',
+			blocks: [{
+				expression: '@true',
+				list: [],
+			}],
+			value: '',
 		};
-	},
-
-	/*-----------------------------------------------------------------*/
-
-	_showContent: function(stack)
-	{
-		/*---------------------------------------------------------*/
-
-		var lastIndex = stack.length - 1;
 
 		/*---------------------------------------------------------*/
 
-		if(stack[lastIndex].type === this.STACK_ITEM_IF_TRY_AGAIN
-		   ||
-		   stack[lastIndex].type === this.STACK_ITEM_IF_TRUE_DONE
-		 ) {
-			return false;
-		}
+		var stack1 = [result];
+		var stack2 = [0x0000];
 
-		/*---------------------------------------------------------*/
-
-		for(var i = 0; i < lastIndex; i++)
-		{
-			if(stack[i].type === this.STACK_ITEM_IF_TRY_AGAIN)
-			{
-				return false;
-			}
-		}
-
-		/*---------------------------------------------------------*/
-
-		return true;
-	},
-
-	/*-----------------------------------------------------------------*/
-
-	render: function(s, dict)
-	{
-		/*---------------------------------------------------------*/
-
-		var result = '';
-
-		/*---------------------------------------------------------*/
-		/*                                                         */
-		/*---------------------------------------------------------*/
-
-		var stack = [this._newStackItem(this.STACK_ITEM_0)], lastStackItem;
+		var item;
 
 		/*---------------------------------------------------------*/
 
@@ -1677,34 +1627,23 @@ ami.twig.engine = {
 
 		var line = 1;
 
-		/*---------------------------------------------------------*/
+		var i;
 
-		var parts, symb, expr, DICT, i;
-
-		/*---------------------------------------------------------*/
-		/*                                                         */
 		/*---------------------------------------------------------*/
 
 		for(;; s = s.substr(COLUMN_NR))
 		{
 			/*-------------------------------------------------*/
-			/*                                                 */
-			/*-------------------------------------------------*/
 
-			lastStackItem = stack[stack.length - 1];
+			var curr = stack1[stack1.length - 1];
+			var indx = stack2[stack2.length - 1];
 
-			/*-------------------------------------------------*/
-			/*                                                 */
 			/*-------------------------------------------------*/
 
 			var m = s.match(this.STATEMENT_RE);
 
-			/*-------------------------------------------------*/
-
 			if(m === null)
 			{
-				/*-----------------------------------------*/
-				/* GET LINE NUMBER                         */
 				/*-----------------------------------------*/
 
 				for(i in s)
@@ -1716,45 +1655,29 @@ ami.twig.engine = {
 				}
 
 				/*-----------------------------------------*/
-				/* GENERATE HTML                           */
-				/*-----------------------------------------*/
 
-				if(this._showContent(stack))
-				{
-					result += s.replace(this.VARIABLE_RE, function(match, expression) {
+				curr.blocks[indx].list.push({
+					line: line,
+					keyword: '@text',
+					expression: '',
+					blocks: (([])),
+					value: s,
+				});
 
-						return ami.twig.expr.interpreter.eval(
-							new ami.twig.expr.Compiler(expression, line), dict
-						);
-					});
-				}
-
-				/*-----------------------------------------*/
-				/* CHECK FOR NON-CLOSED BLOCKS             */
 				/*-----------------------------------------*/
 
 				var msg = [];
 
-				for(i = 1; i < stack.length; i++)
+				for(i = stack1.length - 1; i > 0; i--)
 				{
-					var x = stack[i].type;
-
-					/**/ if(x === this.STACK_ITEM_IF_TRY_AGAIN
-					        ||
-					        x === this.STACK_ITEM_IF_TRUE_DONE
-					        ||
-					        x === this.STACK_ITEM_IF_TRUE_TODO
-					 ) {
+					/**/ if(stack1[i].keyword === 'if')
+					{
 					 	msg.push('missing keyword `endif`');
-					 }
-					 else if(x === this.STACK_ITEM_FOR)
-					 {
+					}
+					else if(stack1[i].keyword === 'for')
+					{
 					 	msg.push('missing keyword `endfor`');
-					 }
-					 else if(x === this.STACK_ITEM_FILTER)
-					 {
-					 	msg.push('missing keyword `endfilter`');
-					 }
+					}
 				}
 
 				if(msg.length > 0)
@@ -1773,325 +1696,138 @@ ami.twig.engine = {
 			var keyword = m[1];
 			var expression = m[2];
 
-			/*-------------------------------------------------*/
-			/* GET POSITION AND LINE NUMBER                    */
-			/*-------------------------------------------------*/
-
 			column_nr = m.index + 0x0000000000;
 			COLUMN_NR = m.index + match.length;
 
-			for(i in match)
+			var value = s.substr(0, column_nr);
+			var VALUE = s.substr(0, COLUMN_NR);
+
+			for(i in VALUE)
 			{
-				if(match[i] === '\n')
+				if(VALUE[i] === '\n')
 				{
 					line++;
 				}
 			}
 
 			/*-------------------------------------------------*/
-			/*                                                 */
-			/*-------------------------------------------------*/
 
-			var showContent = this._showContent(stack);
-
-			/*-------------------------------------------------*/
-			/* GENERATE HTML                                   */
-			/*-------------------------------------------------*/
-
-			if(showContent)
+			if(value)
 			{
-				var SYMB = lastStackItem.symb;
-				var ITER = lastStackItem.iter;
-
-				if(SYMB)
-				{
-					/* CLONE */
-					DICT = {}; for(i in dict) DICT[i] = dict[i];
-					/* CLONE */
-
-					for(i in ITER)
-					{
-						DICT[SYMB] = ITER[i];
-
-						result += s.substr(0, column_nr).replace(this.VARIABLE_RE, function(match, expression) {
-
-							return ami.twig.expr.interpreter.eval(
-								new ami.twig.expr.Compiler(expression, line), DICT
-							);
-						});
-					}
+				item = {
+					line: line,
+					keyword: '@text',
+					expression: (('')),
+					blocks: (([])),
+					value: value,
 				}
-				else
-				{
-					result += s.substr(0, column_nr).replace(this.VARIABLE_RE, function(match, expression) {
 
-						return ami.twig.expr.interpreter.eval(
-							new ami.twig.expr.Compiler(expression, line), dict
-						);
-					});
+				curr.blocks[indx].list.push(item);
+			}
+
+			/*-------------------------------------------------*/
+
+			/**/ if(keyword === 'set'
+			        ||
+				keyword === 'include'
+			 ) {
+				item = {
+					line: line,
+					keyword: keyword,
+					expression: expression,
+					blocks: (([])),
+					value: (('')),
 				}
+
+				curr.blocks[indx].list.push(item);
 			}
 
 			/*-------------------------------------------------*/
-			/* INCLUDE KEYWORD                                 */
-			/*-------------------------------------------------*/
 
-			/**/ if(keyword === 'include')
-			{
-				if(showContent)
-				{
-					/*---------------------------------*/
-
-					var only_subexpr;
-
-					expression = expression.trim();
-
-					if((m = expression.match(/(only)$/)))
-					{
-						expression = expression.substr(expression, expression.length - m[0].length - 1);
-						
-						only_subexpr = m[1];
-					}
-					else
-					{
-						only_subexpr = null;
-					}
-
-					/*---------------------------------*/
-
-					var with_subexpr;
-
-					expression = expression.trim();
-
-					if((m = expression.match(/with\s+(([a-zA-Z_$]|{).*)/)))
-					{
-						expression = expression.substr(expression, expression.length - m[0].length - 1);
-
-						with_subexpr = m[1];
-					}
-					else
-					{
-						with_subexpr = null;
-					}
-
-					/*---------------------------------*/
-
-					var FILENAME = ami.twig.expr.interpreter.eval(
-						new ami.twig.expr.Compiler(expression, line), dict
-					);
-
-					if(with_subexpr)
-					{
-						DICT = ami.twig.expr.interpreter.eval(
-							new ami.twig.expr.Compiler(with_subexpr, line), dict
-						);
-
-						if(!(DICT instanceof Object))
-						{
-							throw 'runtime error, line `' + line + '`, dictionary expected';
-						}
-					}
-					else
-					{
-						DICT = {};
-					}
-
-					if(!only_subexpr)
-					{
-						for(i in dict) DICT[i] = dict[i];
-					}
-
-					/*---------------------------------*/
-
-					ami.twig.ajax.get(
-						FILENAME,
-						function(data) {
-							result += ami.twig.engine.render(data, DICT);
-						},
-						function(/**/) {
-							throw 'runtime error, line `' + line + '`, could not open `' + FILENAME + '`';
-						}
-					);
-
-					/*---------------------------------*/
+			else if(keyword === 'if'
+			        ||
+			        keyword === 'for'
+			 ) {
+				item = {
+					line: line,
+					keyword: keyword,
+					blocks: [{
+						expression: expression,
+						list: [],
+					}],
+					value: '',
 				}
+
+				curr.blocks[indx].list.push(item);
+
+				stack1.push(item);
+				stack2.push(0x00);
 			}
 
-			/*-------------------------------------------------*/
-			/* SET KEYWORD                                     */
-			/*-------------------------------------------------*/
-
-			else if(keyword === 'set')
-			{
-				/*-----------------------------------------*/
-
-				parts = expression.split('=');
-
-				/*-----------------------------------------*/
-
-				symb = parts[0].trim();
-				expr = parts[1].trim();
-
-				var value = ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expr, line), dict);
-
-				/*-----------------------------------------*/
-
-				dict[symb] = value;
-
-				/*-----------------------------------------*/
-			}
-
-			/*-------------------------------------------------*/
-			/* IF KEYWORD                                      */
-			/*-------------------------------------------------*/
-
-			else if(keyword === 'if')
-			{
-				stack.push(this._newStackItem(ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expression, line), dict) ? this.STACK_ITEM_IF_TRUE_TODO : this.STACK_ITEM_IF_TRY_AGAIN));
-			}
-
-			/*-------------------------------------------------*/
-			/* ELSEIF KEYWORD                                  */
 			/*-------------------------------------------------*/
 
 			else if(keyword === 'elseif')
 			{
-				if(lastStackItem.type !== this.STACK_ITEM_IF_TRY_AGAIN
-				   &&
-				   lastStackItem.type !== this.STACK_ITEM_IF_TRUE_DONE
-				   &&
-				   lastStackItem.type !== this.STACK_ITEM_IF_TRUE_TODO
-				 ) {
+				if(curr['keyword'] !== 'if')
+				{
 					throw 'syntax error, line `' + line + '`, missing keyword `if`';
 				}
 
-				/**/ if(lastStackItem.type === this.STACK_ITEM_IF_TRY_AGAIN)
-				{
-					lastStackItem.type = ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expression, line), dict) ? this.STACK_ITEM_IF_TRUE_TODO : this.STACK_ITEM_IF_TRY_AGAIN;
-				}
-				else if(lastStackItem.type === this.STACK_ITEM_IF_TRUE_TODO)
-				{
-					lastStackItem.type = this.STACK_ITEM_IF_TRUE_DONE;
-				}
+				indx = curr.blocks.length;
+
+				curr.blocks.push({
+					expression: expression,
+					list: [],
+				});
+
+				stack2[stack2.length - 1] = indx;
 			}
 
-			/*-------------------------------------------------*/
-			/* ELSE KEYWORD                                    */
 			/*-------------------------------------------------*/
 
 			else if(keyword === 'else')
 			{
-				if(lastStackItem.type !== this.STACK_ITEM_IF_TRY_AGAIN
-				   &&
-				   lastStackItem.type !== this.STACK_ITEM_IF_TRUE_DONE
-				   &&
-				   lastStackItem.type !== this.STACK_ITEM_IF_TRUE_TODO
-				 ) {
+				if(curr['keyword'] !== 'if')
+				{
 					throw 'syntax error, line `' + line + '`, missing keyword `if`';
 				}
 
-				/**/ if(lastStackItem.type === this.STACK_ITEM_IF_TRY_AGAIN)
-				{
-					lastStackItem.type = this.STACK_ITEM_IF_TRUE_TODO;
-				}
-				else if(lastStackItem.type === this.STACK_ITEM_IF_TRUE_TODO)
-				{
-					lastStackItem.type = this.STACK_ITEM_IF_TRUE_DONE;
-				}
-			}
+				indx = curr.blocks.length;
 
-			/*-------------------------------------------------*/
-			/* ENDIF KEYWORD                                   */
+				curr.blocks.push({
+					expression: '@else',
+					list: [],
+				});
+
+				stack2[stack2.length - 1] = indx;
+			}
+			
 			/*-------------------------------------------------*/
 
 			else if(keyword === 'endif')
 			{
-				if(lastStackItem.type !== this.STACK_ITEM_IF_TRY_AGAIN
-				   &&
-				   lastStackItem.type !== this.STACK_ITEM_IF_TRUE_DONE
-				   &&
-				   lastStackItem.type !== this.STACK_ITEM_IF_TRUE_TODO
-				 ) {
+				if(curr['keyword'] !== 'if')
+				{
 					throw 'syntax error, line `' + line + '`, missing keyword `if`';
 				}
 
-				stack.pop();
+				stack1.pop();
+				stack2.pop();
 			}
 
-			/*-------------------------------------------------*/
-			/* FILTER KEYWORD                                  */
-			/*-------------------------------------------------*/
-
-			else if(keyword === 'for')
-			{
-				/*-----------------------------------------*/
-
-				parts = expression.split('in');
-
-				/*-----------------------------------------*/
-
-				symb = parts[0].trim();
-				expr = parts[1].trim();
-
-				var iter = ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expr, line), dict);
-
-				/*-----------------------------------------*/
-
-				if(!(iter instanceof Array)
-				   &&
-				   !(iter instanceof Object)
-				   &&
-				   !(iter instanceof String) && !(typeof iter === 'string')
-				 ) {
-					throw 'runtime error, line `' + line + '`, `' + symb + '` must be iterable';
-				}
-
-				/*-----------------------------------------*/
-
-				stack.push(this._newStackItem(this.STACK_ITEM_FOR, symb, iter));
-
-				/*-----------------------------------------*/
-			}
-
-			/*-------------------------------------------------*/
-			/* ENDFOR KEYWORD                                  */
 			/*-------------------------------------------------*/
 
 			else if(keyword === 'endfor')
 			{
-				if(lastStackItem.type !== this.STACK_ITEM_FOR)
+				if(curr['keyword'] !== 'for')
 				{
 					throw 'syntax error, line `' + line + '`, missing keyword `for`';
 				}
 
-				stack.pop();
+				stack1.pop();
+				stack2.pop();
 			}
 
-			/*-------------------------------------------------*/
-			/* FILTER KEYWORD                                  */
-			/*-------------------------------------------------*/
-
-			else if(keyword === 'filter')
-			{
-				stack.push(this._newStackItem(this.STACK_ITEM_FILTER));
-			}
-
-			/*-------------------------------------------------*/
-			/* ENDFILTER KEYWORD                               */
-			/*-------------------------------------------------*/
-
-			else if(keyword === 'endfilter')
-			{
-				if(lastStackItem.type !== this.STACK_ITEM_FILTER)
-				{
-					throw 'syntax error, line `' + line + '`, missing keyword `filter`';
-				}
-
-				stack.pop();
-			}
-
-			/*-------------------------------------------------*/
-			/* UNKNOWN KEYWORD                                 */
 			/*-------------------------------------------------*/
 
 			else
@@ -2103,6 +1839,236 @@ ami.twig.engine = {
 		}
 
 		/*---------------------------------------------------------*/
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	_render: function(result, item, dict)
+	{
+		var i;
+		var j;
+		var list;
+		var expression;
+
+		var parts, symb, expr, DICT;
+
+		/*---------------------------------------------------------*/
+		/* SET                                                     */
+		/*---------------------------------------------------------*/
+
+		/**/ if(item.keyword === 'set')
+		{
+			/*-------------------------------------------------*/
+
+			parts = item.expression.split('=');
+
+			symb = parts[0].trim();
+			expr = parts[1].trim();
+
+			/*-------------------------------------------------*/
+
+			var value = ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expr, item.line), dict);
+
+			/*-------------------------------------------------*/
+
+			dict[symb] = value;
+
+			/*-------------------------------------------------*/
+		}
+
+		/*---------------------------------------------------------*/
+		/* @BLOCK                                                  */
+		/*---------------------------------------------------------*/
+
+		else if(item.keyword === '@block')
+		{
+			list = item.blocks[0].list;
+
+			for(i in list)
+			{
+				this._render(result, list[i], dict);
+			}
+		}
+
+		/*---------------------------------------------------------*/
+		/* @TEXT                                                   */
+		/*---------------------------------------------------------*/
+
+		else if(item.keyword === '@text')
+		{
+			result[0] += item.value.replace(this.VARIABLE_RE, function(match, expression) {
+
+				return ami.twig.expr.interpreter.eval(
+					new ami.twig.expr.Compiler(expression, item.line), dict
+				);
+			});
+		}
+
+		/*---------------------------------------------------------*/
+		/* IF                                                      */
+		/*---------------------------------------------------------*/
+
+		else if(item.keyword === 'if')
+		{
+			for(i in item.blocks)
+			{
+				expression = item.blocks[i].expression;
+
+				if(expression === '@else' || ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expression, item.line), dict))
+				{
+					list = item.blocks[i].list;
+
+					for(j in list)
+					{
+						this._render(result, list[j], dict);
+					}
+
+					break;
+				}
+			}
+		}
+
+		/*---------------------------------------------------------*/
+		/* FOR                                                     */
+		/*---------------------------------------------------------*/
+
+		else if(item.keyword === 'for')
+		{
+			/*-------------------------------------------------*/
+
+			parts = item.blocks[0].expression.split('in');
+
+			symb = parts[0].trim();
+			expr = parts[1].trim();
+
+			/*-------------------------------------------------*/
+
+			var iter = ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expr, item.line), dict);
+
+			/*-------------------------------------------------*/
+
+			DICT = {}; for(i in dict) DICT[i] = dict[i];
+
+			/*-------------------------------------------------*/
+
+			list = item.blocks[0].list;
+
+			for(i in iter)
+			{
+				DICT[symb] = iter[i];
+
+				for(j in list)
+				{
+					this._render(result, list[j], DICT);
+
+				}
+			}
+
+			/*-------------------------------------------------*/
+		}
+
+		/*---------------------------------------------------------*/
+		/* INCLUDE                                                 */
+		/*---------------------------------------------------------*/
+
+		else if(item.keyword === 'include')
+		{
+			/*-------------------------------------------------*/
+
+			var m;
+
+			expression = item.expression;
+
+			/*-------------------------------------------------*/
+
+			var only_subexpr;
+
+			expression = expression.trim();
+
+			if((m = expression.match(/(only)$/)))
+			{
+				expression = expression.substr(expression, expression.length - m[0].length - 1);
+
+				only_subexpr = m[1];
+			}
+			else
+			{
+				only_subexpr = null;
+			}
+
+			/*-------------------------------------------------*/
+
+			var with_subexpr;
+
+			expression = expression.trim();
+
+			if((m = expression.match(/with\s+(([a-zA-Z_$]|{).*)/)))
+			{
+				expression = expression.substr(expression, expression.length - m[0].length - 1);
+
+				with_subexpr = m[1];
+			}
+			else
+			{
+				with_subexpr = null;
+			}
+
+			/*-------------------------------------------------*/
+
+			var FILENAME = ami.twig.expr.interpreter.eval(
+				new ami.twig.expr.Compiler(expression, item.line), dict
+			);
+
+			/*-------------------------------------------------*/
+
+			if(with_subexpr)
+			{
+				DICT = ami.twig.expr.interpreter.eval(
+					new ami.twig.expr.Compiler(with_subexpr, item.line), dict
+				);
+
+				if(!(DICT instanceof Object))
+				{
+					throw 'runtime error, line `' + line + '`, dictionary expected';
+				}
+			}
+			else
+			{
+				DICT = {};
+			}
+
+			if(!only_subexpr)
+			{
+				for(i in dict) DICT[i] = dict[i];
+			}
+
+			/*-------------------------------------------------*/
+
+			ami.twig.ajax.get(
+				FILENAME,
+				function(data) {
+					result[0] += ami.twig.engine.render(data, DICT);
+				},
+				function(data) {
+					throw 'runtime error, line `' + line + '`, could not open `' + FILENAME + '`';
+				}
+			);
+
+			/*-------------------------------------------------*/
+		}
+
+		/*---------------------------------------------------------*/
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	render: function(s, dict)
+	{
+		var result = [''];
+
+		this._render(result, this.parse(s), dict);
+
+		return result[0];
 	},
 
 	/*-----------------------------------------------------------------*/

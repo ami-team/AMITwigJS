@@ -14,7 +14,7 @@
 /* ami.twig                                                                */
 /*-------------------------------------------------------------------------*/
 
-if(!(ami instanceof Object))
+if(typeof ami === 'undefined')
 {
 	var ami = {};
 }
