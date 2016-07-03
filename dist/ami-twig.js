@@ -14,10 +14,9 @@
 /* ami.twig                                                                */
 /*-------------------------------------------------------------------------*/
 
-if(typeof ami === 'undefined')
-{
-	var ami = {};
-}
+var ami = (typeof ami === 'Object') ? ami
+                                    : { }
+;
 
 ami.twig = {};
 
@@ -337,8 +336,8 @@ ami.twig.expr.tokens = {
 		];
 
 		this.RX = [
-			this.RP,			/* ONLY RP & RB1 */
-			this.RB1,			/* ONLY RP & RB1 */
+			this.RP,
+			this.RB1,
 		];
 
 		/*---------------------------------------------------------*/
@@ -415,38 +414,106 @@ ami.twig.expr.Tokenizer = function(code, line) {
 	/*-----------------------------------------------------------------*/
 
 	this._tokenDefs = [
-		'or', 'and',
-		'b-or', 'b-xor', 'b-and',
+		'or',
+		'and',
+		'b-or',
+		'b-xor',
+		'b-and',
 		'is',
-		'defined', 'null', 'empty', 'iterable', 'even', 'odd',
-		'===', '==', '!==', '!=', '<=', '>=', '<', '>',
-		/^starts\s+with/, /^ends\s+with/,
+		'defined',
+		'null',
+		'empty',
+		'iterable',
+		'even',
+		'odd',
+		'===',
+		'==',
+		'!==',
+		'!=',
+		'<=',
+		'>=',
+		'<',
+		'>',
+		/^starts\s+with/,
+		/^ends\s+with/,
 		'matches',
-		'in', '..',
-		'+', '-', '**', '*', '//', '/', '%',
+		'in',
+		'..',
+		'+',
+		'-',
+		'**',
+		'*',
+		'//',
+		'/',
+		'%',
 		'not',
-		':', '.', ',', '|',
-		'(', ')', '[', ']', '{', '}',
-		/^[0-9]+\.[0-9]+/, /^[0-9]+/, /^'(\\'|[^\'])*'/, /^"(\\"|[^\"])*"/,
+		':',
+		'.',
+		',',
+		'|',
+		'(',
+		')',
+		'[',
+		']',
+		'{',
+		'}',
+		/^[0-9]+\.[0-9]+/,
+		/^[0-9]+/,
+		/^'(\\'|[^\'])*'/,
+		/^"(\\"|[^\"])*"/,
 		/^[a-zA-Z_$][a-zA-Z0-9_$]*/,
 	];
 
 	/*-----------------------------------------------------------------*/
 
 	this._tokenTypes = [
-		ami.twig.expr.tokens.LOGICAL_OR, ami.twig.expr.tokens.LOGICAL_AND,
-		ami.twig.expr.tokens.BITWISE_OR, ami.twig.expr.tokens.BITWISE_XOR, ami.twig.expr.tokens.BITWISE_AND,
+		ami.twig.expr.tokens.LOGICAL_OR,
+		ami.twig.expr.tokens.LOGICAL_AND,
+		ami.twig.expr.tokens.BITWISE_OR,
+		ami.twig.expr.tokens.BITWISE_XOR,
+		ami.twig.expr.tokens.BITWISE_AND,
 		ami.twig.expr.tokens.IS,
-		ami.twig.expr.tokens.DEFINED, ami.twig.expr.tokens.NULL, ami.twig.expr.tokens.EMPTY, ami.twig.expr.tokens.ITERABLE, ami.twig.expr.tokens.EVEN, ami.twig.expr.tokens.ODD,
-		ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP, ami.twig.expr.tokens.CMP_OP,
-		ami.twig.expr.tokens.STARTS_WITH, ami.twig.expr.tokens.ENDS_WITH,
+		ami.twig.expr.tokens.DEFINED,
+		ami.twig.expr.tokens.NULL,
+		ami.twig.expr.tokens.EMPTY,
+		ami.twig.expr.tokens.ITERABLE,
+		ami.twig.expr.tokens.EVEN,
+		ami.twig.expr.tokens.ODD,
+		ami.twig.expr.tokens.CMP_OP,
+		ami.twig.expr.tokens.CMP_OP,
+		ami.twig.expr.tokens.CMP_OP,
+		ami.twig.expr.tokens.CMP_OP,
+		ami.twig.expr.tokens.CMP_OP,
+		ami.twig.expr.tokens.CMP_OP,
+		ami.twig.expr.tokens.CMP_OP,
+		ami.twig.expr.tokens.CMP_OP,
+		ami.twig.expr.tokens.STARTS_WITH,
+		ami.twig.expr.tokens.ENDS_WITH,
 		ami.twig.expr.tokens.MATCHES,
-		ami.twig.expr.tokens.IN, ami.twig.expr.tokens.RANGE,
-		ami.twig.expr.tokens.PLUS, ami.twig.expr.tokens.MINUS, ami.twig.expr.tokens.POWER, ami.twig.expr.tokens.MUL, ami.twig.expr.tokens.FLDIV, ami.twig.expr.tokens.DIV, ami.twig.expr.tokens.MOD,
+		ami.twig.expr.tokens.IN,
+		ami.twig.expr.tokens.RANGE,
+		ami.twig.expr.tokens.PLUS,
+		ami.twig.expr.tokens.MINUS,
+		ami.twig.expr.tokens.POWER,
+		ami.twig.expr.tokens.MUL,
+		ami.twig.expr.tokens.FLDIV,
+		ami.twig.expr.tokens.DIV,
+		ami.twig.expr.tokens.MOD,
 		ami.twig.expr.tokens.NOT,
-		ami.twig.expr.tokens.COLON, ami.twig.expr.tokens.DOT, ami.twig.expr.tokens.COMMA, ami.twig.expr.tokens.PIPE,
-		ami.twig.expr.tokens.LP, ami.twig.expr.tokens.RP, ami.twig.expr.tokens.LB1, ami.twig.expr.tokens.RB1, ami.twig.expr.tokens.LB2, ami.twig.expr.tokens.RB2,
-		ami.twig.expr.tokens.TERMINAL, ami.twig.expr.tokens.TERMINAL, ami.twig.expr.tokens.TERMINAL, ami.twig.expr.tokens.TERMINAL,
+		ami.twig.expr.tokens.COLON,
+		ami.twig.expr.tokens.DOT,
+		ami.twig.expr.tokens.COMMA,
+		ami.twig.expr.tokens.PIPE,
+		ami.twig.expr.tokens.LP,
+		ami.twig.expr.tokens.RP,
+		ami.twig.expr.tokens.LB1,
+		ami.twig.expr.tokens.RB1,
+		ami.twig.expr.tokens.LB2,
+		ami.twig.expr.tokens.RB2,
+		ami.twig.expr.tokens.TERMINAL,
+		ami.twig.expr.tokens.TERMINAL,
+		ami.twig.expr.tokens.TERMINAL,
+		ami.twig.expr.tokens.TERMINAL,
 		ami.twig.expr.tokens.SID,
 	];
 
@@ -1867,7 +1934,9 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			var value = ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expr, item.line), dict);
+			var value = ami.twig.expr.interpreter.eval(
+				new ami.twig.expr.Compiler(expr, item.line), dict
+			);
 
 			/*-------------------------------------------------*/
 
@@ -1943,7 +2012,9 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			var iter = ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expr, item.line), dict);
+			var iter = ami.twig.expr.interpreter.eval(
+				new ami.twig.expr.Compiler(expr, item.line), dict
+			);
 
 			/*-------------------------------------------------*/
 
@@ -2002,7 +2073,7 @@ ami.twig.engine = {
 
 			expression = expression.trim();
 
-			if((m = expression.match(/with\s+(([a-zA-Z_$]|{).*)/)))
+			if((m = expression.match(/with\s+(([a-zA-Z_$]|{).*)$/)))
 			{
 				expression = expression.substr(expression, expression.length - m[0].length - 1);
 

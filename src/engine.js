@@ -293,7 +293,9 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			var value = ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expr, item.line), dict);
+			var value = ami.twig.expr.interpreter.eval(
+				new ami.twig.expr.Compiler(expr, item.line), dict
+			);
 
 			/*-------------------------------------------------*/
 
@@ -369,7 +371,9 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			var iter = ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expr, item.line), dict);
+			var iter = ami.twig.expr.interpreter.eval(
+				new ami.twig.expr.Compiler(expr, item.line), dict
+			);
 
 			/*-------------------------------------------------*/
 
@@ -428,7 +432,7 @@ ami.twig.engine = {
 
 			expression = expression.trim();
 
-			if((m = expression.match(/with\s+(([a-zA-Z_$]|{).*)/)))
+			if((m = expression.match(/with\s+(([a-zA-Z_$]|{).*)$/)))
 			{
 				expression = expression.substr(expression, expression.length - m[0].length - 1);
 

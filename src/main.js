@@ -14,10 +14,9 @@
 /* ami.twig                                                                */
 /*-------------------------------------------------------------------------*/
 
-if(typeof ami === 'undefined')
-{
-	var ami = {};
-}
+var ami = (typeof ami === 'Object') ? ami
+                                    : { }
+;
 
 ami.twig = {};
 
