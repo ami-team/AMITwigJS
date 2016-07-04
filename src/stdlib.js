@@ -195,11 +195,13 @@ ami.twig.stdlib = {
 
 	'default': function(s1, s2)
 	{
-		if(this.isString(s1)
-		   &&
-		   this.isString(s2)
-		 ) {
-			return this.isEmpty(s1) === false ? s1 : s2;
+		/**/ if(s1)
+		{
+			return s1;
+		}
+		else if(s2)
+		{
+			return s2;
 		}
 
 		return '';

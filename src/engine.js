@@ -286,10 +286,15 @@ ami.twig.engine = {
 		{
 			/*-------------------------------------------------*/
 
-			parts = item.expression.split('=');
+			m = item.expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s+=\s+(.+)/)
 
-			symb = parts[0].trim();
-			expr = parts[1].trim();
+			if(!m)
+			{
+				throw 'syntax error, line `' + line + '`, invalid `set` statement';
+			}
+
+			symb = m[1].trim();
+			expr = m[2].trim();
 
 			/*-------------------------------------------------*/
 
@@ -342,7 +347,7 @@ ami.twig.engine = {
 			{
 				expression = item.blocks[i].expression;
 
-				if(expression === '@else' || ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expression, item.line), dict))
+				if(expression === '@else' || ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expression, item.line), dict) === true)
 				{
 					list = item.blocks[i].list;
 
@@ -364,10 +369,15 @@ ami.twig.engine = {
 		{
 			/*-------------------------------------------------*/
 
-			parts = item.blocks[0].expression.split('in');
+			m = item.blocks[0].expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s+in\s+(.+)/)
 
-			symb = parts[0].trim();
-			expr = parts[1].trim();
+			if(!m)
+			{
+				throw 'syntax error, line `' + line + '`, invalid `for` statement';
+			}
+
+			symb = m[1].trim();
+			expr = m[2].trim();
 
 			/*-------------------------------------------------*/
 
