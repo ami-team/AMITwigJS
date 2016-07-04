@@ -31,86 +31,131 @@ ami.twig.expr.interpreter = {
 		var operator;
 
 		/*---------------------------------------------------------*/
-		/* LST, DIC, FUNS, VARS, TERMINALS                         */
+		/* LST                                                     */
 		/*---------------------------------------------------------*/
 
-		if(node.nodeLeft === null
-		   &&
-		   node.nodeRight === null
-		 ) {
-			if(node.list)
+		if(node.nodeType === ami.twig.expr.tokens.LST)
+		{
+		 	/*-------------------------------------------------*/
+
+			s = '';
+
+			for(i in node.list)
 			{
-			 	/*-----------------------------------------*/
-
-				s = '';
-
-				for(i in node.list)
-				{
-					s += ',' + this._getJS(node.list[i]);
-				}
-
-				if(s)
-				{
-					s = s.substr(1);
-				}
-
-			 	/*-----------------------------------------*/
-
-				/**/ if(node.nodeType === ami.twig.expr.tokens.LST)
-				{
-					return /*------------*/ '[' + s + ']';
-				}
-				else if(node.nodeType === ami.twig.expr.tokens.FUN)
-				{
-					return node.nodeValue + '(' + s + ')';
-				}
-				else if(node.nodeType === ami.twig.expr.tokens.VAR)
-				{
-					return node.nodeValue + '[' + s + ']';
-				}
-
-			 	/*-----------------------------------------*/
-
-				throw 'internal error';
-
-			 	/*-----------------------------------------*/
+				s += ',' + this._getJS(node.list[i]);
 			}
 
-			if(node.dict)
+			if(s)
 			{
-			 	/*-----------------------------------------*/
-
-				s = '';
-
-				for(i in node.dict)
-				{
-					s += ',' + i + ':' + this._getJS(node.dict[i]);
-				}
-
-				if(s)
-				{
-					s = s.substr(1);
-				}
-
-			 	/*-----------------------------------------*/
-
-				/**/ if(node.nodeType === ami.twig.expr.tokens.DIC)
-				{
-					return '{' + s + '}';
-				}
-
-			 	/*-----------------------------------------*/
-
-				throw 'internal error';
-
-			 	/*-----------------------------------------*/
+				s = s.substr(1);
 			}
 
+		 	/*-------------------------------------------------*/
+
+			return '[' + s + ']';
+
+		 	/*-------------------------------------------------*/
+		}
+
+		/*---------------------------------------------------------*/
+		/* DIC                                                     */
+		/*---------------------------------------------------------*/
+
+		if(node.nodeType === ami.twig.expr.tokens.DIC)
+		{
+		 	/*-------------------------------------------------*/
+
+			s = '';
+
+			for(i in node.dict)
+			{
+				s += ',' + i + ':' + this._getJS(node.dict[i]);
+			}
+
+			if(s)
+			{
+				s = s.substr(1);
+			}
+
+			/*-------------------------------------------------*/
+
+			return '{' + s + '}';
+
+			/*-------------------------------------------------*/
+		}
+
+		/*---------------------------------------------------------*/
+		/* FUN                                                     */
+		/*---------------------------------------------------------*/
+
+		if(node.nodeType === ami.twig.expr.tokens.FUN)
+		{
+			/*-------------------------------------------------*/
+
+			s = '';
+
+			for(i in node.list)
+			{
+				s += ',' + this._getJS(node.list[i]);
+			}
+
+			if(s)
+			{
+				s = s.substr(1);
+			}
+
+		 	/*-------------------------------------------------*/
+
+			return node.nodeValue + '(' + s + ')';
+
+		 	/*-------------------------------------------------*/
+		}
+
+		/*---------------------------------------------------------*/
+		/* VAR                                                     */
+		/*---------------------------------------------------------*/
+
+		if(node.nodeType === ami.twig.expr.tokens.VAR)
+		{
+			/*-------------------------------------------------*/
+
+			s = '';
+
+			for(i in node.list)
+			{
+				s += ',' + this._getJS(node.list[i]);
+			}
+
+			if(s)
+			{
+				s = s.substr(1);
+			}
+
+		 	/*-------------------------------------------------*/
+
+			if(s)
+			{
+				return node.nodeValue + '[' + s + ']';
+			}
+			else
+			{
+				return node.nodeValue;
+			}
+
+		 	/*-------------------------------------------------*/
+		}
+
+		/*---------------------------------------------------------*/
+		/* TERMINAL                                                */
+		/*---------------------------------------------------------*/
+
+		if(node.nodeType === ami.twig.expr.tokens.TERMINAL)
+		{
 			return node.nodeValue;
 		}
 
 		/*---------------------------------------------------------*/
-		/* UNIARY OPERATORS                                        */
+		/* UNIARY OPERATOR                                         */
 		/*---------------------------------------------------------*/
 
 		if(node.nodeLeft !== null
@@ -132,7 +177,7 @@ ami.twig.expr.interpreter = {
 		}
 
 		/*---------------------------------------------------------*/
-		/* BINARY OPERATORS                                        */
+		/* BINARY OPERATOR                                         */
 		/*---------------------------------------------------------*/
 
 		if(node.nodeLeft !== null
@@ -141,6 +186,15 @@ ami.twig.expr.interpreter = {
 		 ) {
 			switch(node.nodeType)
 			{
+				/*-----------------------------------------*/
+
+				case ami.twig.expr.tokens.DOT:
+
+					left = this._getJS(node.nodeLeft);
+					right = this._getJS(node.nodeRight);
+
+					return left + '.' + right;
+
 				/*-----------------------------------------*/
 
 				case ami.twig.expr.tokens.IS:

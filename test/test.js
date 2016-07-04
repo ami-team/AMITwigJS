@@ -47,7 +47,7 @@ console.log(ami.twig.engine.render('{% for i in t1 %} {{i}} {% endfor %}', dict)
 
 console.log(ami.twig.engine.render('{% for i in t1 %} {% if i === 1 %} one {% else %} ??? {% endif %} {% endfor %}', dict));
 */
-
+/*
 console.log(ami.twig.engine.render('foo {% for i in t1 %} {% if i === 1 %} {% set a = 1 + 1 %} one {% else %} {{i}} {% endif %} {% endfor %} bar', dict));
 
 console.log(ami.twig.engine.render('A {% if 1 === 2 - 1 %} foo {% set a = 1 + 1 %} {% else %} bar {% set a = 1 + 1 %} {% endif %} B', dict));
@@ -55,5 +55,8 @@ console.log(ami.twig.engine.render('A {% if 1 === 2 - 1 %} foo {% set a = 1 + 1 
 console.log(ami.twig.engine.render('{% for i in t1 %} {{i}} {% endfor %}', dict));
 
 console.log(ami.twig.engine.render('||{% if true %} {% include \'test/template.html\' with {\'foo\': \'bar\'} %} {% endif %}||', dict));
+*/
+
+console.log(ami.twig.engine.render('{% for i in [1,2,3] %} {{i}} {% endfor %}', dict));
 
 /*-------------------------------------------------------------------------*/

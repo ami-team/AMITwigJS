@@ -366,7 +366,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	this.parseFilter = function()
 	{
-		var left = this.parseLogicalOr(), node;
+		var left = this.parseLogicalOr(), node, temp;
 
 		/*---------------------------------------------------------*/
 		/* Filter : LogicalOr '|' FunVar                           */
@@ -378,7 +378,9 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			node = this.parseFunVar(true);
 
-			node.list.unshift(left);
+			for(temp = node; temp.nodeType === ami.twig.expr.tokens.DOT; temp = temp.nodeRight);
+
+			temp.list.unshift(left);
 
 			left = node;
 		}
@@ -960,114 +962,129 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	this.parseFunVar = function(isFilter)
 	{
-		var node, L;
+		var node = this._parseFunVar(isFilter);
 
-		var qid = '';
+		if(node)
+		{
+			var temp = node;
+
+			if(temp.nodeType === ami.twig.expr.tokens.DOT)
+			{
+				temp = temp.nodeLeft;
+			}
+
+			if(temp.nodeValue in ami.twig.stdlib)
+			{
+				temp.nodeValue = 'ami.twig.stdlib.' + temp.nodeValue;
+			}
+			else
+			{
+				temp.nodeValue = ((((((('_.'))))))) + temp.nodeValue;
+			}
+		}
+
+		return node;
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	this._parseFunVar = function(isFilter)
+	{
+		var left = this.parseFoo(isFilter), right, node;
+
+		/*---------------------------------------------------------*/
+		/* FunVar : Foo '.' FunVar                                 */
+		/*---------------------------------------------------------*/
+
+		if(this.tokenizer.checkType(ami.twig.expr.tokens.DOT))
+		{
+			node = new ami.twig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
+			this.tokenizer.next();
+
+			right = this._parseFunVar(isFilter);
+
+			node.nodeLeft = left;
+			node.nodeRight = right;
+
+			left = node;
+		}
+
+		/*---------------------------------------------------------*/
+		/*        | Foo                                            */
+		/*---------------------------------------------------------*/
+
+		return left;
+	};
+
+	/*-----------------------------------------------------------------*/
+
+	this.parseFoo = function(isFilter)
+	{
+		var node;
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.SID))
 		{
-			qid += this.tokenizer.peekToken();
+			node = new ami.twig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
 
-			while(this.tokenizer.checkType(ami.twig.expr.tokens.DOT))
-			{
-				qid += this.tokenizer.peekToken();
-				this.tokenizer.next();
-
-				if(this.tokenizer.checkType(ami.twig.expr.tokens.SID))
-				{
-					qid += this.tokenizer.peekToken();
-					this.tokenizer.next();
-				}
-				else
-				{
-					throw 'syntax error, line `' + this.line + '`, qid expected';
-				}
-			}
-
-			/*-------------------------------------------------*/
-			/* RESERVED IDENTIFIERS                            */
-			/*-------------------------------------------------*/
-
-			if(qid === 'true'
+			if(node.nodeValue === 'true'
 			   ||
-			   qid === 'false'
+			   node.nodeValue === 'false'
 			 ) {
-				return new ami.twig.expr.Node(ami.twig.expr.tokens.TERMINAL, qid);
+				node.nodeType = ami.twig.expr.tokens.TERMINAL;
+
+				return node;
 			}
 
-			/*-------------------------------------------------*/
-			/* FunVar : SID ('.' SID)* '(' Singlets ')'        */
-			/*-------------------------------------------------*/
-
-			if(this.tokenizer.checkType(ami.twig.expr.tokens.LP))
+			/**/ if(this.tokenizer.checkType(ami.twig.expr.tokens.LP))
 			{
 				this.tokenizer.next();
 
-				L = this._parseSinglets();
+				node.list = this._parseSinglets();
 
 				if(this.tokenizer.checkType(ami.twig.expr.tokens.RP))
 				{
 					this.tokenizer.next();
+
+					node.nodeType = ami.twig.expr.tokens.FUN;
 				}
 				else
 				{
 					throw 'syntax error, line `' + this.line + '`, `)` expected';
 				}
-
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'ami.twig.stdlib.' + qid);
-				node.list = L;
-				return node;
 			}
-
-			/*-------------------------------------------------*/
-			/*        | SID ('.' SID)* '[' Singlets ']'        */
-			/*-------------------------------------------------*/
-
-			if(this.tokenizer.checkType(ami.twig.expr.tokens.LB1))
+			else if(this.tokenizer.checkType(ami.twig.expr.tokens.LB1))
 			{
 				this.tokenizer.next();
 
-				L = this._parseSinglets();
+				node.list = this._parseSinglets();
 
 				if(this.tokenizer.checkType(ami.twig.expr.tokens.RB1))
 				{
 					this.tokenizer.next();
+
+					node.nodeType = ami.twig.expr.tokens.VAR;
+
 				}
 				else
 				{
 					throw 'syntax error, line `' + this.line + '`, `]` expected';
 				}
-
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VAR, ((((((('_.'))))))) + qid);
-				node.list = L;
-				return node;
-			}
-
-			/*-------------------------------------------------*/
-			/*        | SID ('.' SID)*                         */
-			/*-------------------------------------------------*/
-
-			if(isFilter)
-			{
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'ami.twig.stdlib.' + qid);
-				node.list = [  ];
-				return node;
 			}
 			else
 			{
-				node = new ami.twig.expr.Node(ami.twig.expr.tokens.VAR, ((((((('_.'))))))) + qid);
-				node.list = null;
-				return node;
+				node.nodeType = isFilter ? ami.twig.expr.tokens.FUN
+				                         : ami.twig.expr.tokens.VAR
+				;
+
+				node.list = [];
 			}
 
-			/*-------------------------------------------------*/
+			return node;
 		}
 
-		/*---------------------------------------------------------*/
-
 		return null;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 

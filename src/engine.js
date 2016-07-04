@@ -459,7 +459,7 @@ ami.twig.engine = {
 
 				if(!(DICT instanceof Object))
 				{
-					throw 'runtime error, line `' + line + '`, dictionary expected';
+					throw 'runtime error, line `' + item.line + '`, dictionary expected';
 				}
 			}
 			else
@@ -479,8 +479,8 @@ ami.twig.engine = {
 				function(data) {
 					result[0] += ami.twig.engine.render(data, DICT);
 				},
-				function(data) {
-					throw 'runtime error, line `' + line + '`, could not open `' + FILENAME + '`';
+				function(/**/) {
+					throw 'runtime error, line `' + item.line + '`, could not open `' + FILENAME + '`';
 				}
 			);
 
