@@ -66,6 +66,6 @@ console.log(ami.twig.engine.render('{% for i in "hello" %} {{i}} {% endfor %}', 
 
 console.log(ami.twig.engine.render('{% for i in {"aa": 1, "bb": 3, "cc": 5} %} {{i}} {% endfor %}', dict));
 
-console.log(ami.twig.engine.render('{% for i in [4,5,6] %} {{i}} {% endfor %}', dict));
+console.log(ami.twig.engine.render('{% for i in [4,5,6] %} {% if loop.first %} yes {% endif %} {% endfor %}', dict));
 
 /*-------------------------------------------------------------------------*/
