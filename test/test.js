@@ -56,11 +56,16 @@ console.log(ami.twig.engine.render('{% for i in t1 %} {{i}} {% endfor %}', dict)
 
 console.log(ami.twig.engine.render('||{% if true %} {% include \'test/template.html\' with {\'foo\': \'bar\'} %} {% endif %}||', dict));
 */
-
+/*
 console.log(ami.twig.engine.render('{% set b = [1, 2, 3] %}', dict));
 
 console.log(ami.twig.engine.render('{{ b }}', dict));
+*/
 
-console.log(ami.twig.engine.render('{% for i in [1,2,3] %} {{i}} {% endfor %}', dict));
+console.log(ami.twig.engine.render('{% for i in "hello" %} {{i}} {% endfor %}', dict));
+
+console.log(ami.twig.engine.render('{% for i in {"aa": 1, "bb": 3, "cc": 5} %} {{i}} {% endfor %}', dict));
+
+console.log(ami.twig.engine.render('{% for i in [4,5,6] %} {{i}} {% endfor %}', dict));
 
 /*-------------------------------------------------------------------------*/

@@ -271,8 +271,8 @@ ami.twig.engine = {
 
 	_render: function(result, item, dict)
 	{
-		var i;
-		var j;
+		var i, j;
+		var k, l;
 		var list;
 		var expression;
 
@@ -385,22 +385,45 @@ ami.twig.engine = {
 				new ami.twig.expr.Compiler(expr, item.line), dict
 			);
 
-			/*-------------------------------------------------*/
-
-			DICT = {}; for(i in dict) DICT[i] = dict[i];
+			var ITER = (iter instanceof Object) ? Object.keys(iter) : iter;
 
 			/*-------------------------------------------------*/
+
+			if(!(iter instanceof Array
+			     ||
+			     iter instanceof Object
+			     ||
+			     iter instanceof String || typeof iter === 'string'
+			 )) {
+				throw 'syntax error, line `' + line + '`, right operande not iterable';
+			}
+
+			/*-------------------------------------------------*/
+
+			DICT = {loop: {}}; for(i in dict) DICT[i] = dict[i];
+
+			/*-------------------------------------------------*/
+
+			k = 0x000000000;
+			l = ITER.length;
 
 			list = item.blocks[0].list;
 
-			for(i in iter)
+			for(i in ITER)
 			{
-				DICT[symb] = iter[i];
+				DICT[symb] = ITER[i];
+
+				DICT['loop'].first = (k === (0 - 0));
+				DICT['loop'].last = (k === (l - 1));
+
+				DICT['loop'].index = k;
+				DICT['loop'].length = l;
+
+				k++;
 
 				for(j in list)
 				{
 					this._render(result, list[j], DICT);
-
 				}
 			}
 
