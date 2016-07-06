@@ -14,9 +14,9 @@
 /* ami.twig                                                                */
 /*-------------------------------------------------------------------------*/
 
-var ami = (typeof ami === 'Object') ? ami
-                                    : { }
-;
+var ami = (Object.prototype.toString.call(ami) === '[object Object]') ? ami : {};
+
+/*-------------------------------------------------------------------------*/
 
 ami.twig = {};
 
@@ -2088,7 +2088,7 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			var only_subexpr;
+			var only_subexpr = null;
 
 			expression = expression.trim();
 
@@ -2098,14 +2098,10 @@ ami.twig.engine = {
 
 				only_subexpr = m[1];
 			}
-			else
-			{
-				only_subexpr = null;
-			}
 
 			/*-------------------------------------------------*/
 
-			var with_subexpr;
+			var with_subexpr = null;
 
 			expression = expression.trim();
 
@@ -2114,10 +2110,6 @@ ami.twig.engine = {
 				expression = expression.substr(expression, expression.length - m[0].length - 1);
 
 				with_subexpr = m[1];
-			}
-			else
-			{
-				with_subexpr = null;
 			}
 
 			/*-------------------------------------------------*/
@@ -2130,7 +2122,7 @@ ami.twig.engine = {
 			{
 				DICT = ami.twig.expr.cache.eval(with_subexpr, item.line, dict);
 
-				if(!(DICT instanceof Object))
+				if(Object.prototype.toString.call(DICT) !== '[object Object]')
 				{
 					throw 'runtime error, line `' + item.line + '`, dictionary expected';
 				}
