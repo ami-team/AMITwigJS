@@ -23,6 +23,15 @@ ami.twig.engine = {
 	VARIABLE_RE: /\{\{\s*(.*?)\s*\}\}/g,
 
 	/*-----------------------------------------------------------------*/
+/*
+	track: function(s)
+	{
+		var currentdate = new Date();
+
+		console.log(s + ' ' + currentdate.getHours() + ':' + currentdate.getMinutes() + ':' + currentdate.getSeconds());
+	},
+ */
+	/*-----------------------------------------------------------------*/
 
 	parse: function(s)
 	{
@@ -30,10 +39,10 @@ ami.twig.engine = {
 
 		var result = {
 			line: line,
-			keyword: '@block',
+			keyword: 'if',
 			expression: '',
 			blocks: [{
-				expression: '@true',
+				expression: '@else',
 				list: [],
 			}],
 			value: '',
@@ -271,12 +280,11 @@ ami.twig.engine = {
 
 	_render: function(result, item, dict)
 	{
-		var i, j;
-		var k, l;
-		var list;
-		var expression;
+		var i, j, k, l;
 
-		var parts, symb, expr, DICT;
+		var expression, list;
+
+		var m, symb, expr, DICT;
 
 		/*---------------------------------------------------------*/
 		/* SET                                                     */
@@ -290,7 +298,7 @@ ami.twig.engine = {
 
 			if(!m)
 			{
-				throw 'syntax error, line `' + line + '`, invalid `set` statement';
+				throw 'syntax error, line `' + item.line + '`, invalid `set` statement';
 			}
 
 			symb = m[1].trim();
@@ -298,29 +306,13 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			var value = ami.twig.expr.interpreter.eval(
-				new ami.twig.expr.Compiler(expr, item.line), dict
-			);
+			var value = ami.twig.expr.cache.eval(expr, item.line, dict);
 
 			/*-------------------------------------------------*/
 
 			dict[symb] = value;
 
 			/*-------------------------------------------------*/
-		}
-
-		/*---------------------------------------------------------*/
-		/* @BLOCK                                                  */
-		/*---------------------------------------------------------*/
-
-		else if(item.keyword === '@block')
-		{
-			list = item.blocks[0].list;
-
-			for(i in list)
-			{
-				this._render(result, list[i], dict);
-			}
 		}
 
 		/*---------------------------------------------------------*/
@@ -331,9 +323,7 @@ ami.twig.engine = {
 		{
 			result[0] += item.value.replace(this.VARIABLE_RE, function(match, expression) {
 
-				return ami.twig.expr.interpreter.eval(
-					new ami.twig.expr.Compiler(expression, item.line), dict
-				);
+				return ami.twig.expr.cache.eval(expression, item.line, dict);
 			});
 		}
 
@@ -347,7 +337,7 @@ ami.twig.engine = {
 			{
 				expression = item.blocks[i].expression;
 
-				if(expression === '@else' || ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expression, item.line), dict) === true)
+				if(expression === '@else' || ami.twig.expr.cache.eval(expression, item.line, dict) === true)
 				{
 					list = item.blocks[i].list;
 
@@ -373,7 +363,7 @@ ami.twig.engine = {
 
 			if(!m)
 			{
-				throw 'syntax error, line `' + line + '`, invalid `for` statement';
+				throw 'syntax error, line `' + item.line + '`, invalid `for` statement';
 			}
 
 			symb = m[1].trim();
@@ -381,21 +371,20 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			var iter = ami.twig.expr.interpreter.eval(
-				new ami.twig.expr.Compiler(expr, item.line), dict
-			);
+			var iter = ami.twig.expr.cache.eval(expr, item.line, dict);
 
-			var ITER = (iter instanceof Object) ? Object.keys(iter) : iter;
+			if(Object.prototype.toString.call(iter) === '[object Object]')
+			{
+				iter = Object.keys(iter);
+			}
 
 			/*-------------------------------------------------*/
 
-			if(!(iter instanceof Array
-			     ||
-			     iter instanceof Object
-			     ||
-			     iter instanceof String || typeof iter === 'string'
-			 )) {
-				throw 'syntax error, line `' + line + '`, right operande not iterable';
+			if(Object.prototype.toString.call(iter) !== '[object Array]'
+			   &&
+			   Object.prototype.toString.call(iter) !== '[object String]'
+			 ) {
+				throw 'syntax error, line `' + item.line + '`, right operande not iterable';
 			}
 
 			/*-------------------------------------------------*/
@@ -405,18 +394,18 @@ ami.twig.engine = {
 			/*-------------------------------------------------*/
 
 			k = 0x000000000;
-			l = ITER.length;
+			l = iter.length;
 
 			list = item.blocks[0].list;
 
-			for(i in ITER)
+			for(i in iter)
 			{
-				DICT[symb] = ITER[i];
+				DICT[symb] = iter[i];
 
 				DICT['loop'].first = (k === (0 - 0));
-				DICT['loop'].last = (k === (l - 1));
+				DICT['loop'].last  = (k === (l - 1));
 
-				DICT['loop'].index = k;
+				DICT['loop'].index  = k;
 				DICT['loop'].length = l;
 
 				k++;
@@ -438,13 +427,11 @@ ami.twig.engine = {
 		{
 			/*-------------------------------------------------*/
 
-			var m;
-
 			expression = item.expression;
 
 			/*-------------------------------------------------*/
 
-			var only_subexpr;
+			var only_subexpr = null;
 
 			expression = expression.trim();
 
@@ -454,14 +441,10 @@ ami.twig.engine = {
 
 				only_subexpr = m[1];
 			}
-			else
-			{
-				only_subexpr = null;
-			}
 
 			/*-------------------------------------------------*/
 
-			var with_subexpr;
+			var with_subexpr = null;
 
 			expression = expression.trim();
 
@@ -471,26 +454,18 @@ ami.twig.engine = {
 
 				with_subexpr = m[1];
 			}
-			else
-			{
-				with_subexpr = null;
-			}
 
 			/*-------------------------------------------------*/
 
-			var FILENAME = ami.twig.expr.interpreter.eval(
-				new ami.twig.expr.Compiler(expression, item.line), dict
-			);
+			var FILENAME = ami.twig.expr.cache.eval(expression, item.line, dict);
 
 			/*-------------------------------------------------*/
 
 			if(with_subexpr)
 			{
-				DICT = ami.twig.expr.interpreter.eval(
-					new ami.twig.expr.Compiler(with_subexpr, item.line), dict
-				);
+				DICT = ami.twig.expr.cache.eval(with_subexpr, item.line, dict);
 
-				if(!(DICT instanceof Object))
+				if(Object.prototype.toString.call(DICT) !== '[object Object]')
 				{
 					throw 'runtime error, line `' + item.line + '`, dictionary expected';
 				}

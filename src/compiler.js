@@ -378,9 +378,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			node = this.parseFunVar(true);
 
-			for(temp = node; temp.nodeType === ami.twig.expr.tokens.DOT; temp = temp.nodeRight);
-
-			temp.list.unshift(left);
+			for(temp = node; temp.nodeType === ami.twig.expr.tokens.DOT; temp = temp.nodeRight); temp.list.unshift(left);
 
 			left = node;
 		}
@@ -966,12 +964,11 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		if(node)
 		{
-			var temp = node;
+			/*-------------------------------------------------*/
 
-			if(temp.nodeType === ami.twig.expr.tokens.DOT)
-			{
-				temp = temp.nodeLeft;
-			}
+			var temp = (node.nodeType === ami.twig.expr.tokens.DOT) ? node.nodeLeft : node;
+
+			/*-------------------------------------------------*/
 
 			if(temp.nodeValue in ami.twig.stdlib)
 			{
@@ -981,6 +978,8 @@ ami.twig.expr.Compiler = function(code, line) {
 			{
 				temp.nodeValue = ((((((('_.'))))))) + temp.nodeValue;
 			}
+
+			/*-------------------------------------------------*/
 		}
 
 		return node;

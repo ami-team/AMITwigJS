@@ -656,9 +656,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			node = this.parseFunVar(true);
 
-			for(temp = node; temp.nodeType === ami.twig.expr.tokens.DOT; temp = temp.nodeRight);
-
-			temp.list.unshift(left);
+			for(temp = node; temp.nodeType === ami.twig.expr.tokens.DOT; temp = temp.nodeRight); temp.list.unshift(left);
 
 			left = node;
 		}
@@ -1244,12 +1242,11 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		if(node)
 		{
-			var temp = node;
+			/*-------------------------------------------------*/
 
-			if(temp.nodeType === ami.twig.expr.tokens.DOT)
-			{
-				temp = temp.nodeLeft;
-			}
+			var temp = (node.nodeType === ami.twig.expr.tokens.DOT) ? node.nodeLeft : node;
+
+			/*-------------------------------------------------*/
 
 			if(temp.nodeValue in ami.twig.stdlib)
 			{
@@ -1259,6 +1256,8 @@ ami.twig.expr.Compiler = function(code, line) {
 			{
 				temp.nodeValue = ((((((('_.'))))))) + temp.nodeValue;
 			}
+
+			/*-------------------------------------------------*/
 		}
 
 		return node;
@@ -1681,6 +1680,15 @@ ami.twig.engine = {
 	VARIABLE_RE: /\{\{\s*(.*?)\s*\}\}/g,
 
 	/*-----------------------------------------------------------------*/
+/*
+	track: function(s)
+	{
+		var currentdate = new Date();
+
+		console.log(s + ' ' + currentdate.getHours() + ':' + currentdate.getMinutes() + ':' + currentdate.getSeconds());
+	},
+ */
+	/*-----------------------------------------------------------------*/
 
 	parse: function(s)
 	{
@@ -1688,10 +1696,10 @@ ami.twig.engine = {
 
 		var result = {
 			line: line,
-			keyword: '@block',
+			keyword: 'if',
 			expression: '',
 			blocks: [{
-				expression: '@true',
+				expression: '@else',
 				list: [],
 			}],
 			value: '',
@@ -1929,12 +1937,11 @@ ami.twig.engine = {
 
 	_render: function(result, item, dict)
 	{
-		var i, j;
-		var k, l;
-		var list;
-		var expression;
+		var i, j, k, l;
 
-		var parts, symb, expr, DICT;
+		var expression, list;
+
+		var m, symb, expr, DICT;
 
 		/*---------------------------------------------------------*/
 		/* SET                                                     */
@@ -1948,7 +1955,7 @@ ami.twig.engine = {
 
 			if(!m)
 			{
-				throw 'syntax error, line `' + line + '`, invalid `set` statement';
+				throw 'syntax error, line `' + item.line + '`, invalid `set` statement';
 			}
 
 			symb = m[1].trim();
@@ -1956,29 +1963,13 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			var value = ami.twig.expr.interpreter.eval(
-				new ami.twig.expr.Compiler(expr, item.line), dict
-			);
+			var value = ami.twig.expr.cache.eval(expr, item.line, dict);
 
 			/*-------------------------------------------------*/
 
 			dict[symb] = value;
 
 			/*-------------------------------------------------*/
-		}
-
-		/*---------------------------------------------------------*/
-		/* @BLOCK                                                  */
-		/*---------------------------------------------------------*/
-
-		else if(item.keyword === '@block')
-		{
-			list = item.blocks[0].list;
-
-			for(i in list)
-			{
-				this._render(result, list[i], dict);
-			}
 		}
 
 		/*---------------------------------------------------------*/
@@ -1989,9 +1980,7 @@ ami.twig.engine = {
 		{
 			result[0] += item.value.replace(this.VARIABLE_RE, function(match, expression) {
 
-				return ami.twig.expr.interpreter.eval(
-					new ami.twig.expr.Compiler(expression, item.line), dict
-				);
+				return ami.twig.expr.cache.eval(expression, item.line, dict);
 			});
 		}
 
@@ -2005,7 +1994,7 @@ ami.twig.engine = {
 			{
 				expression = item.blocks[i].expression;
 
-				if(expression === '@else' || ami.twig.expr.interpreter.eval(new ami.twig.expr.Compiler(expression, item.line), dict) === true)
+				if(expression === '@else' || ami.twig.expr.cache.eval(expression, item.line, dict) === true)
 				{
 					list = item.blocks[i].list;
 
@@ -2031,7 +2020,7 @@ ami.twig.engine = {
 
 			if(!m)
 			{
-				throw 'syntax error, line `' + line + '`, invalid `for` statement';
+				throw 'syntax error, line `' + item.line + '`, invalid `for` statement';
 			}
 
 			symb = m[1].trim();
@@ -2039,21 +2028,20 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			var iter = ami.twig.expr.interpreter.eval(
-				new ami.twig.expr.Compiler(expr, item.line), dict
-			);
+			var iter = ami.twig.expr.cache.eval(expr, item.line, dict);
 
-			var ITER = (iter instanceof Object) ? Object.keys(iter) : iter;
+			if(Object.prototype.toString.call(iter) === '[object Object]')
+			{
+				iter = Object.keys(iter);
+			}
 
 			/*-------------------------------------------------*/
 
-			if(!(iter instanceof Array
-			     ||
-			     iter instanceof Object
-			     ||
-			     iter instanceof String || typeof iter === 'string'
-			 )) {
-				throw 'syntax error, line `' + line + '`, right operande not iterable';
+			if(Object.prototype.toString.call(iter) !== '[object Array]'
+			   &&
+			   Object.prototype.toString.call(iter) !== '[object String]'
+			 ) {
+				throw 'syntax error, line `' + item.line + '`, right operande not iterable';
 			}
 
 			/*-------------------------------------------------*/
@@ -2063,18 +2051,18 @@ ami.twig.engine = {
 			/*-------------------------------------------------*/
 
 			k = 0x000000000;
-			l = ITER.length;
+			l = iter.length;
 
 			list = item.blocks[0].list;
 
-			for(i in ITER)
+			for(i in iter)
 			{
-				DICT[symb] = ITER[i];
+				DICT[symb] = iter[i];
 
 				DICT['loop'].first = (k === (0 - 0));
-				DICT['loop'].last = (k === (l - 1));
+				DICT['loop'].last  = (k === (l - 1));
 
-				DICT['loop'].index = k;
+				DICT['loop'].index  = k;
 				DICT['loop'].length = l;
 
 				k++;
@@ -2095,8 +2083,6 @@ ami.twig.engine = {
 		else if(item.keyword === 'include')
 		{
 			/*-------------------------------------------------*/
-
-			var m;
 
 			expression = item.expression;
 
@@ -2136,17 +2122,13 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			var FILENAME = ami.twig.expr.interpreter.eval(
-				new ami.twig.expr.Compiler(expression, item.line), dict
-			);
+			var FILENAME = ami.twig.expr.cache.eval(expression, item.line, dict);
 
 			/*-------------------------------------------------*/
 
 			if(with_subexpr)
 			{
-				DICT = ami.twig.expr.interpreter.eval(
-					new ami.twig.expr.Compiler(with_subexpr, item.line), dict
-				);
+				DICT = ami.twig.expr.cache.eval(with_subexpr, item.line, dict);
 
 				if(!(DICT instanceof Object))
 				{
@@ -2196,6 +2178,57 @@ ami.twig.engine = {
 };
 
 /*-------------------------------------------------------------------------*/
+/*!
+ * AMI TWIG Engine
+ *
+ * Version: 0.1.0
+ *
+ * Copyright (c) 2014-2015 The AMI Team
+ * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
+ *
+ */
+
+'use strict';
+
+/*-------------------------------------------------------------------------*/
+/*                                                                         */
+/*-------------------------------------------------------------------------*/
+
+ami.twig.expr.cache = {
+	/*-----------------------------------------------------------------*/
+
+	dict: {},
+
+	/*-----------------------------------------------------------------*/
+
+	eval: function(expression, line, _)
+	{
+		var js;
+
+		if(expression in this.dict)
+		{
+			js = this.dict[expression];
+		}
+		else
+		{
+			js = this.dict[expression] = ami.twig.expr.interpreter.getJS(
+							new ami.twig.expr.Compiler(expression, line)
+			);
+		}
+
+		/*---------------------------------------------------------*/
+
+		if(!_) _ = {};
+
+		return eval(js);
+
+		/*---------------------------------------------------------*/
+	},
+
+	/*-----------------------------------------------------------------*/
+};
+
+/*-------------------------------------------------------------------------*/
 /*
  * AMI TWIG Engine
  *
@@ -2239,27 +2272,41 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'isNumber': function(x)
+	'isArray': function(x)
 	{
-		return x instanceof Number || typeof x === 'number';
+		return Object.prototype.toString.call(x) === '[object Array]';
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	'isObject': function(x)
+	{
+		return Object.prototype.toString.call(x) === '[object Object]';
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	'isString': function(x)
 	{
-		return x instanceof String || typeof x === 'string';
+		return Object.prototype.toString.call(x) === '[object String]';
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	'isNumber': function(x)
+	{
+		return Object.prototype.toString.call(x) === '[object Number]';
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	'isIterable': function(x)
 	{
-		return x instanceof Array
+		return Object.prototype.toString.call(x) === '[object Array]'
 		       ||
-		       x instanceof Object
+		       Object.prototype.toString.call(x) === '[object Object]'
 		       ||
-		       x instanceof String || typeof x === 'string'
+		       Object.prototype.toString.call(x) === '[object String]'
 		;
 	},
 
@@ -2283,14 +2330,14 @@ ami.twig.stdlib = {
 
 	'isInObject': function(x, y)
 	{
-		if(y instanceof Array
+		if(this.isArray(y)
 		   ||
-		   y instanceof String || typeof y === 'string'
+		   this.isString(y)
 		 ) {
 		 	return y.indexOf(x) >= 0;
 		}
 
-		if(y instanceof Object)
+		if(this.isObject(y))
 		{
 			return x in y;
 		}
@@ -2363,7 +2410,19 @@ ami.twig.stdlib = {
 
 	'length': function(x)
 	{
-		return this.isIterable(x) ? x.length : 0;
+		if(this.isArray(x)
+		   ||
+		   this.isString(x)
+		 ) {
+		 	return x.length;
+		}
+
+		if(this.isObject(x))
+		{
+			return Object.keys(x).length;
+		}
+
+		return 0;
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -2384,7 +2443,7 @@ ami.twig.stdlib = {
 
 	'keys': function(x)
 	{
-		return x instanceof Object ? Object.keys(x) : [];
+		return this.isObject(x) ? Object.keys(x) : [];
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -2543,7 +2602,7 @@ ami.twig.stdlib = {
 
 	'replace': function(s, dict)
 	{
-		if(this.isString(s) && dict instanceof Object)
+		if(this.isString(s) && this.isObject(dict))
 		{
 			var t = '';
 
@@ -2588,8 +2647,8 @@ ami.twig.stdlib = {
 	{
 		/*---------------------------------------------------------*/
 
-		var args = (arguments.length === 1) && (arguments[0] instanceof Array || arguments[0] instanceof Object) ? arguments[0]
-		                                                                                                         : arguments
+		var args = (arguments.length === 1) && (this.isArray(arguments[0]) || this.isObject(arguments[0])) ? arguments[0]
+		                                                                                                   : arguments
 		;
 
 		/*---------------------------------------------------------*/
@@ -2622,8 +2681,8 @@ ami.twig.stdlib = {
 	{
 		/*---------------------------------------------------------*/
 
-		var args = (arguments.length === 1) && (arguments[0] instanceof Array || arguments[0] instanceof Object) ? arguments[0]
-		                                                                                                         : arguments
+		var args = (arguments.length === 1) && (this.isArray(arguments[0]) || this.isObject(arguments[0])) ? arguments[0]
+		                                                                                                   : arguments
 		;
 
 		/*---------------------------------------------------------*/

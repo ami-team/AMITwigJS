@@ -41,27 +41,41 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'isNumber': function(x)
+	'isArray': function(x)
 	{
-		return x instanceof Number || typeof x === 'number';
+		return Object.prototype.toString.call(x) === '[object Array]';
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	'isObject': function(x)
+	{
+		return Object.prototype.toString.call(x) === '[object Object]';
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	'isString': function(x)
 	{
-		return x instanceof String || typeof x === 'string';
+		return Object.prototype.toString.call(x) === '[object String]';
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	'isNumber': function(x)
+	{
+		return Object.prototype.toString.call(x) === '[object Number]';
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	'isIterable': function(x)
 	{
-		return x instanceof Array
+		return Object.prototype.toString.call(x) === '[object Array]'
 		       ||
-		       x instanceof Object
+		       Object.prototype.toString.call(x) === '[object Object]'
 		       ||
-		       x instanceof String || typeof x === 'string'
+		       Object.prototype.toString.call(x) === '[object String]'
 		;
 	},
 
@@ -85,14 +99,14 @@ ami.twig.stdlib = {
 
 	'isInObject': function(x, y)
 	{
-		if(y instanceof Array
+		if(this.isArray(y)
 		   ||
-		   y instanceof String || typeof y === 'string'
+		   this.isString(y)
 		 ) {
 		 	return y.indexOf(x) >= 0;
 		}
 
-		if(y instanceof Object)
+		if(this.isObject(y))
 		{
 			return x in y;
 		}
@@ -165,7 +179,19 @@ ami.twig.stdlib = {
 
 	'length': function(x)
 	{
-		return this.isIterable(x) ? x.length : 0;
+		if(this.isArray(x)
+		   ||
+		   this.isString(x)
+		 ) {
+		 	return x.length;
+		}
+
+		if(this.isObject(x))
+		{
+			return Object.keys(x).length;
+		}
+
+		return 0;
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -186,7 +212,7 @@ ami.twig.stdlib = {
 
 	'keys': function(x)
 	{
-		return x instanceof Object ? Object.keys(x) : [];
+		return this.isObject(x) ? Object.keys(x) : [];
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -345,7 +371,7 @@ ami.twig.stdlib = {
 
 	'replace': function(s, dict)
 	{
-		if(this.isString(s) && dict instanceof Object)
+		if(this.isString(s) && this.isObject(dict))
 		{
 			var t = '';
 
@@ -390,8 +416,8 @@ ami.twig.stdlib = {
 	{
 		/*---------------------------------------------------------*/
 
-		var args = (arguments.length === 1) && (arguments[0] instanceof Array || arguments[0] instanceof Object) ? arguments[0]
-		                                                                                                         : arguments
+		var args = (arguments.length === 1) && (this.isArray(arguments[0]) || this.isObject(arguments[0])) ? arguments[0]
+		                                                                                                   : arguments
 		;
 
 		/*---------------------------------------------------------*/
@@ -424,8 +450,8 @@ ami.twig.stdlib = {
 	{
 		/*---------------------------------------------------------*/
 
-		var args = (arguments.length === 1) && (arguments[0] instanceof Array || arguments[0] instanceof Object) ? arguments[0]
-		                                                                                                         : arguments
+		var args = (arguments.length === 1) && (this.isArray(arguments[0]) || this.isObject(arguments[0])) ? arguments[0]
+		                                                                                                   : arguments
 		;
 
 		/*---------------------------------------------------------*/
