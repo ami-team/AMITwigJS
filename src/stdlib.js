@@ -71,11 +71,13 @@ ami.twig.stdlib = {
 
 	'isIterable': function(x)
 	{
-		return Object.prototype.toString.call(x) === '[object Array]'
+		var typeName = Object.prototype.toString.call(x);
+
+		return typeName === '[object Array]'
 		       ||
-		       Object.prototype.toString.call(x) === '[object Object]'
+		       typeName === '[object Object]'
 		       ||
-		       Object.prototype.toString.call(x) === '[object String]'
+		       typeName === '[object String]'
 		;
 	},
 
@@ -315,12 +317,10 @@ ami.twig.stdlib = {
 	{
 		if(this.isString(s))
 		{
-			if(s.length > 0)
-			{
-				s[0] = s[0].toUpperCase();
-			}
+			return s.toLowerCase().replace(/(?:^|\s)\S/g, function(c) {
 
-			return s;
+				return c.toUpperCase();
+			});
 		}
 
 		return '';

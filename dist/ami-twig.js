@@ -1978,10 +1978,10 @@ ami.twig.engine = {
 
 		else if(item.keyword === '@text')
 		{
-			result[0] += item.value.replace(this.VARIABLE_RE, function(match, expression) {
+			result.push(item.value.replace(this.VARIABLE_RE, function(match, expression) {
 
 				return ami.twig.expr.cache.eval(expression, item.line, dict);
-			});
+			}));
 		}
 
 		/*---------------------------------------------------------*/
@@ -2030,18 +2030,24 @@ ami.twig.engine = {
 
 			var iter = ami.twig.expr.cache.eval(expr, item.line, dict);
 
-			if(Object.prototype.toString.call(iter) === '[object Object]')
-			{
-				iter = Object.keys(iter);
+			/*-------------------------------------------------*/
+
+			var typeName = Object.prototype.toString.call(iter);
+
+			if(typeName !== '[object Array]'
+			   &&
+			   typeName !== '[object Object]'
+			   &&
+			   typeName !== '[object String]'
+			 ) {
+				throw 'syntax error, line `' + item.line + '`, right operande not iterable';
 			}
 
 			/*-------------------------------------------------*/
 
-			if(Object.prototype.toString.call(iter) !== '[object Array]'
-			   &&
-			   Object.prototype.toString.call(iter) !== '[object String]'
-			 ) {
-				throw 'syntax error, line `' + item.line + '`, right operande not iterable';
+			if(typeName === '[object Object]')
+			{
+				iter = Object.keys(iter);
 			}
 
 			/*-------------------------------------------------*/
@@ -2092,11 +2098,11 @@ ami.twig.engine = {
 
 			expression = expression.trim();
 
-			if((m = expression.match(/(only)$/)))
+			if((m = expression.match(/only$/)))
 			{
 				expression = expression.substr(expression, expression.length - m[0].length - 1);
 
-				only_subexpr = m[1];
+				only_subexpr = true;
 			}
 
 			/*-------------------------------------------------*/
@@ -2116,6 +2122,11 @@ ami.twig.engine = {
 
 			var FILENAME = ami.twig.expr.cache.eval(expression, item.line, dict);
 
+			if(Object.prototype.toString.call(FILENAME) !== '[object String]')
+			{
+				throw 'runtime error, line `' + item.line + '`, string expected';
+			}
+
 			/*-------------------------------------------------*/
 
 			if(with_subexpr)
@@ -2124,7 +2135,7 @@ ami.twig.engine = {
 
 				if(Object.prototype.toString.call(DICT) !== '[object Object]')
 				{
-					throw 'runtime error, line `' + item.line + '`, dictionary expected';
+					throw 'runtime error, line `' + item.line + '`, object expected';
 				}
 			}
 			else
@@ -2142,7 +2153,7 @@ ami.twig.engine = {
 			ami.twig.ajax.get(
 				FILENAME,
 				function(data) {
-					result[0] += ami.twig.engine.render(data, DICT);
+					result.push(ami.twig.engine.render(data, DICT));
 				},
 				function(/**/) {
 					throw 'runtime error, line `' + item.line + '`, could not open `' + FILENAME + '`';
@@ -2159,11 +2170,11 @@ ami.twig.engine = {
 
 	render: function(s, dict)
 	{
-		var result = [''];
+		var result = [];
 
 		this._render(result, this.parse(s), dict);
 
-		return result[0];
+		return result.join('');
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -2172,8 +2183,6 @@ ami.twig.engine = {
 /*-------------------------------------------------------------------------*/
 /*!
  * AMI TWIG Engine
- *
- * Version: 0.1.0
  *
  * Copyright (c) 2014-2015 The AMI Team
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -2294,11 +2303,13 @@ ami.twig.stdlib = {
 
 	'isIterable': function(x)
 	{
-		return Object.prototype.toString.call(x) === '[object Array]'
+		var typeName = Object.prototype.toString.call(x);
+
+		return typeName === '[object Array]'
 		       ||
-		       Object.prototype.toString.call(x) === '[object Object]'
+		       typeName === '[object Object]'
 		       ||
-		       Object.prototype.toString.call(x) === '[object String]'
+		       typeName === '[object String]'
 		;
 	},
 
@@ -2538,12 +2549,10 @@ ami.twig.stdlib = {
 	{
 		if(this.isString(s))
 		{
-			if(s.length > 0)
-			{
-				s[0] = s[0].toUpperCase();
-			}
+			return s.toLowerCase().replace(/(?:^|\s)\S/g, function(c) {
 
-			return s;
+				return c.toUpperCase();
+			});
 		}
 
 		return '';
