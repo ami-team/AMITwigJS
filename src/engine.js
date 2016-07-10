@@ -283,7 +283,7 @@ ami.twig.engine = {
 
 		var expression, list;
 
-		var m, symb, expr, DICT;
+		var m, symb, expr, DICT, value;
 
 		/*---------------------------------------------------------*/
 		/* do                                                      */
@@ -314,7 +314,7 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			var value = ami.twig.expr.cache.eval(expr, item.line, dict);
+			value = ami.twig.expr.cache.eval(expr, item.line, dict);
 
 			/*-------------------------------------------------*/
 
@@ -331,7 +331,9 @@ ami.twig.engine = {
 		{
 			result.push(item.value.replace(this.VARIABLE_RE, function(match, expression) {
 
-				return ami.twig.expr.cache.eval(expression, item.line, dict) || '';
+				value = ami.twig.expr.cache.eval(expression, item.line, dict);
+
+				return (typeof value !== 'undefined') ? value : '';
 
 			}));
 		}
@@ -380,11 +382,11 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			var iter = ami.twig.expr.cache.eval(expr, item.line, dict);
+			value = ami.twig.expr.cache.eval(expr, item.line, dict);
 
 			/*-------------------------------------------------*/
 
-			var typeName = Object.prototype.toString.call(iter);
+			var typeName = Object.prototype.toString.call(value);
 
 			if(typeName !== '[object Array]'
 			   &&
@@ -399,7 +401,7 @@ ami.twig.engine = {
 
 			if(typeName === '[object Object]')
 			{
-				iter = Object.keys(iter);
+				value = Object.keys(value);
 			}
 
 			/*-------------------------------------------------*/
@@ -408,14 +410,14 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			k = 0x000000000;
-			l = iter.length;
+			k = 0x0000000000;
+			l = value.length;
 
 			list = item.blocks[0].list;
 
-			for(i in iter)
+			for(i in value)
 			{
-				DICT[symb] = iter[i];
+				DICT[symb] = value[i];
 
 				DICT['loop'].first = (k === (0 - 0));
 				DICT['loop'].last  = (k === (l - 1));
