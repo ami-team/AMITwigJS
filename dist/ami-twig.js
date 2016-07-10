@@ -2181,7 +2181,7 @@ ami.twig.engine = {
 	{
 		var result = [];
 
-		this._render(result, Object.prototype.toString.call(tmpl) !== '[object String]' ? this.compile(tmpl) : tmpl, dict);
+		this._render(result, Object.prototype.toString.call(tmpl) === '[object String]' ? this.compile(tmpl) : tmpl, dict);
 
 		return result.join('');
 	},
