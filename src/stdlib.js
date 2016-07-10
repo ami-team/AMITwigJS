@@ -212,9 +212,23 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
+	'sort': function(x)
+	{
+		return this.isArray(x) ? x.sort() : [];
+	},
+
+	/*-----------------------------------------------------------------*/
+
 	'join': function(x, sep)
 	{
 		return this.isArray(x) ? x.join(sep) : '';
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	'slice': function(x, idx1, idx2)
+	{
+		return this.isArray(x) ? x.slice(idx1, idx2) : [];
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -352,19 +366,26 @@ ami.twig.stdlib = {
 				||
 				mode === 'html_attr'
 			 ) {
-				s = s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+				return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 			}
 			else if(mode === 'js')
 			{
-				s = s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/"/g, '\\\"').replace(/'/g, '\\\'');
+				return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/"/g, '\\\"').replace(/'/g, '\\\'');
 			}
 			else if(mode === 'url')
 			{
-				s = encodeURIComponent(s);
+				return encodeURIComponent(s);
 			}
 		}
 
-		return s;
+		return '';
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	'url_encode': function(s)
+	{
+		return this.isString(s) ? encodeURIComponent(s) : '';
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -394,13 +415,13 @@ ami.twig.stdlib = {
 
 			while(i < l)
 			{
-				for(var key in dict)
+				for(var name in dict)
 				{
-					if(s.substring(i).indexOf(key) === 0)
+					if(s.substring(i).indexOf(name) === 0)
 					{
-						t += dict[key];
+						t += dict[name];
 
-						i += key.length;
+						i += name.length;
 
 						continue;
 					}
