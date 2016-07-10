@@ -529,11 +529,11 @@ ami.twig.engine = {
 
 	/*-----------------------------------------------------------------*/
 
-	render: function(s, dict)
+	render: function(tmpl, dict)
 	{
 		var result = [];
 
-		this._render(result, this.parse(s), dict);
+		this._render(result, Object.prototype.toString.call(tmpl) !== '[object String]' ? this.parse(tmpl) : tmpl, dict);
 
 		return result.join('');
 	},
