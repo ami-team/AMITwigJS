@@ -25,17 +25,8 @@ ami.twig.engine = {
 	COMMENT_RE: /\{\#\s*(.*?)\s*\#\}/g,
 
 	/*-----------------------------------------------------------------*/
-/*
-	track: function(s)
-	{
-		var currentdate = new Date();
 
-		console.log(s + ' ' + currentdate.getHours() + ':' + currentdate.getMinutes() + ':' + currentdate.getSeconds());
-	},
- */
-	/*-----------------------------------------------------------------*/
-
-	parse: function(s)
+	compile: function(s)
 	{
 		/*---------------------------------------------------------*/
 
@@ -533,7 +524,7 @@ ami.twig.engine = {
 	{
 		var result = [];
 
-		this._render(result, Object.prototype.toString.call(tmpl) !== '[object String]' ? this.parse(tmpl) : tmpl, dict);
+		this._render(result, Object.prototype.toString.call(tmpl) !== '[object String]' ? this.compile(tmpl) : tmpl, dict);
 
 		return result.join('');
 	},
