@@ -1992,7 +1992,7 @@ ami.twig.engine = {
 		{
 			result.push(item.value.replace(this.VARIABLE_RE, function(match, expression) {
 
-				return ami.twig.expr.cache.eval(expression, item.line, dict);
+				return ami.twig.expr.cache.eval(expression, item.line, dict) || '';
 
 			}));
 		}
@@ -2460,6 +2460,13 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
+	'join': function(x, sep)
+	{
+		return this.isArray(x) ? x.join(sep) : '';
+	},
+
+	/*-----------------------------------------------------------------*/
+
 	'keys': function(x)
 	{
 		return this.isObject(x) ? Object.keys(x) : [];
@@ -2610,9 +2617,16 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
+	'nl2br': function(s)
+	{
+		return this.isString(s) ? s.replace(/\n/g, '<br/>') : '';
+	},
+
+	/*-----------------------------------------------------------------*/
+
 	'raw': function(s)
 	{
-		return s;
+		return this.isString(s) ? s : '';
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -2647,6 +2661,13 @@ ami.twig.stdlib = {
 		}
 
 		return s;
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	'split': function(s, sep, max)
+	{
+		return this.isString(s) ? s.split(sep, max) : [];
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -2724,6 +2745,33 @@ ami.twig.stdlib = {
 		/*---------------------------------------------------------*/
 
 		return result;
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	'round': function(x, mode)
+	{
+		/**/ if(mode === 'ceil')
+		{
+			return Math.ceil(x);
+		}
+		else if(mode === 'floor')
+		{
+			return Math.floor(x);
+		}
+		else
+		{
+			return Math.round(x);
+		}
+	},
+
+	/*-----------------------------------------------------------------*/
+	/* JSON                                                            */
+	/*-----------------------------------------------------------------*/
+
+	'json_encode': function(x)
+	{
+		return JSON.stringify(x, null, 2);
 	},
 
 	/*-----------------------------------------------------------------*/
