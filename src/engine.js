@@ -22,6 +22,8 @@ ami.twig.engine = {
 
 	VARIABLE_RE: /\{\{\s*(.*?)\s*\}\}/g,
 
+	COMMENT_RE: /\{#\s*(.*?)\s*#\}/g,
+
 	/*-----------------------------------------------------------------*/
 /*
 	track: function(s)
@@ -335,7 +337,8 @@ ami.twig.engine = {
 			result.push(item.value.replace(this.VARIABLE_RE, function(match, expression) {
 
 				return ami.twig.expr.cache.eval(expression, item.line, dict);
-			}));
+
+			}).replace(this.COMMENT_RE, ''));
 		}
 
 		/*---------------------------------------------------------*/
