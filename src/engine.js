@@ -333,8 +333,7 @@ ami.twig.engine = {
 
 				value = ami.twig.expr.cache.eval(expression, item.line, dict);
 
-				return (typeof value !== 'undefined') ? value : '';
-
+				return (typeof value !== 'undefined' && value !== null) ? value : '';
 			}));
 		}
 
