@@ -331,6 +331,12 @@ ami.twig.expr.interpreter = {
 
 				/*-----------------------------------------*/
 
+				case ami.twig.expr.tokens.CONCAT:
+					operator = '+';
+					break;
+
+				/*-----------------------------------------*/
+
 				default:
 					operator = node.nodeValue;
 					break;
