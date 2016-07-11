@@ -2823,333 +2823,315 @@ ami.twig.expr.interpreter = {
 
 	_getJS: function(node)
 	{
+		var L;
 		var i;
 		var x;
-		var s;
 
 		var left;
 		var right;
 
 		var operator;
 
-		/*---------------------------------------------------------*/
-		/* LST                                                     */
-		/*---------------------------------------------------------*/
-
-		if(node.nodeType === ami.twig.expr.tokens.LST)
-		{
-		 	/*-------------------------------------------------*/
-
-			s = '';
-
-			for(i in node.list)
-			{
-				s += ',' + this._getJS(node.list[i]);
-			}
-
-			if(s)
-			{
-				s = s.substr(1);
-			}
-
-		 	/*-------------------------------------------------*/
-
-			return '[' + s + ']';
-
-		 	/*-------------------------------------------------*/
-		}
-
-		/*---------------------------------------------------------*/
-		/* DIC                                                     */
-		/*---------------------------------------------------------*/
-
-		if(node.nodeType === ami.twig.expr.tokens.DIC)
-		{
-		 	/*-------------------------------------------------*/
-
-			s = '';
-
-			for(i in node.dict)
-			{
-				s += ',' + i + ':' + this._getJS(node.dict[i]);
-			}
-
-			if(s)
-			{
-				s = s.substr(1);
-			}
-
-			/*-------------------------------------------------*/
-
-			return '{' + s + '}';
-
-			/*-------------------------------------------------*/
-		}
-
-		/*---------------------------------------------------------*/
-		/* FUN                                                     */
-		/*---------------------------------------------------------*/
-
-		if(node.nodeType === ami.twig.expr.tokens.FUN)
+		switch(node.nodeType)
 		{
 			/*-------------------------------------------------*/
-
-			s = '';
-
-			for(i in node.list)
-			{
-				s += ',' + this._getJS(node.list[i]);
-			}
-
-			if(s)
-			{
-				s = s.substr(1);
-			}
-
-		 	/*-------------------------------------------------*/
-
-			return node.nodeValue + '(' + s + ')';
-
-		 	/*-------------------------------------------------*/
-		}
-
-		/*---------------------------------------------------------*/
-		/* VAR                                                     */
-		/*---------------------------------------------------------*/
-
-		if(node.nodeType === ami.twig.expr.tokens.VAR)
-		{
+			/* LST                                             */
 			/*-------------------------------------------------*/
 
-			s = '';
+			case ami.twig.expr.tokens.LST:
+		 		/*-----------------------------------------*/
 
-			for(i in node.list)
-			{
-				s += ',' + this._getJS(node.list[i]);
-			}
+				L = [];
 
-			if(s)
-			{
-				s = s.substr(1);
-			}
+				for(i in node.list)
+				{
+					L.push(/* * * */ this._getJS(node.list[i]));
+				}
 
-		 	/*-------------------------------------------------*/
+		 		/*-----------------------------------------*/
 
-			if(s)
-			{
-				return node.nodeValue + '[' + s + ']';
-			}
-			else
-			{
+				return '[' + L.join(',') + ']';
+
+			/*-------------------------------------------------*/
+			/* DIC                                             */
+			/*-------------------------------------------------*/
+
+			case ami.twig.expr.tokens.DIC:
+		 		/*-----------------------------------------*/
+
+				L = [];
+	
+				for(i in node.dict)
+				{
+					L.push(i + ':' + this._getJS(node.dict[i]));
+				}
+
+				/*-----------------------------------------*/
+
+				return '{' + L.join(',') + '}';
+
+			/*-------------------------------------------------*/
+			/* FUN                                             */
+			/*-------------------------------------------------*/
+
+			case ami.twig.expr.tokens.FUN:
+		 		/*-----------------------------------------*/
+
+				L = [];
+
+				for(i in node.list)
+				{
+					L.push(this._getJS(node.list[i]));
+				}
+
+			 	/*-----------------------------------------*/
+
+				return node.nodeValue + '(' + L.join(',') + ')';
+
+			/*-------------------------------------------------*/
+			/* VAR                                             */
+			/*-------------------------------------------------*/
+
+			case ami.twig.expr.tokens.VAR:
+		 		/*-----------------------------------------*/
+
+				L = [];
+
+				for(i in node.list)
+				{
+					L.push(this._getJS(node.list[i]));
+				}
+
+			 	/*-----------------------------------------*/
+
+				return L.length > 0 ? node.nodeValue + '[' + L.join(',') + ']' : node.nodeValue;
+
+			/*-------------------------------------------------*/
+			/* TERMINAL                                        */
+			/*-------------------------------------------------*/
+
+			case ami.twig.expr.tokens.TERMINAL:
+
 				return node.nodeValue;
-			}
 
-		 	/*-------------------------------------------------*/
-		}
+			/*-------------------------------------------------*/
+			/* IS                                              */
+			/*-------------------------------------------------*/
 
-		/*---------------------------------------------------------*/
-		/* TERMINAL                                                */
-		/*---------------------------------------------------------*/
+			case ami.twig.expr.tokens.IS:
 
-		if(node.nodeType === ami.twig.expr.tokens.TERMINAL)
-		{
-			return node.nodeValue;
-		}
+				left = this._getJS(node.nodeLeft);
 
-		/*---------------------------------------------------------*/
-		/* UNIARY OPERATOR                                         */
-		/*---------------------------------------------------------*/
+				switch(node.nodeRight.nodeType)
+				{
+					case ami.twig.expr.tokens.DEFINED:
+						return 'ami.twig.stdlib.isDefined(' + left + ')';
 
-		if(node.nodeLeft !== null
-		   &&
-		   node.nodeRight === null
-		 ) {
-			operator = (node.nodeType !== ami.twig.expr.tokens.NOT) ? node.nodeValue : '!';
+					case ami.twig.expr.tokens.NULL:
+						return 'ami.twig.stdlib.isNull(' + left + ')';
 
-			return operator + '(' + this._getJS(node.nodeLeft) + ')';
-		}
+					case ami.twig.expr.tokens.EMPTY:
+						return 'ami.twig.stdlib.isEmpty(' + left + ')';
 
-		if(node.nodeLeft === null
-		   &&
-		   node.nodeRight !== null
-		 ) {
-			operator = (node.nodeType !== ami.twig.expr.tokens.NOT) ? node.nodeValue : '!';
+					case ami.twig.expr.tokens.ITERABLE:
+						return 'ami.twig.stdlib.isIterable(' + left + ')';
 
-			return operator + '(' + this._getJS(node.nodeRight) + ')';
-		}
+					case ami.twig.expr.tokens.EVEN:
+						return 'ami.twig.stdlib.isEven(' + left + ')';
 
-		/*---------------------------------------------------------*/
-		/* BINARY OPERATOR                                         */
-		/*---------------------------------------------------------*/
+					case ami.twig.expr.tokens.ODD:
+						return 'ami.twig.stdlib.isOdd(' + left + ')';
+				}
 
-		if(node.nodeLeft !== null
-		   &&
-		   node.nodeRight !== null
-		 ) {
-			switch(node.nodeType)
-			{
-				/*-----------------------------------------*/
+				throw 'internal error';
 
-				case ami.twig.expr.tokens.DOT:
+			/*-------------------------------------------------*/
+			/* IN                                              */
+			/*-------------------------------------------------*/
 
+			case ami.twig.expr.tokens.IN:
+
+				if(node.nodeRight.nodeType !== ami.twig.expr.tokens.RANGE)
+				{
 					left = this._getJS(node.nodeLeft);
 					right = this._getJS(node.nodeRight);
 
-					return left + '.' + right;
+					return 'ami.twig.stdlib.isInObject(' + left + ',' + right + ')';
+				}
+				else
+				{
+					x = this._getJS(node.nodeLeft);
 
+					left = node.nodeRight.nodeLeft.nodeValue;
+					right = node.nodeRight.nodeRight.nodeValue;
+
+					return 'ami.twig.stdlib.isInRange(' + x + ',' + left + ',' + right + ')';
+				}
+
+			/*-------------------------------------------------*/
+			/* STARTS_WITH                                     */
+			/*-------------------------------------------------*/
+
+			case ami.twig.expr.tokens.STARTS_WITH:
+
+				left = this._getJS(node.nodeLeft);
+				right = this._getJS(node.nodeRight);
+
+				return 'ami.twig.stdlib.startsWith(' + left + ',' + right + ')';
+
+			/*-------------------------------------------------*/
+			/* ENDS_WITH                                       */
+			/*-------------------------------------------------*/
+
+			case ami.twig.expr.tokens.ENDS_WITH:
+
+				left = this._getJS(node.nodeLeft);
+				right = this._getJS(node.nodeRight);
+
+				return 'ami.twig.stdlib.endsWith(' + left + ',' + right + ')';
+
+			/*-------------------------------------------------*/
+			/* MATCHES                                         */
+			/*-------------------------------------------------*/
+
+			case ami.twig.expr.tokens.MATCHES:
+
+				left = this._getJS(node.nodeLeft);
+				right = this._getJS(node.nodeRight);
+
+				return 'ami.twig.stdlib.match(' + left + ',' + right + ')';
+
+			/*-------------------------------------------------*/
+			/* RANGE                                           */
+			/*-------------------------------------------------*/
+
+			case ami.twig.expr.tokens.RANGE:
+
+				left = this._getJS(node.nodeLeft);
+				right = this._getJS(node.nodeRight);
+
+				return 'ami.twig.stdlib.range(' + left + ',' + right + ')';
+
+			/*-------------------------------------------------*/
+			/* DOT                                             */
+			/*-------------------------------------------------*/
+
+			case ami.twig.expr.tokens.DOT:
+
+				left = this._getJS(node.nodeLeft);
+				right = this._getJS(node.nodeRight);
+
+				return left + '.' + right;
+
+			/*-------------------------------------------------*/
+			/* FLDIV                                           */
+			/*-------------------------------------------------*/
+
+			case ami.twig.expr.tokens.FLDIV:
+
+				left = this._getJS(node.nodeLeft);
+				right = this._getJS(node.nodeRight);
+
+				return 'Math.floor(' + left + '/' + right + ')';
+
+			/*-------------------------------------------------*/
+			/* POWER                                           */
+			/*-------------------------------------------------*/
+
+			case ami.twig.expr.tokens.POWER:
+
+				left = this._getJS(node.nodeLeft);
+				right = this._getJS(node.nodeRight);
+
+				return 'Math.pow(' + left + ',' + right + ')';
+
+			/*-------------------------------------------------*/
+
+			default:
+				/*-----------------------------------------*/
+				/* UNIARY OPERATOR                         */
 				/*-----------------------------------------*/
 
-				case ami.twig.expr.tokens.IS:
+				if(node.nodeLeft !== null
+				   &&
+				   node.nodeRight === null
+				 ) {
+					operator = (node.nodeType !== ami.twig.expr.tokens.NOT) ? node.nodeValue : '!';
 
-					left = this._getJS(node.nodeLeft);
+					return operator + '(' + this._getJS(node.nodeLeft) + ')';
+				}
 
-					switch(node.nodeRight.nodeType)
+				if(node.nodeLeft === null
+				   &&
+				   node.nodeRight !== null
+				 ) {
+					operator = (node.nodeType !== ami.twig.expr.tokens.NOT) ? node.nodeValue : '!';
+
+					return operator + '(' + this._getJS(node.nodeRight) + ')';
+				}
+
+				/*-----------------------------------------*/
+				/* BINARY OPERATOR                         */
+				/*-----------------------------------------*/
+
+				if(node.nodeLeft !== null
+				   &&
+				   node.nodeRight !== null
+				 ) {
+					switch(node.nodeType)
 					{
-						case ami.twig.expr.tokens.DEFINED:
-							return 'ami.twig.stdlib.isDefined(' + left + ')';
+						/*-------------------------*/
 
-						case ami.twig.expr.tokens.NULL:
-							return 'ami.twig.stdlib.isNull(' + left + ')';
+						case ami.twig.expr.tokens.LOGICAL_OR:
+							operator = '||';
+							break;
 
-						case ami.twig.expr.tokens.EMPTY:
-							return 'ami.twig.stdlib.isEmpty(' + left + ')';
+						/*-------------------------*/
 
-						case ami.twig.expr.tokens.ITERABLE:
-							return 'ami.twig.stdlib.isIterable(' + left + ')';
+						case ami.twig.expr.tokens.LOGICAL_AND:
+							operator = '&&';
+							break;
 
-						case ami.twig.expr.tokens.EVEN:
-							return 'ami.twig.stdlib.isEven(' + left + ')';
+						/*-------------------------*/
 
-						case ami.twig.expr.tokens.ODD:
-							return 'ami.twig.stdlib.isOdd(' + left + ')';
+						case ami.twig.expr.tokens.BITWISE_OR:
+							operator = '|';
+							break;
+
+						/*-------------------------*/
+
+						case ami.twig.expr.tokens.BITWISE_XOR:
+							operator = '^';
+							break;
+
+						/*-------------------------*/
+
+						case ami.twig.expr.tokens.BITWISE_AND:
+							operator = '&';
+							break;
+
+						/*-------------------------*/
+
+						case ami.twig.expr.tokens.CONCAT:
+							operator = '+';
+							break;
+
+						/*-------------------------*/
+
+						default:
+							operator = node.nodeValue;
+							break;
+
+						/*-------------------------*/
 					}
 
-					throw 'internal error';
-
-				/*-----------------------------------------*/
-
-				case ami.twig.expr.tokens.IN:
-
-					if(node.nodeRight.nodeType !== ami.twig.expr.tokens.RANGE)
-					{
-						left = this._getJS(node.nodeLeft);
-						right = this._getJS(node.nodeRight);
-
-						return 'ami.twig.stdlib.isInObject(' + left + ',' + right + ')';
-					}
-					else
-					{
-						x = this._getJS(node.nodeLeft);
-
-						left = node.nodeRight.nodeLeft.nodeValue;
-						right = node.nodeRight.nodeRight.nodeValue;
-
-						return 'ami.twig.stdlib.isInRange(' + x + ',' + left + ',' + right + ')';
-					}
-
-				/*-----------------------------------------*/
-
-				case ami.twig.expr.tokens.STARTS_WITH:
-
 					left = this._getJS(node.nodeLeft);
 					right = this._getJS(node.nodeRight);
 
-					return 'ami.twig.stdlib.startsWith(' + left + ',' + right + ')';
+					return '(' + left + operator + right + ')';
+				}
 
-				/*-----------------------------------------*/
-
-				case ami.twig.expr.tokens.ENDS_WITH:
-
-					left = this._getJS(node.nodeLeft);
-					right = this._getJS(node.nodeRight);
-
-					return 'ami.twig.stdlib.endsWith(' + left + ',' + right + ')';
-
-				/*-----------------------------------------*/
-
-				case ami.twig.expr.tokens.MATCHES:
-
-					left = this._getJS(node.nodeLeft);
-					right = this._getJS(node.nodeRight);
-
-					return 'ami.twig.stdlib.match(' + left + ',' + right + ')';
-
-				/*-----------------------------------------*/
-
-				case ami.twig.expr.tokens.RANGE:
-
-					left = this._getJS(node.nodeLeft);
-					right = this._getJS(node.nodeRight);
-
-					return 'ami.twig.stdlib.range(' + left + ',' + right + ')';
-
-				/*-----------------------------------------*/
-
-				case ami.twig.expr.tokens.FLDIV:
-
-					left = this._getJS(node.nodeLeft);
-					right = this._getJS(node.nodeRight);
-
-					return 'Math.floor(' + left + '/' + right + ')';
-
-				/*-----------------------------------------*/
-
-				case ami.twig.expr.tokens.POWER:
-
-					left = this._getJS(node.nodeLeft);
-					right = this._getJS(node.nodeRight);
-
-					return 'Math.pow(' + left + ',' + right + ')';
-
-				/*-----------------------------------------*/
-
-				case ami.twig.expr.tokens.LOGICAL_OR:
-					operator = '||';
-					break;
-
-				/*-----------------------------------------*/
-
-				case ami.twig.expr.tokens.LOGICAL_AND:
-					operator = '&&';
-					break;
-
-				/*-----------------------------------------*/
-
-				case ami.twig.expr.tokens.BITWISE_OR:
-					operator = '|';
-					break;
-
-				/*-----------------------------------------*/
-
-				case ami.twig.expr.tokens.BITWISE_XOR:
-					operator = '^';
-					break;
-
-				/*-----------------------------------------*/
-
-				case ami.twig.expr.tokens.BITWISE_AND:
-					operator = '&';
-					break;
-
-				/*-----------------------------------------*/
-
-				case ami.twig.expr.tokens.CONCAT:
-					operator = '+';
-					break;
-
-				/*-----------------------------------------*/
-
-				default:
-					operator = node.nodeValue;
-					break;
-
-				/*-----------------------------------------*/
-			}
-
-			left = this._getJS(node.nodeLeft);
-			right = this._getJS(node.nodeRight);
-
-			return '(' + left + operator + right + ')';
+			/*-------------------------------------------------*/
 		}
 
 		/*---------------------------------------------------------*/
