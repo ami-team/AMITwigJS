@@ -97,12 +97,12 @@ ami.twig.expr.interpreter = {
 
 				for(i in node.list)
 				{
-					L.push(this._getJS(node.list[i]));
+					L.push('[' + this._getJS(node.list[i]) + ']');
 				}
 
 			 	/*-----------------------------------------*/
 
-				return L.length > 0 ? node.nodeValue + '[' + L.join(',') + ']' : node.nodeValue;
+				return L.length > 0 ? node.nodeValue + L.join('') : node.nodeValue;
 
 			/*-------------------------------------------------*/
 			/* TERMINAL                                        */

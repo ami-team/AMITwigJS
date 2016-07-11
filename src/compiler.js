@@ -777,50 +777,15 @@ ami.twig.expr.Compiler = function(code, line) {
 		}
 
 		/*---------------------------------------------------------*/
-		/*              | Y                                        */
+		/*              | X                                        */
 		/*---------------------------------------------------------*/
 
-		return this.parseY();
+		return this.parseX();
 	};
 
 	/*-----------------------------------------------------------------*/
 
 	this.parseX = function()
-	{
-		var node;
-
-		/*---------------------------------------------------------*/
-		/* X : Array | Object | FunVar | Terminal                  */
-		/*---------------------------------------------------------*/
-
-		if((node = this.parseArray())) {
-			return node;
-		}
-
-		if((node = this.parseObject())) {
-			return node;
-		}
-
-		if((node = this.parseFunVar())) {
-			return node;
-		}
-
-		if((node = this.parseTerminal())) {
-			return node;
-		}
-
-		/*---------------------------------------------------------*/
-		/* SYNTAX ERROR                                            */
-		/*---------------------------------------------------------*/
-
-		throw 'syntax error, line `' + this.line + '`, syntax error or tuncated expression';
-
-		/*---------------------------------------------------------*/
-	};
-
-	/*-----------------------------------------------------------------*/
-
-	this.parseY = function()
 	{
 		var node;
 
@@ -966,7 +931,7 @@ ami.twig.expr.Compiler = function(code, line) {
 	{
 		var node = this._parseFunVar(isFilter);
 
-		if(node)
+		if(node && node.nodeType !== ami.twig.expr.tokens.TERMINAL)
 		{
 			/*-------------------------------------------------*/
 
@@ -1030,6 +995,10 @@ ami.twig.expr.Compiler = function(code, line) {
 			node = new ami.twig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
 
+			/*-------------------------------------------------*/
+			/*                                                 */
+			/*-------------------------------------------------*/
+
 			if(node.nodeValue === 'true'
 			   ||
 			   node.nodeValue === 'false'
@@ -1038,6 +1007,10 @@ ami.twig.expr.Compiler = function(code, line) {
 
 				return node;
 			}
+
+			/*-------------------------------------------------*/
+			/*                                                 */
+			/*-------------------------------------------------*/
 
 			/**/ if(this.tokenizer.checkType(ami.twig.expr.tokens.LP))
 			{
@@ -1056,24 +1029,38 @@ ami.twig.expr.Compiler = function(code, line) {
 					throw 'syntax error, line `' + this.line + '`, `)` expected';
 				}
 			}
+
+			/*-------------------------------------------------*/
+			/*                                                 */
+			/*-------------------------------------------------*/
+
 			else if(this.tokenizer.checkType(ami.twig.expr.tokens.LB1))
 			{
-				this.tokenizer.next();
+				node.list = [];
 
-				node.list = this._parseSinglets();
-
-				if(this.tokenizer.checkType(ami.twig.expr.tokens.RB1))
+				while(this.tokenizer.checkType(ami.twig.expr.tokens.LB1))
 				{
 					this.tokenizer.next();
 
-					node.nodeType = ami.twig.expr.tokens.VAR;
+					this._parseSinglet(node.list);
 
-				}
-				else
-				{
-					throw 'syntax error, line `' + this.line + '`, `]` expected';
+					if(this.tokenizer.checkType(ami.twig.expr.tokens.RB1))
+					{
+						this.tokenizer.next();
+
+						node.nodeType = ami.twig.expr.tokens.VAR;
+					}
+					else
+					{
+						throw 'syntax error, line `' + this.line + '`, `]` expected';
+					}
 				}
 			}
+
+			/*-------------------------------------------------*/
+			/*                                                 */
+			/*-------------------------------------------------*/
+
 			else
 			{
 				node.nodeType = isFilter ? ami.twig.expr.tokens.FUN
@@ -1082,6 +1069,8 @@ ami.twig.expr.Compiler = function(code, line) {
 
 				node.list = [];
 			}
+
+			/*-------------------------------------------------*/
 
 			return node;
 		}
