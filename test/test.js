@@ -72,4 +72,6 @@ console.log(ami.twig.engine.render('{# this is a comment #}{% for i in [4,5,6] %
 console.log(ami.twig.expr.cache.eval('t1', 1, dict));
 console.log(ami.twig.expr.cache.eval('t1', 1, dict));
 
+console.log(ami.twig.stdlib.replace('aaaa bb cccc dd', {'aa': 'AA', 'cc': 'CC'}));
+
 /*-------------------------------------------------------------------------*/

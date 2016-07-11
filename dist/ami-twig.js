@@ -2449,14 +2449,14 @@ ami.twig.stdlib = {
 
 	'first': function(x)
 	{
-		return this.isIterable(x) && x.length > 0 ? x[0x0000000000] : '';
+		return (this.isArray(x) || this.isString(x)) && x.length > 0 ? x[0x0000000000] : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	'last': function(x)
 	{
-		return this.isIterable(x) && x.length > 0 ? x[x.length - 1] : '';
+		return (this.isArray(x) || this.isString(x)) && x.length > 0 ? x[x.length - 1] : '';
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -2539,9 +2539,11 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
+	/* PAS BON, A REVOIR */
+
 	'match': function(s, regex)
 	{
-		if(this.isString(s)
+		if(this.isString(  s  )
 		   &&
 		   this.isString(regex)
 		 ) {
@@ -2657,6 +2659,8 @@ ami.twig.stdlib = {
 	{
 		if(this.isString(s) && this.isObject(dict))
 		{
+			var q;
+
 			var t = '';
 
 			var i = 0x000000;
@@ -2664,6 +2668,8 @@ ami.twig.stdlib = {
 
 			while(i < l)
 			{
+				q = true;
+
 				for(var name in dict)
 				{
 					if(s.substring(i).indexOf(name) === 0)
@@ -2672,11 +2678,16 @@ ami.twig.stdlib = {
 
 						i += name.length;
 
-						continue;
+						q = false;
+
+						break;
 					}
 				}
 
-				t += s.charAt(i++);
+				if(q)
+				{
+					t += s.charAt(i++);
+				}
 			}
 
 			return t;
