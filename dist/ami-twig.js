@@ -2285,7 +2285,23 @@ ami.twig.stdlib = {
 
 	'isEmpty': function(x)
 	{
-		return (x === null || x === false) || (x === '' || x === [] || x === {});
+		if(x === null
+		   ||
+		   x === false
+		   ||
+		   x === ((''))
+		 ) {
+		 	return true;
+		}
+		else
+		{
+			var typeName = Object.prototype.toString.call(x);
+
+			return (typeName === '[object Array]' && x.length === 0)
+			       ||
+			       (typeName === '[object Object]' && Object.keys(x).length === 0)
+			;
+		}
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -2809,6 +2825,10 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 };
+
+/*-------------------------------------------------------------------------*/
+
+ami.twig.stdlib.e = ami.twig.stdlib.escape;
 
 /*-------------------------------------------------------------------------*/
 /*

@@ -74,4 +74,18 @@ console.log(ami.twig.expr.cache.eval('t1', 1, dict));
 
 console.log(ami.twig.stdlib.replace('aaaa bb cccc dd', {'aa': 'AA', 'cc': 'CC'}));
 
+console.log(ami.twig.stdlib.isEmpty(dict.hh));
+
+console.log('----');
+
+console.log(ami.twig.stdlib.isEmpty(null));
+console.log(ami.twig.stdlib.isEmpty(false));
+console.log(ami.twig.stdlib.isEmpty(''));
+console.log(ami.twig.stdlib.isEmpty([]));
+console.log(ami.twig.stdlib.isEmpty({}));
+
+var x = null;
+
+console.log(Object.prototype.toString.call(x));
+
 /*-------------------------------------------------------------------------*/
