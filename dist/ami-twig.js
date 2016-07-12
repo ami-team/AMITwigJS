@@ -2533,31 +2533,27 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	/* PAS BON, A REVOIR */
-
 	'match': function(s, regex)
 	{
 		if(this.isString(  s  )
 		   &&
 		   this.isString(regex)
 		 ) {
-			var len = regex.     length     ;
-			var idx = regex.lastIndexOf('/');
+			var idx1 = regex.indexOf('/');
+			var idx2 = regex.lastIndexOf('/');
 
-			if(len < 2
-			   ||
-			   idx < 0
-			   ||
-			   regex.charAt(0) !== '/'
-			 ) {
-				throw 'invalid regular expression `' + regex + '`';
+			if(idx1 === 0 || idx1 < idx2)
+			{
+				try
+				{
+					return new RegExp(
+						regex.substring(idx1 + 1, idx2)
+						,
+						regex.substring(idx2 + 1  /**/)
+					).test(s);
+				}
+				catch(err) { }
 			}
-
-			return new RegExp(
-				regex.substring(0x1, idx + 0)
-				,
-				regex.substring(idx + 1, len)
-			).test(s);
 		}
 
 		return false;

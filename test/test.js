@@ -89,4 +89,6 @@ console.log(ami.twig.engine.render('{{ " <hr /> & \" | escape }}', dict));
 console.log(ami.twig.engine.render('{{ " \\" \' \\n \\\\ " | escape("js") }}', dict));
 
 
+console.log(ami.twig.engine.render('{{ "- 123 -" | match("/123/g") }}', dict));
+
 /*-------------------------------------------------------------------------*/
