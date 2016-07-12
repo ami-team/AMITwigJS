@@ -2363,18 +2363,19 @@ ami.twig.stdlib = {
 
 	'isInRange': function(x, x1, x2)
 	{
-		/**/ if(this.isNumber(x1)
-		        &&
-		        this.isNumber(x2)
+		if(this.isNumber(x1)
+		   &&
+		   this.isNumber(x2)
 		 ) {
 			return ((((((((x))))))) >= (((((((x1))))))))
 			       &&
 			       ((((((((x))))))) <= (((((((x2))))))))
 			;
 		}
-		else if(this.isString(x1) && x1.length === 1
-		        &&
-		        this.isString(x2) && x2.length === 1
+
+		if(this.isString(x1) && x1.length === 1
+		   &&
+		   this.isString(x2) && x2.length === 1
 		 ) {
 			return (x.charCodeAt(0) >= x1.charCodeAt(0))
 			       &&
@@ -2457,7 +2458,41 @@ ami.twig.stdlib = {
 
 	'slice': function(x, idx1, idx2)
 	{
-		return (this.isArray(x) || this.isString(x)) ? x.slice(idx1, idx2) : '';
+		return (this.isArray(x) || this.isString(x)) ? x.slice(idx1, idx2) : null;
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	'merge': function(x, y)
+	{
+		var i;
+
+		if(this.isArray(x) && this.isArray(y))
+		{
+			var L = [];
+
+			Array.prototype.push.apply(L, x);
+			Array.prototype.push.apply(L, y);
+
+			return L;
+		}
+
+		if(this.isObject(x) && this.isObject(y))
+		{
+			var D = {};
+
+			for(i in x) D[i] = x[i];
+			for(i in x) D[i] = y[i];
+
+			return D;
+		}
+
+		if(this.isString(x) && this.isString(y))
+		{
+			return x + y;
+		}
+
+		return null;
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -2490,22 +2525,6 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 	/* STRINGS                                                         */
-	/*-----------------------------------------------------------------*/
-
-	'default': function(s1, s2)
-	{
-		/**/ if(s1)
-		{
-			return s1;
-		}
-		else if(s2)
-		{
-			return s2;
-		}
-
-		return '';
-	},
-
 	/*-----------------------------------------------------------------*/
 
 	'startsWith': function(s1, s2)
@@ -2564,6 +2583,22 @@ ami.twig.stdlib = {
 		}
 
 		return false;
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	'default': function(s1, s2)
+	{
+		/**/ if(s1)
+		{
+			return s1;
+		}
+		else if(s2)
+		{
+			return s2;
+		}
+
+		return '';
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -2729,7 +2764,7 @@ ami.twig.stdlib = {
 			return t;
 		}
 
-		return s;
+		return '';
 	},
 
 	/*-----------------------------------------------------------------*/
