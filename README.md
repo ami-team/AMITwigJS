@@ -1,4 +1,4 @@
-AMI TWIG
+AMI-TWIG
 ========
 
 AMI-TWIG is a JavaScript implementation of TWIG template engine.
