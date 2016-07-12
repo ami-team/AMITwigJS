@@ -1050,7 +1050,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			node = new ami.twig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
 
-			right = this.parseY();
+			right = this.parseX();
 
 			node.nodeLeft = left;
 			node.nodeRight = right;
