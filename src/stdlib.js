@@ -389,6 +389,24 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
+	'_escape_map1': {
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		'&': '&amp;',
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	'_escape_map2': {
+		'\\': '\\\\',
+		'\n': '\\n',
+		'"': '\\"',
+		"'": "\\'",
+	},
+
+	/*-----------------------------------------------------------------*/
+
 	'escape': function(s, mode)
 	{
 		if(this.isString(s))
@@ -399,11 +417,17 @@ ami.twig.stdlib = {
 				||
 				mode === 'html_attr'
 			 ) {
-				return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+			 	return s.replace(/[<>"&]/g, function(s) {
+
+					return ami.twig.stdlib._escape_map1[s];
+				});
 			}
 			else if(mode === 'js')
 			{
-				return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/"/g, '\\\"').replace(/'/g, '\\\'');
+				return s.replace(/[\\\n"']/g, function(s) {
+
+					return ami.twig.stdlib._escape_map2[s];
+				});
 			}
 			else if(mode === 'url')
 			{

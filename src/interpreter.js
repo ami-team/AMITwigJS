@@ -43,7 +43,7 @@ ami.twig.expr.interpreter = {
 
 				for(i in node.list)
 				{
-					L.push(/* * * */ this._getJS(node.list[i]));
+					L.push(/* (i) */ this._getJS(node.list[i]));
 				}
 
 		 		/*-----------------------------------------*/
@@ -139,9 +139,10 @@ ami.twig.expr.interpreter = {
 
 					case ami.twig.expr.tokens.ODD:
 						return 'ami.twig.stdlib.isOdd(' + left + ')';
-				}
 
-				throw 'internal error';
+					default:
+						throw 'internal error';
+				}
 
 			/*-------------------------------------------------*/
 			/* IN                                              */

@@ -84,16 +84,9 @@ console.log(ami.twig.stdlib.isEmpty(''));
 console.log(ami.twig.stdlib.isEmpty([]));
 console.log(ami.twig.stdlib.isEmpty({}));
 
-console.log(' HELLO WORLD ! '.trim().toLowerCase().replace(/^\S/g, function(c) {
+console.log(ami.twig.engine.render('{{ " <hr /> & \" | escape }}', dict));
 
-				return c.toUpperCase();
-			})
-);
+console.log(ami.twig.engine.render('{{ " \\" \' \\n \\\\ " | escape("js") }}', dict));
 
-console.log('HELLO WORLD !'.trim().toLowerCase().replace(/(?:^|\s)\S/g, function(c) {
-
-				return c.toUpperCase();
-			})
-);
 
 /*-------------------------------------------------------------------------*/
