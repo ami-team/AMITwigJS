@@ -460,6 +460,8 @@ ami.twig.expr.Tokenizer = function(code, line) {
 		']',
 		'{',
 		'}',
+		'true',
+		'false',
 		/^[0-9]+\.[0-9]+/,
 		/^[0-9]+/,
 		/^'(\\'|[^\'])*'/,
@@ -514,6 +516,8 @@ ami.twig.expr.Tokenizer = function(code, line) {
 		ami.twig.expr.tokens.RB1,
 		ami.twig.expr.tokens.LB2,
 		ami.twig.expr.tokens.RB2,
+		ami.twig.expr.tokens.TERMINAL,
+		ami.twig.expr.tokens.TERMINAL,
 		ami.twig.expr.tokens.TERMINAL,
 		ami.twig.expr.tokens.TERMINAL,
 		ami.twig.expr.tokens.TERMINAL,
@@ -1209,7 +1213,7 @@ ami.twig.expr.Compiler = function(code, line) {
 	{
 		var node = this._parseFunVar(isFilter);
 
-		if(node && node.nodeType !== ami.twig.expr.tokens.TERMINAL)
+		if(node)
 		{
 			/*-------------------------------------------------*/
 
@@ -1273,18 +1277,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			node = new ami.twig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
 
-			/*-------------------------------------------------*/
-			/*                                                 */
-			/*-------------------------------------------------*/
-
-			if(node.nodeValue === 'true'
-			   ||
-			   node.nodeValue === 'false'
-			 ) {
-				node.nodeType = ami.twig.expr.tokens.TERMINAL;
-
-				return node;
-			}
+			node.list = [];
 
 			/*-------------------------------------------------*/
 			/*                                                 */
@@ -1314,8 +1307,6 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			else if(this.tokenizer.checkType(ami.twig.expr.tokens.LB1))
 			{
-				node.list = [];
-
 				while(this.tokenizer.checkType(ami.twig.expr.tokens.LB1))
 				{
 					this.tokenizer.next();
@@ -1344,8 +1335,6 @@ ami.twig.expr.Compiler = function(code, line) {
 				node.nodeType = isFilter ? ami.twig.expr.tokens.FUN
 				                         : ami.twig.expr.tokens.VAR
 				;
-
-				node.list = [];
 			}
 
 			/*-------------------------------------------------*/
