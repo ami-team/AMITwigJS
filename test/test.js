@@ -84,8 +84,16 @@ console.log(ami.twig.stdlib.isEmpty(''));
 console.log(ami.twig.stdlib.isEmpty([]));
 console.log(ami.twig.stdlib.isEmpty({}));
 
-var x = null;
+console.log(' HELLO WORLD ! '.trim().toLowerCase().replace(/^\S/g, function(c) {
 
-console.log(Object.prototype.toString.call(x));
+				return c.toUpperCase();
+			})
+);
+
+console.log('HELLO WORLD !'.trim().toLowerCase().replace(/(?:^|\s)\S/g, function(c) {
+
+				return c.toUpperCase();
+			})
+);
 
 /*-------------------------------------------------------------------------*/

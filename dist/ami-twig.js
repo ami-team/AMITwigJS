@@ -2583,7 +2583,22 @@ ami.twig.stdlib = {
 	{
 		if(this.isString(s))
 		{
-			return s.toLowerCase().replace(/(?:^|\s)\S/g, function(c) {
+			return s.trim().toLowerCase().replace(/^\S/g, function(c) {
+
+				return c.toUpperCase();
+			});
+		}
+
+		return '';
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	'title': function(s)
+	{
+		if(this.isString(s))
+		{
+			return s.trim().toLowerCase().replace(/(?:^|\s)\S/g, function(c) {
 
 				return c.toUpperCase();
 			});
@@ -2799,6 +2814,13 @@ ami.twig.stdlib = {
 	'json_encode': function(x)
 	{
 		return JSON.stringify(x, null, 2);
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	'json_path': function(x, path)
+	{
+		return JSPath.apply(path, x);
 	},
 
 	/*-----------------------------------------------------------------*/
