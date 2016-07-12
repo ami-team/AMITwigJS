@@ -962,10 +962,10 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	this._parseFunVar = function(isFilter)
 	{
-		var left = this.parseFoo(isFilter), right, node;
+		var left = this.__parseFunVar(isFilter), right, node;
 
 		/*---------------------------------------------------------*/
-		/* FunVar : Foo '.' FunVar                                 */
+		/* _FunVar : __FunVar '.' _FunVar                          */
 		/*---------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.DOT))
@@ -982,7 +982,7 @@ ami.twig.expr.Compiler = function(code, line) {
 		}
 
 		/*---------------------------------------------------------*/
-		/*        | Foo                                            */
+		/*        | __FunVar                                       */
 		/*---------------------------------------------------------*/
 
 		return left;
@@ -990,7 +990,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseFoo = function(isFilter)
+	this.__parseFunVar = function(isFilter)
 	{
 		var node;
 
@@ -1002,7 +1002,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			node.list = [];
 
 			/*-------------------------------------------------*/
-			/*                                                 */
+			/* __FunVar : SID '(' Singlets ')'                 */
 			/*-------------------------------------------------*/
 
 			/**/ if(this.tokenizer.checkType(ami.twig.expr.tokens.LP))
@@ -1024,7 +1024,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			}
 
 			/*-------------------------------------------------*/
-			/*                                                 */
+			/*          | SID ('[' Singlet ']')+               */
 			/*-------------------------------------------------*/
 
 			else if(this.tokenizer.checkType(ami.twig.expr.tokens.LB1))
@@ -1049,7 +1049,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			}
 
 			/*-------------------------------------------------*/
-			/*                                                 */
+			/*          | SID                                  */
 			/*-------------------------------------------------*/
 
 			else
