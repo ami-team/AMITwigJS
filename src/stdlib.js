@@ -228,6 +228,13 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
+	'slice': function(x, idx1, idx2)
+	{
+		return (this.isArray(x) || this.isString(x)) ? x.slice(idx1, idx2) : '';
+	},
+
+	/*-----------------------------------------------------------------*/
+
 	'sort': function(x)
 	{
 		return this.isArray(x) ? x.sort() : [];
@@ -235,16 +242,16 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'join': function(x, sep)
+	'reverse': function(x)
 	{
-		return this.isArray(x) ? x.join(sep) : '';
+		return this.isArray(x) ? x.reverse() : [];
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'slice': function(x, idx1, idx2)
+	'join': function(x, sep)
 	{
-		return this.isArray(x) ? x.slice(idx1, idx2) : [];
+		return this.isArray(x) ? x.join(sep) : '';
 	},
 
 	/*-----------------------------------------------------------------*/
