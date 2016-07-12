@@ -2844,7 +2844,7 @@ ami.twig.stdlib = {
 
 	'json_path': function(x, path)
 	{
-		return JSPath.apply(path, x);
+		return JSPath ? JSPath.apply(path, x) : [];
 	},
 
 	/*-----------------------------------------------------------------*/
