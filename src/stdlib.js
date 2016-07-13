@@ -558,6 +558,24 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
+	'filter_round': function(x, mode)
+	{
+		/**/ if(mode === 'ceil')
+		{
+			return Math.ceil(x);
+		}
+		else if(mode === 'floor')
+		{
+			return Math.floor(x);
+		}
+		else
+		{
+			return Math.round(x);
+		}
+	},
+
+	/*-----------------------------------------------------------------*/
+
 	'min': function()
 	{
 		/*---------------------------------------------------------*/
@@ -622,24 +640,6 @@ ami.twig.stdlib = {
 		/*---------------------------------------------------------*/
 
 		return result;
-	},
-
-	/*-----------------------------------------------------------------*/
-
-	'filter_round': function(x, mode)
-	{
-		/**/ if(mode === 'ceil')
-		{
-			return Math.ceil(x);
-		}
-		else if(mode === 'floor')
-		{
-			return Math.floor(x);
-		}
-		else
-		{
-			return Math.round(x);
-		}
 	},
 
 	/*-----------------------------------------------------------------*/
