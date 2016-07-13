@@ -427,7 +427,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'_escape_map1': {
+	'_internal_escape_map1': {
 		'<': '&lt;',
 		'>': '&gt;',
 		'"': '&quot;',
@@ -436,7 +436,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'_escape_map2': {
+	'_internal_escape_map2': {
 		'\\': '\\\\',
 		'\n': '\\n',
 		'\"': '\\\"',
@@ -457,7 +457,7 @@ ami.twig.stdlib = {
 				||
 				mode === 'html_attr'
 			 ) {
-			 	_map = this._escape_map1;
+			 	_map = this._internal_escape_map1;
 
 			 	return s.replace(/[<>"&]/g, function(s) {
 
@@ -466,7 +466,7 @@ ami.twig.stdlib = {
 			}
 			else if(mode === 'js')
 			{
-			 	_map = this._escape_map2;
+			 	_map = this._internal_escape_map2;
 
 				return s.replace(/[\\\n"']/g, function(s) {
 
