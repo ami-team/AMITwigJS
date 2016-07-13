@@ -1221,15 +1221,20 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			/*-------------------------------------------------*/
 
-			if(temp.nodeType === ami.twig.expr.tokens.FUN && temp.nodeValue in ami.twig.stdlib)
+			if(temp.nodeType === ami.twig.expr.tokens.FUN)
 			{
 				if(isFilter)
 				{
-					temp.nodeValue = 'ami.twig.stdlib.filter_' + temp.nodeValue;
+					temp.nodeValue = 'filter_' + temp.nodeValue;
+				}
+
+				if(temp.nodeValue in ami.twig.stdlib)
+				{
+					temp.nodeValue = 'ami.twig.stdlib.' + temp.nodeValue;
 				}
 				else
 				{
-					temp.nodeValue = 'ami.twig.stdlib.' + temp.nodeValue;
+					temp.nodeValue = ((((((('_.'))))))) + temp.nodeValue;
 				}
 			}
 			else
@@ -2661,7 +2666,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'_escape_map1': {
+	'_internal_escape_map1': {
 		'<': '&lt;',
 		'>': '&gt;',
 		'"': '&quot;',
@@ -2670,7 +2675,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'_escape_map2': {
+	'_internal_escape_map2': {
 		'\\': '\\\\',
 		'\n': '\\n',
 		'\"': '\\\"',
@@ -2691,7 +2696,7 @@ ami.twig.stdlib = {
 				||
 				mode === 'html_attr'
 			 ) {
-			 	_map = this._escape_map1;
+			 	_map = this._internal_escape_map1;
 
 			 	return s.replace(/[<>"&]/g, function(s) {
 
@@ -2700,7 +2705,7 @@ ami.twig.stdlib = {
 			}
 			else if(mode === 'js')
 			{
-			 	_map = this._escape_map2;
+			 	_map = this._internal_escape_map2;
 
 				return s.replace(/[\\\n"']/g, function(s) {
 
