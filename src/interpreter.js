@@ -220,7 +220,14 @@ ami.twig.expr.interpreter = {
 				left = this._getJS(node.nodeLeft);
 				right = this._getJS(node.nodeRight);
 
-				return left + '.' + right;
+				if(node.nodeValue === '.')
+				{
+					return left + '.' + right;
+				}
+				else
+				{
+					return left + '[' + right + ']';
+				}
 
 			/*-------------------------------------------------*/
 			/* FLDIV                                           */

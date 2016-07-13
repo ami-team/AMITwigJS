@@ -107,8 +107,8 @@ ami.twig.expr.tokens = {
 	RB1: 134,
 	LB2: 135,
 	RB2: 136,
-	TERMINAL: 137,
-	SID: 138,
+	SID: 137,
+	TERMINAL: 138,
 
 	/*-----------------------------------------------------------------*/
 	/* VIRTUAL TOKENS                                                  */
@@ -761,7 +761,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	this.parseNotPlusMinus = function()
 	{
-		var left = null, right, node;
+		var right, node;
 
 		/*---------------------------------------------------------*/
 		/* NotPlusMinus : ('not' | '-' | '+') Y                    */
@@ -774,7 +774,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			right = this.parseX();
 
-			node.nodeLeft = left;
+			node.nodeLeft = null;
 			node.nodeRight = right;
 
 			return node;
@@ -794,7 +794,7 @@ ami.twig.expr.Compiler = function(code, line) {
 		var node;
 
 		/*---------------------------------------------------------*/
-		/* X : Group | Array | Object | FunVar | Terminal          */
+		/* X : Group | Array | Object | QExpr | Terminal           */
 		/*---------------------------------------------------------*/
 
 		if((node = this.parseGroup())) {
@@ -809,7 +809,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			return node;
 		}
 
-		if((node = this.parseFunVar())) {
+		if((node = this.parseQExpr())) {
 			return node;
 		}
 
@@ -863,7 +863,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	this.parseArray = function()
 	{
-		var node, L;
+		var node, list;
 
 		/*---------------------------------------------------------*/
 		/* Array : '[' Singlets ']'                                */
@@ -873,14 +873,14 @@ ami.twig.expr.Compiler = function(code, line) {
 		{
 			this.tokenizer.next();
 
-			L = this._parseSinglets();
+			list = this._parseSinglets();
 
 			if(this.tokenizer.checkType(ami.twig.expr.tokens.RB1))
 			{
 				this.tokenizer.next();
 
 				node = new ami.twig.expr.Node(ami.twig.expr.tokens.LST, 'Array');
-				node.list = L;
+				node.list = list;
 				return node;
 			}
 			else
@@ -898,7 +898,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	this.parseObject = function()
 	{
-		var node, D;
+		var node, dict;
 
 		/*---------------------------------------------------------*/
 		/* Object : '{' Doublets '}'                               */
@@ -908,14 +908,14 @@ ami.twig.expr.Compiler = function(code, line) {
 		{
 			this.tokenizer.next();
 
-			D = this._parseDoublets();
+			dict = this._parseDoublets();
 
 			if(this.tokenizer.checkType(ami.twig.expr.tokens.RB2))
 			{
 				this.tokenizer.next();
 
 				node = new ami.twig.expr.Node(ami.twig.expr.tokens.DIC, 'Object');
-				node.dict = D;
+				node.dict = dict;
 				return node;
 			}
 			else
@@ -931,9 +931,9 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseFunVar = function(isFilter)
+	this.parseQExpr = function(isFilter)
 	{
-		var node = this._parseFunVar(isFilter);
+		var node = this._parseQExpr(isFilter);
 
 		if(node)
 		{
@@ -972,20 +972,20 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	/*-----------------------------------------------------------------*/
 
-	this._parseFunVar = function(isFilter)
+	this._parseQExpr = function(isFilter)
 	{
-		var left = this.__parseFunVar(isFilter), right, node;
+		var left = this.parseFunVar(isFilter), right, node;
 
 		/*---------------------------------------------------------*/
-		/* _FunVar : __FunVar '.' _FunVar                          */
+		/* _QExpr : FunVar '.' _QExpr                              */
 		/*---------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.DOT))
 		{
-			node = new ami.twig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
+			node = new ami.twig.expr.Node(this.tokenizer.peekType(), '.');
 			this.tokenizer.next();
 
-			right = this._parseFunVar(isFilter);
+			right = this._parseQExpr(isFilter);
 
 			node.nodeLeft = left;
 			node.nodeRight = right;
@@ -994,7 +994,34 @@ ami.twig.expr.Compiler = function(code, line) {
 		}
 
 		/*---------------------------------------------------------*/
-		/*        | __FunVar                                       */
+		/* _QExpr : FunVar '[' Filter ']'                          */
+		/*---------------------------------------------------------*/
+
+		if(this.tokenizer.checkType(ami.twig.expr.tokens.LB1))
+		{
+			this.tokenizer.next();
+
+			right = this.parseFilter();
+
+			if(this.tokenizer.checkType(ami.twig.expr.tokens.RB1))
+			{
+				this.tokenizer.next();
+
+				node = new ami.twig.expr.Node(ami.twig.expr.tokens.DOT, '[]');
+
+				node.nodeLeft = left;
+				node.nodeRight = right;
+
+				left = node;
+			}
+			else
+			{
+				throw 'syntax error, line `' + this.line + '`, `]` expected';
+			}
+		}
+
+		/*---------------------------------------------------------*/
+		/*        | FunVar                                         */
 		/*---------------------------------------------------------*/
 
 		return left;
@@ -1002,19 +1029,17 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	/*-----------------------------------------------------------------*/
 
-	this.__parseFunVar = function(isFilter)
+	this.parseFunVar = function(isFilter)
 	{
 		var node;
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.SID))
 		{
-			node = new ami.twig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
+			node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, this.tokenizer.peekToken());
 			this.tokenizer.next();
 
-			node.list = [];
-
 			/*-------------------------------------------------*/
-			/* __FunVar : SID '(' Singlets ')'                 */
+			/* FunVar : SID '(' Singlets ')'                   */
 			/*-------------------------------------------------*/
 
 			/**/ if(this.tokenizer.checkType(ami.twig.expr.tokens.LP))
@@ -1026,8 +1051,6 @@ ami.twig.expr.Compiler = function(code, line) {
 				if(this.tokenizer.checkType(ami.twig.expr.tokens.RP))
 				{
 					this.tokenizer.next();
-
-					node.nodeType = ami.twig.expr.tokens.FUN;
 				}
 				else
 				{
@@ -1036,32 +1059,7 @@ ami.twig.expr.Compiler = function(code, line) {
 			}
 
 			/*-------------------------------------------------*/
-			/*          | SID ('[' Singlet ']')+               */
-			/*-------------------------------------------------*/
-
-			else if(this.tokenizer.checkType(ami.twig.expr.tokens.LB1))
-			{
-				while(this.tokenizer.checkType(ami.twig.expr.tokens.LB1))
-				{
-					this.tokenizer.next();
-
-					this._parseSinglet(node.list);
-
-					if(this.tokenizer.checkType(ami.twig.expr.tokens.RB1))
-					{
-						this.tokenizer.next();
-
-						node.nodeType = ami.twig.expr.tokens.VAR;
-					}
-					else
-					{
-						throw 'syntax error, line `' + this.line + '`, `]` expected';
-					}
-				}
-			}
-
-			/*-------------------------------------------------*/
-			/*          | SID                                  */
+			/*        | SID                                    */
 			/*-------------------------------------------------*/
 
 			else
@@ -1069,6 +1067,8 @@ ami.twig.expr.Compiler = function(code, line) {
 				node.nodeType = isFilter ? ami.twig.expr.tokens.FUN
 				                         : ami.twig.expr.tokens.VAR
 				;
+
+				node.list = [];
 			}
 
 			/*-------------------------------------------------*/
