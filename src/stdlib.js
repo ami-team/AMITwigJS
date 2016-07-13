@@ -196,7 +196,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'length': function(x)
+	'filter_length': function(x)
 	{
 		if(this.isArray(x)
 		   ||
@@ -215,28 +215,28 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'first': function(x)
+	'filter_first': function(x)
 	{
 		return (this.isArray(x) || this.isString(x)) && x.length > 0 ? x[0x0000000000] : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'last': function(x)
+	'filter_last': function(x)
 	{
 		return (this.isArray(x) || this.isString(x)) && x.length > 0 ? x[x.length - 1] : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'slice': function(x, idx1, idx2)
+	'filter_slice': function(x, idx1, idx2)
 	{
 		return (this.isArray(x) || this.isString(x)) ? x.slice(idx1, idx2) : null;
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'merge': function(x, y)
+	'filter_merge': function(x, y)
 	{
 		var i;
 
@@ -270,28 +270,28 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'sort': function(x)
+	'filter_sort': function(x)
 	{
 		return this.isArray(x) ? x.sort() : [];
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'reverse': function(x)
+	'filter_reverse': function(x)
 	{
 		return this.isArray(x) ? x.reverse() : [];
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'join': function(x, sep)
+	'filter_join': function(x, sep)
 	{
 		return this.isArray(x) ? x.join(sep) : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'keys': function(x)
+	'filter_keys': function(x)
 	{
 		return this.isObject(x) ? Object.keys(x) : [];
 	},
@@ -360,7 +360,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'default': function(s1, s2)
+	'filter_default': function(s1, s2)
 	{
 		/**/ if(s1)
 		{
@@ -376,21 +376,21 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'lower': function(s)
+	'filter_lower': function(s)
 	{
 		return this.isString(s) ? s.toLowerCase() : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'upper': function(s)
+	'filter_upper': function(s)
 	{
 		return this.isString(s) ? s.toUpperCase() : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'capitalize': function(s)
+	'filter_capitalize': function(s)
 	{
 		if(this.isString(s))
 		{
@@ -405,7 +405,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'title': function(s)
+	'filter_title': function(s)
 	{
 		if(this.isString(s))
 		{
@@ -420,7 +420,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'trim': function(s)
+	'filter_trim': function(s)
 	{
 		return this.isString(s) ? s.trim() : '';
 	},
@@ -445,7 +445,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'escape': function(s, mode)
+	'filter_escape': function(s, mode)
 	{
 		if(this.isString(s))
 		{
@@ -478,28 +478,28 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'url_encode': function(s)
+	'filter_url_encode': function(s)
 	{
 		return this.isString(s) ? encodeURIComponent(s) : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'nl2br': function(s)
+	'filter_nl2br': function(s)
 	{
 		return this.isString(s) ? s.replace(/\n/g, '<br/>') : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'raw': function(s)
+	'filter_raw': function(s)
 	{
 		return this.isString(s) ? s : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'replace': function(s, dict)
+	'filter_replace': function(s, dict)
 	{
 		if(this.isString(s) && this.isObject(dict))
 		{
@@ -542,7 +542,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'split': function(s, sep, max)
+	'filter_split': function(s, sep, max)
 	{
 		return this.isString(s) ? s.split(sep, max) : [];
 	},
@@ -551,7 +551,7 @@ ami.twig.stdlib = {
 	/* NUMBERS                                                         */
 	/*-----------------------------------------------------------------*/
 
-	'abs': function(x)
+	'filter_abs': function(x)
 	{
 		return Math.abs(x);
 	},
@@ -626,7 +626,7 @@ ami.twig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'round': function(x, mode)
+	'filter_round': function(x, mode)
 	{
 		/**/ if(mode === 'ceil')
 		{
@@ -646,14 +646,14 @@ ami.twig.stdlib = {
 	/* JSON                                                            */
 	/*-----------------------------------------------------------------*/
 
-	'json_encode': function(x)
+	'filter_json_encode': function(x)
 	{
 		return JSON.stringify(x, null, 2);
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'json_jspath': function(x, path)
+	'filter_json_jspath': function(x, path)
 	{
 		return typeof JSPath !== 'undefined' ? JSPath.apply(path, x) : [];
 	},
