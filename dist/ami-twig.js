@@ -2681,22 +2681,28 @@ ami.twig.stdlib = {
 	{
 		if(this.isString(s))
 		{
+			var _map;
+
 			/**/ if(!mode
 			        ||
 				mode === 'html'
 				||
 				mode === 'html_attr'
 			 ) {
+			 	_map = this._escape_map1;
+
 			 	return s.replace(/[<>"&]/g, function(s) {
 
-					return ami.twig.stdlib._escape_map1[s];
+					return _map[s];
 				});
 			}
 			else if(mode === 'js')
 			{
+			 	_map = this._escape_map2;
+
 				return s.replace(/[\\\n"']/g, function(s) {
 
-					return ami.twig.stdlib._escape_map2[s];
+					return _map[s];
 				});
 			}
 			else if(mode === 'url')
