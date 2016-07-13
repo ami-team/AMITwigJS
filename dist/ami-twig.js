@@ -1221,7 +1221,10 @@ ami.twig.expr.Compiler = function(code, line) {
 		{
 			/*-------------------------------------------------*/
 
-			var temp = (node.nodeType === ami.twig.expr.tokens.DOT) ? node.nodeLeft : node;
+			var temp = (node.nodeType === ami.twig.expr.tokens.DOT) ? node
+			                                                            .nodeLeft
+			                                                        : node
+			;
 
 			/*-------------------------------------------------*/
 
@@ -1319,7 +1322,7 @@ ami.twig.expr.Compiler = function(code, line) {
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.SID))
 		{
 			node = isFilter ? new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'filter_' + this.tokenizer.peekToken())
-			                : new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, this.tokenizer.peekToken())
+			                : new ami.twig.expr.Node(ami.twig.expr.tokens.FUN,             this.tokenizer.peekToken())
 			;
 
 			this.tokenizer.next();
