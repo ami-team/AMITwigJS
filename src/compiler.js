@@ -974,10 +974,10 @@ ami.twig.expr.Compiler = function(code, line) {
 
 	this._parseQExpr = function(isFilter)
 	{
-		var left = this.parseFunVar(isFilter), right, node;
+		var left = this.__parseQExpr(isFilter), right, node;
 
 		/*---------------------------------------------------------*/
-		/* _QExpr : FunVar '.' _QExpr                              */
+		/* _QExpr : __QExpr '.' _QExpr                             */
 		/*---------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.DOT))
@@ -994,7 +994,20 @@ ami.twig.expr.Compiler = function(code, line) {
 		}
 
 		/*---------------------------------------------------------*/
-		/* _QExpr : FunVar '[' Filter ']'                          */
+		/*        | __QExpr                                        */
+		/*---------------------------------------------------------*/
+
+		return left;
+	};
+
+	/*-----------------------------------------------------------------*/
+
+	this.__parseQExpr = function(isFilter)
+	{
+		var left = this.parseFunVar(isFilter), right, node;
+
+		/*---------------------------------------------------------*/
+		/* __QExpr : FunVar '[' Filter ']'                          */
 		/*---------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.LB1))
@@ -1021,7 +1034,7 @@ ami.twig.expr.Compiler = function(code, line) {
 		}
 
 		/*---------------------------------------------------------*/
-		/*        | FunVar                                         */
+		/*         | FunVar                                        */
 		/*---------------------------------------------------------*/
 
 		return left;
