@@ -669,6 +669,6 @@ ami.twig.stdlib = {
 
 /*-------------------------------------------------------------------------*/
 
-ami.twig.stdlib.e = ami.twig.stdlib.escape;
+ami.twig.stdlib.filter_e = ami.twig.stdlib.filter_escape;
 
 /*-------------------------------------------------------------------------*/
