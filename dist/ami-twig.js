@@ -1226,7 +1226,7 @@ ami.twig.expr.Compiler = function(code, line) {
 				temp.nodeValue = 'filter_' + temp.nodeValue;
 			}
 
-			if(temp.nodeValue in ami.twig.stdlib)
+			if(temp.nodeType === ami.twig.expr.tokens.FUN && temp.nodeValue in ami.twig.stdlib)
 			{
 				temp.nodeValue = 'ami.twig.stdlib.' + temp.nodeValue;
 			}
