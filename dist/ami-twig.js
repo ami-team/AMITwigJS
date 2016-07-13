@@ -1158,7 +1158,9 @@ ami.twig.expr.Compiler = function(code, line) {
 				this.tokenizer.next();
 
 				node = new ami.twig.expr.Node(ami.twig.expr.tokens.LST, 'Array');
+
 				node.list = list;
+
 				return node;
 			}
 			else
@@ -1193,7 +1195,9 @@ ami.twig.expr.Compiler = function(code, line) {
 				this.tokenizer.next();
 
 				node = new ami.twig.expr.Node(ami.twig.expr.tokens.DIC, 'Object');
+
 				node.dict = dict;
+
 				return node;
 			}
 			else
@@ -1471,7 +1475,7 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			if(this.tokenizer.checkType(ami.twig.expr.tokens.RANGE))
 			{
-				node = new ami.twig.expr.Node(((ami.twig.expr.tokens.RANGE)), this.tokenizer.peekToken());
+				node = new ami.twig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 				this.tokenizer.next();
 
 				if(this.tokenizer.checkType(ami.twig.expr.tokens.TERMINAL))
