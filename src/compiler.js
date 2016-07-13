@@ -384,7 +384,7 @@ ami.twig.expr.Compiler = function(code, line) {
 		{
 			this.tokenizer.next();
 
-			node = this.parseFunVar(true);
+			node = this.parseQExpr(true);
 
 			for(temp = node; temp.nodeType === ami.twig.expr.tokens.DOT; temp = temp.nodeRight); temp.list.unshift(left);
 
@@ -947,21 +947,9 @@ ami.twig.expr.Compiler = function(code, line) {
 
 			/*-------------------------------------------------*/
 
-			if(temp.nodeType === ami.twig.expr.tokens.FUN)
+			if(temp.nodeType === ami.twig.expr.tokens.FUN && temp.nodeValue in ami.twig.stdlib)
 			{
-				if(isFilter)
-				{
-					temp.nodeValue = 'filter_' + temp.nodeValue;
-				}
-
-				if(temp.nodeValue in ami.twig.stdlib)
-				{
-					temp.nodeValue = 'ami.twig.stdlib.' + temp.nodeValue;
-				}
-				else
-				{
-					temp.nodeValue = ((((((('_.'))))))) + temp.nodeValue;
-				}
+				temp.nodeValue = 'ami.twig.stdlib.' + temp.nodeValue;
 			}
 			else
 			{
@@ -1052,7 +1040,10 @@ ami.twig.expr.Compiler = function(code, line) {
 
 		if(this.tokenizer.checkType(ami.twig.expr.tokens.SID))
 		{
-			node = new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, this.tokenizer.peekToken());
+			node = isFilter ? new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, 'filter_' + this.tokenizer.peekToken())
+			                : new ami.twig.expr.Node(ami.twig.expr.tokens.FUN, this.tokenizer.peekToken())
+			;
+
 			this.tokenizer.next();
 
 			/*-------------------------------------------------*/

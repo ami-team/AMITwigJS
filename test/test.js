@@ -66,7 +66,7 @@ console.log(ami.twig.engine.render('{% for i in "hello" %} {{i}} {% endfor %}', 
 
 console.log(ami.twig.engine.render('{% for i in {"aa": 1, "bb": 3, "cc": 5} %} {{i}} {% endfor %}', dict));
 */
-
+/*
 console.log(ami.twig.engine.render('{# this is a comment #}{% for i in [4,5,6] %} {{i}} {% if loop.first %} (first) {% endif %} {% endfor %}', dict));
 
 console.log(ami.twig.expr.cache.eval('t1', 1, dict));
@@ -90,5 +90,9 @@ console.log(ami.twig.engine.render('{{ " \\" \' \\n \\\\ " | escape("js") }}', d
 
 
 console.log(ami.twig.engine.render('{{ "- 123 -" | match("/123/g") }}', dict));
+*/
+
+console.log(ami.twig.expr.interpreter.getJS(new ami.twig.expr.Compiler('s | escape', 1)));
+
 
 /*-------------------------------------------------------------------------*/
