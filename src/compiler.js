@@ -867,7 +867,7 @@ ami.twig.expr.Compiler = function(code, line) {
 		var left = this.parseX(isFilter), right, node;
 
 		/*---------------------------------------------------------*/
-		/* parseDot3 : X '[' Filter ']'                            */
+		/* parseDot3 : X ('[' Filter ']')*                         */
 		/*---------------------------------------------------------*/
 
 		while(this.tokenizer.checkType(ami.twig.expr.tokens.LB1))
