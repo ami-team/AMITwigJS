@@ -870,7 +870,7 @@ ami.twig.expr.Compiler = function(code, line) {
 		/* parseDot3 : X '[' Filter ']'                            */
 		/*---------------------------------------------------------*/
 
-		if(this.tokenizer.checkType(ami.twig.expr.tokens.LB1))
+		while(this.tokenizer.checkType(ami.twig.expr.tokens.LB1))
 		{
 			this.tokenizer.next();
 
