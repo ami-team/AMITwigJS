@@ -351,7 +351,10 @@ ami.twig.stdlib = {
 						regex.substring(idx2 + 1  /**/)
 					).test(s);
 				}
-				catch(err) { }
+				catch(err)
+				{
+					/* IGNORE */
+				}
 			}
 		}
 
