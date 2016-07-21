@@ -2298,6 +2298,20 @@ amiTwig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
+	'isNumber': function(x)
+	{
+		return Object.prototype.toString.call(x) === '[object Number]';
+	},
+
+	/*-----------------------------------------------------------------*/
+
+	'isString': function(x)
+	{
+		return Object.prototype.toString.call(x) === '[object String]';
+	},
+
+	/*-----------------------------------------------------------------*/
+
 	'isArray': function(x)
 	{
 		return Object.prototype.toString.call(x) === '[object Array]';
@@ -2312,29 +2326,15 @@ amiTwig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'isString': function(x)
-	{
-		return Object.prototype.toString.call(x) === '[object String]';
-	},
-
-	/*-----------------------------------------------------------------*/
-
-	'isNumber': function(x)
-	{
-		return Object.prototype.toString.call(x) === '[object Number]';
-	},
-
-	/*-----------------------------------------------------------------*/
-
 	'isIterable': function(x)
 	{
 		var typeName = Object.prototype.toString.call(x);
 
-		return typeName === '[object Array]'
+		return typeName === '[object String]'
+		       ||
+		       typeName === '[object Array]'
 		       ||
 		       typeName === '[object Object]'
-		       ||
-		       typeName === '[object String]'
 		;
 	},
 
@@ -2439,9 +2439,9 @@ amiTwig.stdlib = {
 
 	'filter_length': function(x)
 	{
-		if(this.isArray(x)
+		if(this.isString(x)
 		   ||
-		   this.isString(x)
+		   this.isArray(x)
 		 ) {
 		 	return x.length;
 		}
@@ -2458,52 +2458,72 @@ amiTwig.stdlib = {
 
 	'filter_first': function(x)
 	{
-		return (this.isArray(x) || this.isString(x)) && x.length > 0 ? x[0x0000000000] : '';
+		return (this.isString(x) || this.isArray(x)) && x.length > 0 ? x[0x0000000000] : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	'filter_last': function(x)
 	{
-		return (this.isArray(x) || this.isString(x)) && x.length > 0 ? x[x.length - 1] : '';
+		return (this.isString(x) || this.isArray(x)) && x.length > 0 ? x[x.length - 1] : '';
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	'filter_slice': function(x, idx1, idx2)
 	{
-		return (this.isArray(x) || this.isString(x)) ? x.slice(idx1, idx2) : null;
+		return (this.isString(x) || this.isArray(x)) ? x.slice(idx1, idx2) : null;
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'filter_merge': function(x, y)
+	'filter_merge': function()
 	{
-		var i;
+		var i, j;
 
-		if(this.isArray(x) && this.isArray(y))
+		if(arguments.length > 1)
 		{
-			var L = [];
+			if(this.isString(arguments[0]))
+			{
+				var s = '';
 
-			Array.prototype.push.apply(L, x);
-			Array.prototype.push.apply(L, y);
+				for(i in arguments)
+				{
+					s += arguments[i];
+				}
 
-			return L;
-		}
+				return s;
+			}
 
-		if(this.isObject(x) && this.isObject(y))
-		{
-			var D = {};
+			if(this.isArray(arguments[0]))
+			{
+				var L = []
 
-			for(i in x) D[i] = x[i];
-			for(i in x) D[i] = y[i];
+				for(i in arguments)
+				{
+					for(j in arguments[i])
+					{
+						L.push(arguments[i][j]);
+					}
+				}
 
-			return D;
-		}
+				return L;
+			}
 
-		if(this.isString(x) && this.isString(y))
-		{
-			return x + y;
+			if(this.isObject(arguments[0]))
+			{
+				var D = {}
+
+				for(i in arguments)
+				{
+					for(j in arguments[i])
+					{
+						D[j] = arguments[i][j];
+					}
+				}
+
+				return D;
+			}
 		}
 
 		return null;
@@ -2575,11 +2595,11 @@ amiTwig.stdlib = {
 
 	'match': function(s, regex)
 	{
-		if(this.isString(  s  )
+		if(this.isString(((s)))
 		   &&
 		   this.isString(regex)
 		 ) {
-			var idx1 = regex.indexOf('/');
+			var idx1 = regex.  indexOf  ('/');
 			var idx2 = regex.lastIndexOf('/');
 
 			if(idx1 === 0 || idx1 < idx2)
@@ -2890,6 +2910,32 @@ amiTwig.stdlib = {
 		/*---------------------------------------------------------*/
 
 		return result;
+	},
+
+	/*-----------------------------------------------------------------*/
+	/* RANDOM                                                          */
+	/*-----------------------------------------------------------------*/
+
+	'random': function(x)
+	{
+		var y = Math.random();
+
+		/**/ if(this.isString(x))
+		{
+			return x[x.length * y];
+		}
+		else if(this.isArray(x))
+		{
+			return x[x.length * y];
+		}
+		else if(this.isNumber(x))
+		{
+			return Math.floor(x * y);
+		}
+		else
+		{
+			return Math.floor(1 * y);
+		}
 	},
 
 	/*-----------------------------------------------------------------*/

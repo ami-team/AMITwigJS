@@ -92,6 +92,13 @@ console.log(amiTwig.engine.render('{{ " \\" \' \\n \\\\ " | escape("js") }}', di
 console.log(amiTwig.engine.render('{{ "- 123 -" | match("/123/g") }}', dict));
 */
 
-console.log(amiTwig.expr.interpreter.getJS(new amiTwig.expr.Compiler('s | escape', 1)));
+//console.log(amiTwig.expr.interpreter.getJS(new amiTwig.expr.Compiler('s | escape', 1)));
+
+
+console.log(amiTwig.stdlib.filter_merge([1,2], [3,4], [5,6]));
+
+console.log(amiTwig.stdlib.filter_merge({'1': 2}, {'3': 4}, {'5': 6}));
+
+console.log(amiTwig.stdlib.filter_merge('1,2', '3,4', '5,6'));
 
 /*-------------------------------------------------------------------------*/
