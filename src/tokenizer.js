@@ -7,7 +7,7 @@
  */
 
 /*-------------------------------------------------------------------------*/
-/* ami.twig.tokenizer                                                      */
+/* amiTwig.tokenizer                                                       */
 /*-------------------------------------------------------------------------*/
 
 /**
@@ -15,7 +15,7 @@
  * @namespace ami/twig/tokenizer
  */
 
-ami.twig.tokenizer = {
+amiTwig.tokenizer = {
 	/*-----------------------------------------------------------------*/
 
 	/**
@@ -33,7 +33,7 @@ ami.twig.tokenizer = {
 	  * var EQUAL = 1;
 	  * var NUMBER = 2;
 	  *
-	  * var result = ami.twig.tokenizer.tokenize(
+	  * var result = amiTwig.tokenizer.tokenize(
 	  * 	'1+2=3',
 	  *	1,
 	  *	[' ', '\t'],

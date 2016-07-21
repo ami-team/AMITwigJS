@@ -7,7 +7,7 @@
  */
 
 /*-------------------------------------------------------------------------*/
-/* ami.twig.expr.interpreter                                               */
+/* amiTwig.expr.interpreter                                                */
 /*-------------------------------------------------------------------------*/
 
 /**
@@ -16,7 +16,7 @@
  * @namespace ami/twig/expr/interpreter
  */
 
-ami.twig.expr.interpreter = {
+amiTwig.expr.interpreter = {
 	/*-----------------------------------------------------------------*/
 
 	_getJS: function(node)
@@ -36,7 +36,7 @@ ami.twig.expr.interpreter = {
 			/* LST                                             */
 			/*-------------------------------------------------*/
 
-			case ami.twig.expr.tokens.LST:
+			case amiTwig.expr.tokens.LST:
 		 		/*-----------------------------------------*/
 
 				L = [];
@@ -54,7 +54,7 @@ ami.twig.expr.interpreter = {
 			/* DIC                                             */
 			/*-------------------------------------------------*/
 
-			case ami.twig.expr.tokens.DIC:
+			case amiTwig.expr.tokens.DIC:
 		 		/*-----------------------------------------*/
 
 				L = [];
@@ -72,7 +72,7 @@ ami.twig.expr.interpreter = {
 			/* FUN                                             */
 			/*-------------------------------------------------*/
 
-			case ami.twig.expr.tokens.FUN:
+			case amiTwig.expr.tokens.FUN:
 		 		/*-----------------------------------------*/
 
 				L = [];
@@ -90,7 +90,7 @@ ami.twig.expr.interpreter = {
 			/* VAR                                             */
 			/*-------------------------------------------------*/
 
-			case ami.twig.expr.tokens.VAR:
+			case amiTwig.expr.tokens.VAR:
 		 		/*-----------------------------------------*/
 
 				L = [];
@@ -108,7 +108,7 @@ ami.twig.expr.interpreter = {
 			/* TERMINAL                                        */
 			/*-------------------------------------------------*/
 
-			case ami.twig.expr.tokens.TERMINAL:
+			case amiTwig.expr.tokens.TERMINAL:
 
 				return node.nodeValue;
 
@@ -116,29 +116,29 @@ ami.twig.expr.interpreter = {
 			/* IS                                              */
 			/*-------------------------------------------------*/
 
-			case ami.twig.expr.tokens.IS:
+			case amiTwig.expr.tokens.IS:
 
 				left = this._getJS(node.nodeLeft);
 
 				switch(node.nodeRight.nodeType)
 				{
-					case ami.twig.expr.tokens.DEFINED:
-						return 'ami.twig.stdlib.isDefined(' + left + ')';
+					case amiTwig.expr.tokens.DEFINED:
+						return 'amiTwig.stdlib.isDefined(' + left + ')';
 
-					case ami.twig.expr.tokens.NULL:
-						return 'ami.twig.stdlib.isNull(' + left + ')';
+					case amiTwig.expr.tokens.NULL:
+						return 'amiTwig.stdlib.isNull(' + left + ')';
 
-					case ami.twig.expr.tokens.EMPTY:
-						return 'ami.twig.stdlib.isEmpty(' + left + ')';
+					case amiTwig.expr.tokens.EMPTY:
+						return 'amiTwig.stdlib.isEmpty(' + left + ')';
 
-					case ami.twig.expr.tokens.ITERABLE:
-						return 'ami.twig.stdlib.isIterable(' + left + ')';
+					case amiTwig.expr.tokens.ITERABLE:
+						return 'amiTwig.stdlib.isIterable(' + left + ')';
 
-					case ami.twig.expr.tokens.EVEN:
-						return 'ami.twig.stdlib.isEven(' + left + ')';
+					case amiTwig.expr.tokens.EVEN:
+						return 'amiTwig.stdlib.isEven(' + left + ')';
 
-					case ami.twig.expr.tokens.ODD:
-						return 'ami.twig.stdlib.isOdd(' + left + ')';
+					case amiTwig.expr.tokens.ODD:
+						return 'amiTwig.stdlib.isOdd(' + left + ')';
 
 					default:
 						throw 'internal error';
@@ -148,14 +148,14 @@ ami.twig.expr.interpreter = {
 			/* IN                                              */
 			/*-------------------------------------------------*/
 
-			case ami.twig.expr.tokens.IN:
+			case amiTwig.expr.tokens.IN:
 
-				if(node.nodeRight.nodeType !== ami.twig.expr.tokens.RANGE)
+				if(node.nodeRight.nodeType !== amiTwig.expr.tokens.RANGE)
 				{
 					left = this._getJS(node.nodeLeft);
 					right = this._getJS(node.nodeRight);
 
-					return 'ami.twig.stdlib.isInObject(' + left + ',' + right + ')';
+					return 'amiTwig.stdlib.isInObject(' + left + ',' + right + ')';
 				}
 				else
 				{
@@ -164,58 +164,58 @@ ami.twig.expr.interpreter = {
 					left = node.nodeRight.nodeLeft.nodeValue;
 					right = node.nodeRight.nodeRight.nodeValue;
 
-					return 'ami.twig.stdlib.isInRange(' + x + ',' + left + ',' + right + ')';
+					return 'amiTwig.stdlib.isInRange(' + x + ',' + left + ',' + right + ')';
 				}
 
 			/*-------------------------------------------------*/
 			/* STARTS_WITH                                     */
 			/*-------------------------------------------------*/
 
-			case ami.twig.expr.tokens.STARTS_WITH:
+			case amiTwig.expr.tokens.STARTS_WITH:
 
 				left = this._getJS(node.nodeLeft);
 				right = this._getJS(node.nodeRight);
 
-				return 'ami.twig.stdlib.startsWith(' + left + ',' + right + ')';
+				return 'amiTwig.stdlib.startsWith(' + left + ',' + right + ')';
 
 			/*-------------------------------------------------*/
 			/* ENDS_WITH                                       */
 			/*-------------------------------------------------*/
 
-			case ami.twig.expr.tokens.ENDS_WITH:
+			case amiTwig.expr.tokens.ENDS_WITH:
 
 				left = this._getJS(node.nodeLeft);
 				right = this._getJS(node.nodeRight);
 
-				return 'ami.twig.stdlib.endsWith(' + left + ',' + right + ')';
+				return 'amiTwig.stdlib.endsWith(' + left + ',' + right + ')';
 
 			/*-------------------------------------------------*/
 			/* MATCHES                                         */
 			/*-------------------------------------------------*/
 
-			case ami.twig.expr.tokens.MATCHES:
+			case amiTwig.expr.tokens.MATCHES:
 
 				left = this._getJS(node.nodeLeft);
 				right = this._getJS(node.nodeRight);
 
-				return 'ami.twig.stdlib.match(' + left + ',' + right + ')';
+				return 'amiTwig.stdlib.match(' + left + ',' + right + ')';
 
 			/*-------------------------------------------------*/
 			/* RANGE                                           */
 			/*-------------------------------------------------*/
 
-			case ami.twig.expr.tokens.RANGE:
+			case amiTwig.expr.tokens.RANGE:
 
 				left = this._getJS(node.nodeLeft);
 				right = this._getJS(node.nodeRight);
 
-				return 'ami.twig.stdlib.range(' + left + ',' + right + ')';
+				return 'amiTwig.stdlib.range(' + left + ',' + right + ')';
 
 			/*-------------------------------------------------*/
 			/* DOT                                             */
 			/*-------------------------------------------------*/
 
-			case ami.twig.expr.tokens.DOT:
+			case amiTwig.expr.tokens.DOT:
 
 				left = this._getJS(node.nodeLeft);
 				right = this._getJS(node.nodeRight);
@@ -233,7 +233,7 @@ ami.twig.expr.interpreter = {
 			/* FLDIV                                           */
 			/*-------------------------------------------------*/
 
-			case ami.twig.expr.tokens.FLDIV:
+			case amiTwig.expr.tokens.FLDIV:
 
 				left = this._getJS(node.nodeLeft);
 				right = this._getJS(node.nodeRight);
@@ -244,7 +244,7 @@ ami.twig.expr.interpreter = {
 			/* POWER                                           */
 			/*-------------------------------------------------*/
 
-			case ami.twig.expr.tokens.POWER:
+			case amiTwig.expr.tokens.POWER:
 
 				left = this._getJS(node.nodeLeft);
 				right = this._getJS(node.nodeRight);
@@ -262,7 +262,7 @@ ami.twig.expr.interpreter = {
 				   &&
 				   node.nodeRight === null
 				 ) {
-					operator = (node.nodeType !== ami.twig.expr.tokens.NOT) ? node.nodeValue : '!';
+					operator = (node.nodeType !== amiTwig.expr.tokens.NOT) ? node.nodeValue : '!';
 
 					return operator + '(' + this._getJS(node.nodeLeft) + ')';
 				}
@@ -271,7 +271,7 @@ ami.twig.expr.interpreter = {
 				   &&
 				   node.nodeRight !== null
 				 ) {
-					operator = (node.nodeType !== ami.twig.expr.tokens.NOT) ? node.nodeValue : '!';
+					operator = (node.nodeType !== amiTwig.expr.tokens.NOT) ? node.nodeValue : '!';
 
 					return operator + '(' + this._getJS(node.nodeRight) + ')';
 				}
@@ -288,37 +288,37 @@ ami.twig.expr.interpreter = {
 					{
 						/*-------------------------*/
 
-						case ami.twig.expr.tokens.LOGICAL_OR:
+						case amiTwig.expr.tokens.LOGICAL_OR:
 							operator = '||';
 							break;
 
 						/*-------------------------*/
 
-						case ami.twig.expr.tokens.LOGICAL_AND:
+						case amiTwig.expr.tokens.LOGICAL_AND:
 							operator = '&&';
 							break;
 
 						/*-------------------------*/
 
-						case ami.twig.expr.tokens.BITWISE_OR:
+						case amiTwig.expr.tokens.BITWISE_OR:
 							operator = '|';
 							break;
 
 						/*-------------------------*/
 
-						case ami.twig.expr.tokens.BITWISE_XOR:
+						case amiTwig.expr.tokens.BITWISE_XOR:
 							operator = '^';
 							break;
 
 						/*-------------------------*/
 
-						case ami.twig.expr.tokens.BITWISE_AND:
+						case amiTwig.expr.tokens.BITWISE_AND:
 							operator = '&';
 							break;
 
 						/*-------------------------*/
 
-						case ami.twig.expr.tokens.CONCAT:
+						case amiTwig.expr.tokens.CONCAT:
 							operator = '+';
 							break;
 

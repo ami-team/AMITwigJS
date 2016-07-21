@@ -39,12 +39,12 @@
 
 		try
 		{
-			var expr = new ami.twig.expr.Compiler($('#expr').val(), 1);
+			var expr = new amiTwig.expr.Compiler($('#expr').val(), 1);
 
 			var tree = Viz(expr.dump(), 'svg', undefined);
 			$('#tree').html(tree);
 
-			var code = ami.twig.expr.interpreter.getJS(expr);
+			var code = amiTwig.expr.interpreter.getJS(expr);
 			$('#code').html(code);
 
 			$('#message').empty();

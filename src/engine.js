@@ -7,7 +7,7 @@
  */
 
 /*-------------------------------------------------------------------------*/
-/* ami.twig.engine                                                         */
+/* amiTwig.engine                                                          */
 /*-------------------------------------------------------------------------*/
 
 /**
@@ -15,7 +15,7 @@
  * @namespace ami/twig
  */
 
-ami.twig.engine = {
+amiTwig.engine = {
 	/*-----------------------------------------------------------------*/
 
 	STATEMENT_RE: /\{\%\s*([a-zA-Z]+)\s*(.*?)\s*\%\}/m,
@@ -291,7 +291,7 @@ ami.twig.engine = {
 
 		/**/ if(item.keyword === 'do')
 		{
-			ami.twig.expr.cache.eval(item.expression, item.line, dict);
+			amiTwig.expr.cache.eval(item.expression, item.line, dict);
 		}
 
 		/*---------------------------------------------------------*/
@@ -314,7 +314,7 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			value = ami.twig.expr.cache.eval(expr, item.line, dict);
+			value = amiTwig.expr.cache.eval(expr, item.line, dict);
 
 			/*-------------------------------------------------*/
 
@@ -331,7 +331,7 @@ ami.twig.engine = {
 		{
 			result.push(item.value.replace(this.VARIABLE_RE, function(match, expression) {
 
-				value = ami.twig.expr.cache.eval(expression, item.line, dict);
+				value = amiTwig.expr.cache.eval(expression, item.line, dict);
 
 				return (typeof value !== 'undefined' && value !== null) ? value : '';
 			}));
@@ -347,7 +347,7 @@ ami.twig.engine = {
 			{
 				expression = item.blocks[i].expression;
 
-				if(expression === '@else' || ami.twig.expr.cache.eval(expression, item.line, dict) === true)
+				if(expression === '@else' || amiTwig.expr.cache.eval(expression, item.line, dict) === true)
 				{
 					list = item.blocks[i].list;
 
@@ -381,7 +381,7 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			value = ami.twig.expr.cache.eval(expr, item.line, dict);
+			value = amiTwig.expr.cache.eval(expr, item.line, dict);
 
 			/*-------------------------------------------------*/
 
@@ -473,7 +473,7 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			var FILENAME = ami.twig.expr.cache.eval(expression, item.line, dict);
+			var FILENAME = amiTwig.expr.cache.eval(expression, item.line, dict);
 
 			if(Object.prototype.toString.call(FILENAME) !== '[object String]')
 			{
@@ -484,7 +484,7 @@ ami.twig.engine = {
 
 			if(with_subexpr)
 			{
-				DICT = ami.twig.expr.cache.eval(with_subexpr, item.line, dict);
+				DICT = amiTwig.expr.cache.eval(with_subexpr, item.line, dict);
 
 				if(Object.prototype.toString.call(DICT) !== '[object Object]')
 				{
@@ -503,10 +503,10 @@ ami.twig.engine = {
 
 			/*-------------------------------------------------*/
 
-			ami.twig.ajax.get(
+			amiTwig.ajax.get(
 				FILENAME,
 				function(data) {
-					result.push(ami.twig.engine.render(data, DICT));
+					result.push(amiTwig.engine.render(data, DICT));
 				},
 				function(/**/) {
 					throw 'runtime error, line `' + item.line + '`, could not open `' + FILENAME + '`';

@@ -7,7 +7,7 @@
  */
 
 /*-------------------------------------------------------------------------*/
-/* ami.twig.expr.cache                                                     */
+/* amiTwig.expr.cache                                                      */
 /*-------------------------------------------------------------------------*/
 
 /**
@@ -15,7 +15,7 @@
  * @namespace ami/twig/expr/cache
  */
 
-ami.twig.expr.cache = {
+amiTwig.expr.cache = {
 	/*-----------------------------------------------------------------*/
 
 	dict: {},
@@ -32,8 +32,8 @@ ami.twig.expr.cache = {
 		}
 		else
 		{
-			js = this.dict[expression] = ami.twig.expr.interpreter.getJS(
-							new ami.twig.expr.Compiler(expression, line)
+			js = this.dict[expression] = amiTwig.expr.interpreter.getJS(
+							new amiTwig.expr.Compiler(expression, line)
 			);
 		}
 
