@@ -94,11 +94,18 @@ console.log(amiTwig.engine.render('{{ "- 123 -" | match("/123/g") }}', dict));
 
 //console.log(amiTwig.expr.interpreter.getJS(new amiTwig.expr.Compiler('s | escape', 1)));
 
-
+/*
 console.log(amiTwig.stdlib.filter_merge([1,2], [3,4], [5,6]));
 
 console.log(amiTwig.stdlib.filter_merge({'1': 2}, {'3': 4}, {'5': 6}));
 
 console.log(amiTwig.stdlib.filter_merge('1,2', '3,4', '5,6'));
+*/
+
+console.log('-------');
+console.log(amiTwig.engine.render('{{ random([1,2,3]) }}'));
+console.log(amiTwig.engine.render('{{ random("azerty") }}'));
+console.log(amiTwig.engine.render('{{ random(100) }}'));
+console.log(amiTwig.engine.render('{{ random() }}'));
 
 /*-------------------------------------------------------------------------*/

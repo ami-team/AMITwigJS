@@ -2920,22 +2920,23 @@ amiTwig.stdlib = {
 	{
 		var y = Math.random();
 
-		/**/ if(this.isString(x))
+		if(x)
 		{
-			return x[x.length * y];
+			/**/ if(this.isString(x))
+			{
+				return x[Math.floor(x.length * y)];
+			}
+			else if(this.isArray(x))
+			{
+				return x[Math.floor(x.length * y)];
+			}
+			else if(this.isNumber(x))
+			{
+				return Math.floor(x * y);
+			}
 		}
-		else if(this.isArray(x))
-		{
-			return x[x.length * y];
-		}
-		else if(this.isNumber(x))
-		{
-			return Math.floor(x * y);
-		}
-		else
-		{
-			return Math.floor(1 * y);
-		}
+
+		return Math.floor(Number.MAX_SAFE_INTEGER * y);
 	},
 
 	/*-----------------------------------------------------------------*/
