@@ -1812,114 +1812,131 @@ amiTwig.engine = {
 
 			/*-------------------------------------------------*/
 
-			/**/ if(keyword === 'do'
-			        ||
-			        keyword === 'set'
-			        ||
-				keyword === 'include'
-			 ) {
-				item = {
-					line: line,
-					keyword: keyword,
-					expression: expression,
-					blocks: (([])),
-					value: (('')),
-				}
+			switch(keyword)
+			{
+				/*-----------------------------------------*/
 
-				curr.blocks[indx].list.push(item);
-			}
+				case 'flush':
 
-			/*-------------------------------------------------*/
+					/* IGNORE */
 
-			else if(keyword === 'if'
-			        ||
-			        keyword === 'for'
-			 ) {
-				item = {
-					line: line,
-					keyword: keyword,
-					blocks: [{
+					break;
+
+				/*-----------------------------------------*/
+
+				case 'do':
+			        case 'set':
+			        case 'include':
+
+					item = {
+						line: line,
+						keyword: keyword,
+						expression: expression,
+						blocks: (([])),
+						value: (('')),
+					};
+
+					curr.blocks[indx].list.push(item);
+
+					break;
+
+				/*-----------------------------------------*/
+
+				case 'if':
+				case 'for':
+
+					item = {
+						line: line,
+						keyword: keyword,
+						blocks: [{
+							expression: expression,
+							list: [],
+						}],
+						value: '',
+					};
+
+					curr.blocks[indx].list.push(item);
+
+					stack1.push(item);
+					stack2.push(0x00);
+
+					break;
+
+				/*-----------------------------------------*/
+
+				case 'elseif':
+
+					if(curr['keyword'] !== 'if')
+					{
+						throw 'syntax error, line `' + line + '`, missing keyword `if`';
+					}
+
+					indx = curr.blocks.length;
+
+					curr.blocks.push({
 						expression: expression,
 						list: [],
-					}],
-					value: '',
-				}
+					});
 
-				curr.blocks[indx].list.push(item);
+					stack2[stack2.length - 1] = indx;
 
-				stack1.push(item);
-				stack2.push(0x00);
-			}
+					break;
 
-			/*-------------------------------------------------*/
+				/*-----------------------------------------*/
 
-			else if(keyword === 'elseif')
-			{
-				if(curr['keyword'] !== 'if')
-				{
-					throw 'syntax error, line `' + line + '`, missing keyword `if`';
-				}
+				case 'else':
 
-				indx = curr.blocks.length;
+					if(curr['keyword'] !== 'if')
+					{
+						throw 'syntax error, line `' + line + '`, missing keyword `if`';
+					}
 
-				curr.blocks.push({
-					expression: expression,
-					list: [],
-				});
+					indx = curr.blocks.length;
 
-				stack2[stack2.length - 1] = indx;
-			}
+					curr.blocks.push({
+						expression: '@else',
+						list: [],
+					});
 
-			/*-------------------------------------------------*/
+					stack2[stack2.length - 1] = indx;
 
-			else if(keyword === 'else')
-			{
-				if(curr['keyword'] !== 'if')
-				{
-					throw 'syntax error, line `' + line + '`, missing keyword `if`';
-				}
+					break;
 
-				indx = curr.blocks.length;
+				/*-----------------------------------------*/
 
-				curr.blocks.push({
-					expression: '@else',
-					list: [],
-				});
+				case 'endif':
 
-				stack2[stack2.length - 1] = indx;
-			}
-			
-			/*-------------------------------------------------*/
+					if(curr['keyword'] !== 'if')
+					{
+						throw 'syntax error, line `' + line + '`, missing keyword `if`';
+					}
 
-			else if(keyword === 'endif')
-			{
-				if(curr['keyword'] !== 'if')
-				{
-					throw 'syntax error, line `' + line + '`, missing keyword `if`';
-				}
+					stack1.pop();
+					stack2.pop();
 
-				stack1.pop();
-				stack2.pop();
-			}
+					break;
 
-			/*-------------------------------------------------*/
+				/*-----------------------------------------*/
 
-			else if(keyword === 'endfor')
-			{
-				if(curr['keyword'] !== 'for')
-				{
-					throw 'syntax error, line `' + line + '`, missing keyword `for`';
-				}
+				case 'endfor':
 
-				stack1.pop();
-				stack2.pop();
-			}
+					if(curr['keyword'] !== 'for')
+					{
+						throw 'syntax error, line `' + line + '`, missing keyword `for`';
+					}
 
-			/*-------------------------------------------------*/
+					stack1.pop();
+					stack2.pop();
 
-			else
-			{
-				throw 'syntax error, line `' + line + '`, unknown keyword `' + keyword + '`';
+					break;
+
+				/*-----------------------------------------*/
+
+				default:
+
+					throw 'syntax error, line `' + line + '`, unknown keyword `' + keyword + '`';
+
+				/*-----------------------------------------*/
 			}
 
 			/*-------------------------------------------------*/
@@ -2606,11 +2623,7 @@ amiTwig.stdlib = {
 			{
 				try
 				{
-					return new RegExp(
-						regex.substring(idx1 + 1, idx2)
-						,
-						regex.substring(idx2 + 1  /**/)
-					).test(s);
+					return new RegExp(regex.substring(idx1 + 1, idx2), regex.substring(idx2 + 1)).test(s);
 				}
 				catch(err)
 				{
@@ -2715,7 +2728,8 @@ amiTwig.stdlib = {
 		{
 			var _map;
 
-			/**/ if(!mode
+			/**/ if(!
+			        mode
 			        ||
 				mode === 'html'
 				||
@@ -2936,7 +2950,9 @@ amiTwig.stdlib = {
 			}
 		}
 
-		return Math.floor(Number.MAX_SAFE_INTEGER * y);
+		x = Number.MAX_SAFE_INTEGER;
+
+		return Math.floor(x * y);
 	},
 
 	/*-----------------------------------------------------------------*/

@@ -365,11 +365,7 @@ amiTwig.stdlib = {
 			{
 				try
 				{
-					return new RegExp(
-						regex.substring(idx1 + 1, idx2)
-						,
-						regex.substring(idx2 + 1  /**/)
-					).test(s);
+					return new RegExp(regex.substring(idx1 + 1, idx2), regex.substring(idx2 + 1)).test(s);
 				}
 				catch(err)
 				{
@@ -474,7 +470,8 @@ amiTwig.stdlib = {
 		{
 			var _map;
 
-			/**/ if(!mode
+			/**/ if(!
+			        mode
 			        ||
 				mode === 'html'
 				||
@@ -695,7 +692,9 @@ amiTwig.stdlib = {
 			}
 		}
 
-		return Math.floor(Number.MAX_SAFE_INTEGER * y);
+		x = Number.MAX_SAFE_INTEGER;
+
+		return Math.floor(x * y);
 	},
 
 	/*-----------------------------------------------------------------*/
