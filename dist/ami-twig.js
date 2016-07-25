@@ -2239,24 +2239,27 @@ amiTwig.expr.cache = {
 
 	eval: function(expression, line, _)
 	{
-		var js;
+		/*---------------------------------------------------------*/
+
+		var f;
 
 		if(expression in this.dict)
 		{
-			js = this.dict[expression];
+			f = this.dict[expression];
 		}
 		else
 		{
-			js = this.dict[expression] = amiTwig.expr.interpreter.getJS(
-							new amiTwig.expr.Compiler(expression, line)
-			);
+			f = this.dict[expression] = eval(
+				amiTwig.expr.interpreter.getJS(
+					new amiTwig.expr.Compiler(expression, line)
+			));
 		}
 
 		/*---------------------------------------------------------*/
 
 		if(!_) _ = {};
 
-		return eval(js);
+		return f.call(_, _);
 
 		/*---------------------------------------------------------*/
 	},
@@ -3382,7 +3385,7 @@ amiTwig.expr.interpreter = {
 
 	getJS: function(expr)
 	{
-		return '(function() { return ' + this._getJS(expr.rootNode) + '; }())';
+		return '(function(_) { return ' + this._getJS(expr.rootNode) + '; })';
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -3398,7 +3401,7 @@ amiTwig.expr.interpreter = {
 	{
 		if(!_) _ = {};
 
-		return eval(this.getJS(expr));
+		return eval(this.getJS(expr)).call(_, _);
 	},
 
 	/*-----------------------------------------------------------------*/

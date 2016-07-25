@@ -353,7 +353,7 @@ amiTwig.expr.interpreter = {
 
 	getJS: function(expr)
 	{
-		return '(function() { return ' + this._getJS(expr.rootNode) + '; }())';
+		return '(function(_) { return ' + this._getJS(expr.rootNode) + '; })';
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -369,7 +369,7 @@ amiTwig.expr.interpreter = {
 	{
 		if(!_) _ = {};
 
-		return eval(this.getJS(expr));
+		return eval(this.getJS(expr)).call(_, _);
 	},
 
 	/*-----------------------------------------------------------------*/
