@@ -2249,9 +2249,8 @@ amiTwig.expr.cache = {
 		}
 		else
 		{
-			f = this.dict[expression] = eval(
-				amiTwig.expr.interpreter.getJS(
-					new amiTwig.expr.Compiler(expression, line)
+			f = this.dict[expression] = eval(amiTwig.expr.interpreter.getJS(
+			                                         new amiTwig.expr.Compiler(expression, line)
 			));
 		}
 
