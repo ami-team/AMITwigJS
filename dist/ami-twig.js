@@ -16,7 +16,7 @@
 
 if(window.console && (window.console.firebug || window.console.exception))
 {
-	console.warning('AMI-Twig is slow with firebug');
+	console.warn('AMI-Twig is slow with firebug');
 }
 
 /*-------------------------------------------------------------------------*/
