@@ -57,22 +57,24 @@ console.log(amiTwig.engine.render('{% for i in t1 %} {{i}} {% endfor %}', dict))
 console.log(amiTwig.engine.render('||{% if true %} {% include \'test/template.html\' with {\'foo\': \'bar\'} %} {% endif %}||', dict));
 */
 
-/*
+
+console.log(amiTwig.engine.render('{% set b = [1, 2, 3] %}'));
 console.log(amiTwig.engine.render('{% set b = [1, 2, 3] %}', dict));
 
+/*
 console.log(amiTwig.engine.render('{{ b }}', dict));
 
 console.log(amiTwig.engine.render('{% for i in "hello" %} {{i}} {% endfor %}', dict));
 
 console.log(amiTwig.engine.render('{% for i in {"aa": 1, "bb": 3, "cc": 5} %} {{i}} {% endfor %}', dict));
 */
-/*
+
 console.log(amiTwig.engine.render('{# this is a comment #}{% for i in [4,5,6] %} {{i}} {% if loop.first %} (first) {% endif %} {% endfor %}', dict));
 
 console.log(amiTwig.expr.cache.eval('t1', 1, dict));
 console.log(amiTwig.expr.cache.eval('t1', 1, dict));
 
-console.log(amiTwig.stdlib.replace('aaaa bb cccc dd', {'aa': 'AA', 'cc': 'CC'}));
+console.log(amiTwig.stdlib.filter_replace('aaaa bb cccc dd', {'aa': 'AA', 'cc': 'CC'}));
 
 console.log(amiTwig.stdlib.isEmpty(dict.hh));
 
@@ -89,8 +91,8 @@ console.log(amiTwig.engine.render('{{ " <hr /> & \" | escape }}', dict));
 console.log(amiTwig.engine.render('{{ " \\" \' \\n \\\\ " | escape("js") }}', dict));
 
 
-console.log(amiTwig.engine.render('{{ "- 123 -" | match("/123/g") }}', dict));
-*/
+console.log(amiTwig.engine.render('{{ "- 123 -" matches "/123/g" }}', dict));
+
 
 //console.log(amiTwig.expr.interpreter.getJS(new amiTwig.expr.Compiler('s | escape', 1)));
 

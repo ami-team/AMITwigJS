@@ -1712,11 +1712,7 @@ amiTwig.engine = {
 
 		/*---------------------------------------------------------*/
 
-		s = s.replace(this.COMMENT_RE, '');
-
-		/*---------------------------------------------------------*/
-
-		for(;; s = s.substr(COLUMN_NR))
+		for(s = s.replace(this.COMMENT_RE, '');; s = s.substr(COLUMN_NR))
 		{
 			/*-------------------------------------------------*/
 
@@ -1817,6 +1813,9 @@ amiTwig.engine = {
 				/*-----------------------------------------*/
 
 				case 'flush':
+				case 'autoescape':
+				case 'spaceless':
+				case 'verbatim':
 
 					/* IGNORE */
 
@@ -1953,235 +1952,239 @@ amiTwig.engine = {
 
 		var expression, list;
 
-		var m, symb, expr, DICT, value;
+		var m, symb, expr, value;
 
-		/*---------------------------------------------------------*/
-		/* DO                                                      */
-		/*---------------------------------------------------------*/
-
-		/**/ if(item.keyword === 'do')
-		{
-			amiTwig.expr.cache.eval(item.expression, item.line, dict);
-		}
-
-		/*---------------------------------------------------------*/
-		/* SET                                                     */
-		/*---------------------------------------------------------*/
-
-		else if(item.keyword === 'set')
+		switch(item.keyword)
 		{
 			/*-------------------------------------------------*/
-
-			m = item.expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s+=\s+(.+)/)
-
-			if(!m)
-			{
-				throw 'syntax error, line `' + item.line + '`, invalid `set` statement';
-			}
-
-			symb = m[1].trim();
-			expr = m[2].trim();
-
+			/* DO                                              */
 			/*-------------------------------------------------*/
 
-			value = amiTwig.expr.cache.eval(expr, item.line, dict);
+			case 'do':
+
+				amiTwig.expr.cache.eval(item.expression, item.line, dict);
+
+				break;
 
 			/*-------------------------------------------------*/
-
-			dict[symb] = value;
-
+			/* SET                                             */
 			/*-------------------------------------------------*/
-		}
 
-		/*---------------------------------------------------------*/
-		/* @TEXT                                                   */
-		/*---------------------------------------------------------*/
+			case 'set':
+				/*-----------------------------------------*/
 
-		else if(item.keyword === '@text')
-		{
-			result.push(item.value.replace(this.VARIABLE_RE, function(match, expression) {
+				m = item.expression.match(/^\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(.+)/)
 
-				value = amiTwig.expr.cache.eval(expression, item.line, dict);
-
-				return (typeof value !== 'undefined' && value !== null) ? value : '';
-			}));
-		}
-
-		/*---------------------------------------------------------*/
-		/* IF                                                      */
-		/*---------------------------------------------------------*/
-
-		else if(item.keyword === 'if')
-		{
-			for(i in item.blocks)
-			{
-				expression = item.blocks[i].expression;
-
-				if(expression === '@else' || amiTwig.expr.cache.eval(expression, item.line, dict) === true)
+				if(!m)
 				{
-					list = item.blocks[i].list;
+					throw 'syntax error, line `' + item.line + '`, invalid `set` statement';
+				}
+
+				symb = m[1].trim();
+				expr = m[2].trim();
+
+				/*-----------------------------------------*/
+
+				value = amiTwig.expr.cache.eval(expr, item.line, dict);
+
+				/*-----------------------------------------*/
+
+				dict[symb] = value;
+
+				/*-----------------------------------------*/
+
+				break;
+
+			/*-------------------------------------------------*/
+			/* @TEXT                                           */
+			/*-------------------------------------------------*/
+
+			case '@text':
+
+				result.push(item.value.replace(this.VARIABLE_RE, function(match, expression) {
+
+					value = amiTwig.expr.cache.eval(expression, item.line, dict);
+
+					return (typeof value !== 'undefined' && value !== null) ? value : '';
+				}));
+
+				break;
+
+			/*-------------------------------------------------*/
+			/* IF                                              */
+			/*-------------------------------------------------*/
+
+			case 'if':
+
+				for(i in item.blocks)
+				{
+					expression = item.blocks[i].expression;
+
+					if(expression === '@else' || amiTwig.expr.cache.eval(expression, item.line, dict) === true)
+					{
+						list = item.blocks[i].list;
+
+						for(j in list)
+						{
+							this._render(result, list[j], dict);
+						}
+
+						break;
+					}
+				}
+
+				break;
+
+			/*-------------------------------------------------*/
+			/* FOR                                             */
+			/*-------------------------------------------------*/
+
+			case 'for':
+				/*-----------------------------------------*/
+
+				m = item.blocks[0].expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s+in\s+(.+)/)
+
+				if(!m)
+				{
+					throw 'syntax error, line `' + item.line + '`, invalid `for` statement';
+				}
+
+				symb = m[1].trim();
+				expr = m[2].trim();
+
+				/*-----------------------------------------*/
+
+				value = amiTwig.expr.cache.eval(expr, item.line, dict);
+
+				/*-----------------------------------------*/
+
+				var typeName = Object.prototype.toString.call(value);
+
+				if(typeName !== '[object Array]'
+				   &&
+				   typeName !== '[object Object]'
+				   &&
+				   typeName !== '[object String]'
+				 ) {
+					throw 'syntax error, line `' + item.line + '`, right operande not iterable';
+				}
+
+				/*-----------------------------------------*/
+
+				if(typeName === '[object Object]')
+				{
+					value = Object.keys(value);
+				}
+
+				/*-----------------------------------------*/
+
+				var old1 = dict[(symb)];
+				var old2 = dict['loop'];
+
+				/*-----------------------------------------*/
+
+				k = 0x0000000000;
+				l = value.length;
+
+				dict.loop = {length: l};
+
+				list = item.blocks[0].list;
+
+				for(i in value)
+				{
+					dict[symb] = value[i];
+
+					dict.loop.first = (k === (0 - 0));
+					dict.loop.index = k;
+					dict.loop.last = (k === (l - 1));
+
+					k++;
 
 					for(j in list)
 					{
 						this._render(result, list[j], dict);
 					}
-
-					break;
 				}
-			}
-		}
 
-		/*---------------------------------------------------------*/
-		/* FOR                                                     */
-		/*---------------------------------------------------------*/
+				/*-----------------------------------------*/
 
-		else if(item.keyword === 'for')
-		{
-			/*-------------------------------------------------*/
+				if(old2) {
+					dict['loop'] = old2;
+				}
 
-			m = item.blocks[0].expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s+in\s+(.+)/)
+				if(old1) {
+					dict[(symb)] = old1;
+				}
 
-			if(!m)
-			{
-				throw 'syntax error, line `' + item.line + '`, invalid `for` statement';
-			}
+				/*-----------------------------------------*/
 
-			symb = m[1].trim();
-			expr = m[2].trim();
+				break;
 
 			/*-------------------------------------------------*/
-
-			value = amiTwig.expr.cache.eval(expr, item.line, dict);
-
+			/* INCLUDE                                         */
 			/*-------------------------------------------------*/
 
-			var typeName = Object.prototype.toString.call(value);
+			case 'include':
+				/*-----------------------------------------*/
 
-			if(typeName !== '[object Array]'
-			   &&
-			   typeName !== '[object Object]'
-			   &&
-			   typeName !== '[object String]'
-			 ) {
-				throw 'syntax error, line `' + item.line + '`, right operande not iterable';
-			}
+				expression = item.expression;
 
-			/*-------------------------------------------------*/
+				/*-----------------------------------------*/
 
-			if(typeName === '[object Object]')
-			{
-				value = Object.keys(value);
-			}
+				var with_context = true;
 
-			/*-------------------------------------------------*/
+				expression = expression.trim();
 
-			DICT = {loop: {}}; for(i in dict) DICT[i] = dict[i];
-
-			/*-------------------------------------------------*/
-
-			k = 0x0000000000;
-			l = value.length;
-
-			list = item.blocks[0].list;
-
-			for(i in value)
-			{
-				DICT[symb] = value[i];
-
-				DICT['loop'].first = (k === (0 - 0));
-				DICT['loop'].last  = (k === (l - 1));
-
-				DICT['loop'].index  = k;
-				DICT['loop'].length = l;
-
-				k++;
-
-				for(j in list)
+				if((m = expression.match(/only$/)))
 				{
-					this._render(result, list[j], DICT);
+					expression = expression.substr(expression, expression.length - m[0].length - 1);
+
+					with_context = false;
 				}
-			}
 
-			/*-------------------------------------------------*/
-		}
+				/*-----------------------------------------*/
 
-		/*---------------------------------------------------------*/
-		/* INCLUDE                                                 */
-		/*---------------------------------------------------------*/
+				var with_subexpr = '{}';
 
-		else if(item.keyword === 'include')
-		{
-			/*-------------------------------------------------*/
+				expression = expression.trim();
 
-			expression = item.expression;
+				if((m = expression.match(/with\s+(([a-zA-Z_$]|{).*)$/)))
+				{
+					expression = expression.substr(expression, expression.length - m[0].length - 1);
 
-			/*-------------------------------------------------*/
+					with_subexpr = m[1];
+				}
 
-			var only_subexpr = null;
+				/*-----------------------------------------*/
 
-			expression = expression.trim();
+				var FILENAME = amiTwig.expr.cache.eval(expression, item.line, dict) || '';
 
-			if((m = expression.match(/only$/)))
-			{
-				expression = expression.substr(expression, expression.length - m[0].length - 1);
+				if(Object.prototype.toString.call(FILENAME) !== '[object String]')
+				{
+					throw 'runtime error, line `' + item.line + '`, string expected';
+				}
 
-				only_subexpr = true;
-			}
+				/*-----------------------------------------*/
 
-			/*-------------------------------------------------*/
+				var VARIABLES = amiTwig.expr.cache.eval(with_subexpr, item.line, dict) || {};
 
-			var with_subexpr = null;
-
-			expression = expression.trim();
-
-			if((m = expression.match(/with\s+(([a-zA-Z_$]|{).*)$/)))
-			{
-				expression = expression.substr(expression, expression.length - m[0].length - 1);
-
-				with_subexpr = m[1];
-			}
-
-			/*-------------------------------------------------*/
-
-			var FILENAME = amiTwig.expr.cache.eval(expression, item.line, dict);
-
-			if(Object.prototype.toString.call(FILENAME) !== '[object String]')
-			{
-				throw 'runtime error, line `' + item.line + '`, string expected';
-			}
-
-			/*-------------------------------------------------*/
-
-			if(with_subexpr)
-			{
-				DICT = amiTwig.expr.cache.eval(with_subexpr, item.line, dict);
-
-				if(Object.prototype.toString.call(DICT) !== '[object Object]')
+				if(Object.prototype.toString.call(VARIABLES) !== '[object Object]')
 				{
 					throw 'runtime error, line `' + item.line + '`, object expected';
 				}
-			}
-			else
-			{
-				DICT = {};
-			}
 
-			if(!only_subexpr)
-			{
-				for(i in dict) DICT[i] = dict[i];
-			}
+				/*-----------------------------------------*/
 
-			/*-------------------------------------------------*/
+				result.push(amiTwig.stdlib.include(
+					FILENAME,
+					VARIABLES,
+					with_context,
+					false
+				));
 
-			amiTwig.ajax.get(
-				FILENAME,
-				function(data) {
-					result.push(amiTwig.engine.render(data, DICT));
-				},
-				function(/**/) {
-					throw 'runtime error, line `' + item.line + '`, could not open `' + FILENAME + '`';
-				}
-			);
+				/*-----------------------------------------*/
+
+				break;
 
 			/*-------------------------------------------------*/
 		}
@@ -2195,7 +2198,7 @@ amiTwig.engine = {
 	{
 		var result = [];
 
-		this._render(result, Object.prototype.toString.call(tmpl) === '[object String]' ? this.compile(tmpl) : tmpl, dict);
+		this._render(result, Object.prototype.toString.call(tmpl) === '[object String]' ? this.compile(tmpl) : tmpl, dict || {});
 
 		return result.join('');
 	},
@@ -2969,6 +2972,45 @@ amiTwig.stdlib = {
 	'filter_json_jspath': function(x, path)
 	{
 		return typeof JSPath !== 'undefined' ? JSPath.apply(path, x) : [];
+	},
+
+	/*-----------------------------------------------------------------*/
+	/* TEMPLATES                                                       */
+	/*-----------------------------------------------------------------*/
+
+	'include': function(fileName, variables, withContext, ignoreMissing)
+	{
+		/*---------------------------------------------------------*/
+
+		variables = variables || {};
+
+		if(withContext)
+		{
+			/* for(var i in dict) variables[i] = dict[i]; */
+		}
+
+		/*---------------------------------------------------------*/
+
+		amiTwig.ajax.get(
+			fileName,
+			function(data)
+			{
+				return amiTwig.engine.render(data, variables);
+			},
+			function(/**/)
+			{
+				if(ignoreMissing)
+				{
+					return '';
+				}
+			}
+		);
+
+		/*---------------------------------------------------------*/
+
+		throw 'runtime error, could not open `' + fileName + '`';
+
+		/*---------------------------------------------------------*/
 	},
 
 	/*-----------------------------------------------------------------*/
