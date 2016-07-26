@@ -1308,9 +1308,7 @@ amiTwig.expr.Compiler = function(code, line) {
 
 		if(this.tokenizer.checkType(amiTwig.expr.tokens.SID))
 		{
-			node = isFilter ? new amiTwig.expr.Node(0, 'filter_' + this.tokenizer.peekToken())
-			                : new amiTwig.expr.Node(0,             this.tokenizer.peekToken())
-			;
+			node = new amiTwig.expr.Node(0, isFilter ? 'filter_' + this.tokenizer.peekToken() : this.tokenizer.peekToken());
 
 			node.q = true;
 
