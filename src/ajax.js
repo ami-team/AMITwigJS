@@ -28,7 +28,7 @@ amiTwig.ajax = {
 
 			try
 			{
-				var txt = ami.fs.readFileSync(fileName, 'utf8');
+				var txt = amiTwig.fs.readFileSync(fileName, 'utf8');
 
 				if(done) {
 					done(txt);

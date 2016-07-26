@@ -7,7 +7,7 @@
 	"extends": "eslint:recommended",
 
 	"globals": {
-		"ami": 1
+		"JSPath": 1
 	},
 
 	"rules": {
