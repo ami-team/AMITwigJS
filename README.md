@@ -25,7 +25,7 @@ var amiTwig = require('ami-twig.min.js').amiTwig;
 var htmlCode = amiTwig.engine.render(twigTemplate, optionalDict);
 ```
 
-where **optionalDict** contains the global variables for the template.
+where *optionalDict* contains the global variables for the template.
 
 For optimization perposes, templates can be compiled before rendering:
 
