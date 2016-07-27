@@ -22,7 +22,7 @@ var amiTwig = require('ami-twig.min.js').amiTwig;
 ### Using AMI-Twig.js:
 
 ```javascript
-var htmlCode = amiTwig.engine.render(twigTemplate, optionalDict);
+var textResult = amiTwig.engine.render(twigTemplate, optionalDict);
 ```
 
 where *optionalDict* contains the global variables for the template.
@@ -32,7 +32,7 @@ For optimization perposes, templates can be compiled before rendering:
 ```javascript
 var compiledTemplate = amiTwig.engine.compile(twigTemplate);
 
-var htmlCode = amiTwig.engine.render(compiledTemplate, optionalDict);
+var textResult = amiTwig.engine.render(compiledTemplate, optionalDict);
 ```
 
 License
