@@ -1,9 +1,7 @@
-AMI-TWIG
+AMI-TWIG.js
 ========
 
-AMI-TWIG is a JavaScript implementation of TWIG template engine.
-
-Please visit the official [home page](http://www.cern.ch/ami/twig/).
+[AMI-TWIG.js](http://www.cern.ch/ami/twig/) is a JavaScript implementation of TWIG template engine.
 
 License
 =======
