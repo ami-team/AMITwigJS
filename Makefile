@@ -14,5 +14,4 @@ lint: all
 clean:
 	rm -fr dist
 
-
-.PHONY: all test clean
+.PHONY: all test lint clean
