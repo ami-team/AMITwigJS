@@ -38,10 +38,7 @@ var htmlCode = amiTwig.engine.render(compiledTemplate, optionalDict);
 License
 =======
 
-Copyright or © or Copr. [name of the author when individual or of the
-legal entity when the software has been created under wage-earning status
-adding underneath, if so required :" contributor(s) : [name of the
-individuals] ([date of creation])
+Copyright or © or Copr. The AMI Team (2015)
 
 ami@lpsc.in2p3.fr
 
