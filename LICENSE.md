@@ -1,6 +1,6 @@
 English version:
-    LICENSE-EN
+ * LICENSE-EN
 
 French version:
-    LICENSE-FR
+ * LICENSE-FR
 
