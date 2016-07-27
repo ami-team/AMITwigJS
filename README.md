@@ -9,23 +9,31 @@ Getting started
 
 Loading AMI-Twig.js server-side:
 
-    var amiTwig = require('ami-twig.min.js').amiTwig;
+```javascript
+var amiTwig = require('ami-twig.min.js').amiTwig;
+```
 
 Loading AMI-Twig.js client-side:
 
-    <script type="text/javascript" src="ami-twig.min.js"></script>
+```javascript
+<script type="text/javascript" src="ami-twig.min.js"></script>
+```
 
 Using AMI-Twig.js:
 
-    var htmlCode = amiTwig.engine.render(twigTemplate [String], optionalDict [Object]);
+```javascript
+var htmlCode = amiTwig.engine.render(twigTemplate, optionalDict);
+```
 
 where optionalDict contains the global variables for the template.
 
 For optimization perposes, templates can be compiled before rendering:
 
-    var compiledTemplate = amiTwig.engine.compile(twigTemplate [String]);
+```javascript
+var compiledTemplate = amiTwig.engine.compile(twigTemplate);
 
-    var htmlCode = amiTwig.engine.render(compiledTemplate [Template], optionalDict [Object]);
+var htmlCode = amiTwig.engine.render(compiledTemplate, optionalDict);
+```
 
 License
 =======
