@@ -7,19 +7,19 @@ AMI-TWIG.js
 Getting started
 ===============
 
-Loading AMI-Twig.js server-side:
+### Loading AMI-Twig.js server-side:
 
 ```javascript
 var amiTwig = require('ami-twig.min.js').amiTwig;
 ```
 
-Loading AMI-Twig.js client-side:
+### Loading AMI-Twig.js client-side:
 
 ```javascript
 <script type="text/javascript" src="ami-twig.min.js"></script>
 ```
 
-Using AMI-Twig.js:
+### Using AMI-Twig.js:
 
 ```javascript
 var htmlCode = amiTwig.engine.render(twigTemplate, optionalDict);
