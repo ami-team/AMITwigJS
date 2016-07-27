@@ -445,10 +445,11 @@ amiTwig.engine = {
 					dict[symb] = value[i];
 
 					dict.loop.first = (k === (0 - 0));
-					dict.loop.index = k;
 					dict.loop.last = (k === (l - 1));
 
+					dict.loop.index0 = k;
 					k++;
+					dict.loop.index = k;
 
 					for(j in list)
 					{
