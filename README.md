@@ -1,7 +1,31 @@
 AMI-TWIG.js
-========
+===========
 
 [AMI-TWIG.js](http://www.cern.ch/ami/twig/) is a JavaScript implementation of TWIG template engine for browsers and NodeJS.
+
+
+Getting started
+===============
+
+Loading AMI-Twig.js server-side:
+
+    var amiTwig = require('ami-twig.min.js').amiTwig;
+
+Loading AMI-Twig.js client-side:
+
+    <script type="text/javascript" src="ami-twig.min.js"></script>
+
+Using AMI-Twig.js:
+
+    var htmlCode = amiTwig.engine.render(twigTemplate [String], optionalDict [Object]);
+
+where optionalDict contains the global variables for the template.
+
+For optimization perposes, templates can be compiled before rendering:
+
+    var compiledTemplate = amiTwig.engine.compile(twigTemplate [String]);
+
+    var htmlCode = amiTwig.engine.render(compiledTemplate [Template], optionalDict [Object]);
 
 License
 =======
