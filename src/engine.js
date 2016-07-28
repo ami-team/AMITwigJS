@@ -21,7 +21,7 @@
 amiTwig.engine = {
 	/*-----------------------------------------------------------------*/
 
-	STATEMENT_RE: /\{\%\s*([a-zA-Z]+)\s*(.*?)\s*\%\}/m,
+	STATEMENT_RE: /\{\%\s*([a-zA-Z]+)\s+(.*?)\s*\%\}/m,
 
 	VARIABLE_RE: /\{\{\s*(.*?)\s*\}\}/g,
 
@@ -35,7 +35,7 @@ amiTwig.engine = {
 
 		var result = {
 			line: line,
-			keyword: 'if',
+			keyword: '@root',
 			expression: '',
 			blocks: [{
 				expression: '@else',
@@ -97,23 +97,21 @@ amiTwig.engine = {
 
 				/*-----------------------------------------*/
 
-				var msg = [];
+				var errors = [];
 
 				for(i = stack1.length - 1; i > 0; i--)
 				{
-					/**/ if(stack1[i].keyword === 'if')
-					{
-					 	msg.push('missing keyword `endif`');
-					}
-					else if(stack1[i].keyword === 'for')
-					{
-					 	msg.push('missing keyword `endfor`');
+					if(stack1[i].keyword === 'if'
+					   ||
+					   stack1[i].keyword === 'for'
+					 ) {
+					 	errors.push('missing keyword `' + stack1[i].keyword + '`');
 					}
 				}
 
-				if(msg.length > 0)
+				if(errors.length > 0)
 				{
-					throw 'syntax error, line `' + line + '`, ' + msg.join(', ');
+					throw 'syntax error, line `' + line + '`, ' + errors.join(', ');
 				}
 
 				/*-----------------------------------------*/
@@ -323,23 +321,16 @@ amiTwig.engine = {
 			case 'set':
 				/*-----------------------------------------*/
 
-				m = item.expression.match(/^\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(.+)/)
+				m = item.expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(.+)/)
 
 				if(!m)
 				{
 					throw 'syntax error, line `' + item.line + '`, invalid `set` statement';
 				}
 
-				symb = m[1].trim();
-				expr = m[2].trim();
-
 				/*-----------------------------------------*/
 
-				value = amiTwig.expr.cache.eval(expr, item.line, dict);
-
-				/*-----------------------------------------*/
-
-				dict[symb] = value;
+				dict[m[1]] = amiTwig.expr.cache.eval(m[2], item.line, dict);
 
 				/*-----------------------------------------*/
 
@@ -355,7 +346,7 @@ amiTwig.engine = {
 
 					value = amiTwig.expr.cache.eval(expression, item.line, dict);
 
-					return (typeof value !== 'undefined' && value !== null) ? value : '';
+					return (value !== undefined && value !== null) ? value : '';
 				}));
 
 				break;
@@ -365,12 +356,13 @@ amiTwig.engine = {
 			/*-------------------------------------------------*/
 
 			case 'if':
+			case '@root':
 
 				for(i in item.blocks)
 				{
 					expression = item.blocks[i].expression;
 
-					if(expression === '@else' || amiTwig.expr.cache.eval(expression, item.line, dict) === true)
+					if(expression === '@else' || amiTwig.expr.cache.eval(expression, item.line, dict))
 					{
 						list = item.blocks[i].list;
 
@@ -399,10 +391,10 @@ amiTwig.engine = {
 					throw 'syntax error, line `' + item.line + '`, invalid `for` statement';
 				}
 
-				symb = m[1].trim();
-				expr = m[2].trim();
-
 				/*-----------------------------------------*/
+
+				symb = m[1];
+				expr = m[2];
 
 				value = amiTwig.expr.cache.eval(expr, item.line, dict);
 

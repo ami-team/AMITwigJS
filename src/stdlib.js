@@ -25,7 +25,7 @@ amiTwig.stdlib = {
 
 	'isDefined': function(x)
 	{
-		return typeof x !== 'undefined';
+		return x !== undefined;
 	},
 
 	/*-----------------------------------------------------------------*/
