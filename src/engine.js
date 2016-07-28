@@ -101,11 +101,13 @@ amiTwig.engine = {
 
 				for(i = stack1.length - 1; i > 0; i--)
 				{
-					if(stack1[i].keyword === 'if'
-					   ||
-					   stack1[i].keyword === 'for'
-					 ) {
-					 	errors.push('missing keyword `' + stack1[i].keyword + '`');
+					/**/ if(stack1[i].keyword === 'if')
+					{
+					 	errors.push('missing keyword `endif`');
+					}
+					else if(stack1[i].keyword === 'for')
+					{
+					 	errors.push('missing keyword `endfor`');
 					}
 				}
 
@@ -215,7 +217,7 @@ amiTwig.engine = {
 
 					if(curr['keyword'] !== 'if')
 					{
-						throw 'syntax error, line `' + line + '`, missing keyword `if`';
+						throw 'syntax error, line `' + line + '`, unexpected keyword `elseif`';
 					}
 
 					indx = curr.blocks.length;
@@ -235,7 +237,7 @@ amiTwig.engine = {
 
 					if(curr['keyword'] !== 'if')
 					{
-						throw 'syntax error, line `' + line + '`, missing keyword `if`';
+						throw 'syntax error, line `' + line + '`, unexpected keyword `else`';
 					}
 
 					indx = curr.blocks.length;
@@ -255,7 +257,7 @@ amiTwig.engine = {
 
 					if(curr['keyword'] !== 'if')
 					{
-						throw 'syntax error, line `' + line + '`, missing keyword `if`';
+						throw 'syntax error, line `' + line + '`, unexpected keyword `endif`';
 					}
 
 					stack1.pop();
@@ -269,7 +271,7 @@ amiTwig.engine = {
 
 					if(curr['keyword'] !== 'for')
 					{
-						throw 'syntax error, line `' + line + '`, missing keyword `for`';
+						throw 'syntax error, line `' + line + '`, unexpected keyword `endfor`';
 					}
 
 					stack1.pop();
