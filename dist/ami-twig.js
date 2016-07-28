@@ -1809,8 +1809,8 @@ amiTwig.engine = {
 				item = {
 					line: line,
 					keyword: '@text',
-					expression: (('')),
-					blocks: (([])),
+					expression: '',
+					blocks: [],
 					value: value,
 				}
 
@@ -1842,8 +1842,8 @@ amiTwig.engine = {
 						line: line,
 						keyword: keyword,
 						expression: expression,
-						blocks: (([])),
-						value: (('')),
+						blocks: [],
+						value: '',
 					};
 
 					curr.blocks[indx].list.push(item);

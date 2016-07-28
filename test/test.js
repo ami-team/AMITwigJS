@@ -111,7 +111,4 @@ console.log(amiTwig.engine.render('{{ random("azerty") }}'));
 console.log(amiTwig.engine.render('{{ random(100) }}'));
 console.log(amiTwig.engine.render('{{ random() }}'));
 
-console.log(amiTwig.engine.render('{% if %}'));
-
-
 /*-------------------------------------------------------------------------*/
