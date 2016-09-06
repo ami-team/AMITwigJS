@@ -544,28 +544,30 @@ amiTwig.expr.Compiler = function(code, line) {
 
 	this.parseNot = function()
 	{
-		var left = this.parseComp(), right, node;
+		var right, node;
 
 		/*---------------------------------------------------------*/
-		/* Not : Comp ('not' Comp)*                                */
+		/* Not : 'not' Comp                                        */
 		/*---------------------------------------------------------*/
 
-		while(this.tokenizer.checkType(amiTwig.expr.tokens.NOT))
+		if(this.tokenizer.checkType(amiTwig.expr.tokens.NOT))
 		{
 			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
 
 			right = this.parseComp();
 
-			node.nodeLeft = left;
+			node.nodeLeft = null;
 			node.nodeRight = right;
 
-			left = node;
+			return node;
 		}
 
 		/*---------------------------------------------------------*/
+		/*     | Comp                                              */
+		/*---------------------------------------------------------*/
 
-		return left;
+		return this.parseComp();
 	};
 
 	/*-----------------------------------------------------------------*/
