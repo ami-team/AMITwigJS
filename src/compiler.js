@@ -637,7 +637,7 @@ amiTwig.expr.Compiler = function(code, line) {
 		}
 
 		/*---------------------------------------------------------*/
-		/*      | AddSub 'in' X                                    */
+		/*      | AddSub 'in' AddSub                               */
 		/*---------------------------------------------------------*/
 
 		else if(this.tokenizer.checkType(amiTwig.expr.tokens.IN))
@@ -645,7 +645,7 @@ amiTwig.expr.Compiler = function(code, line) {
 			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
 
-			right = this.parseX();
+			right = this.parseAddSub();
 
 			node.nodeLeft = left;
 			node.nodeRight = right;
