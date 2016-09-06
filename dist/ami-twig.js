@@ -335,8 +335,7 @@ amiTwig.expr.tokens = {
 			this.MOD,
 		];
 
-		this.NOT_PLUS_MINUS = [
-			this.NOT,
+		this.PLUS_MINUS = [
 			this.PLUS,
 			this.MINUS,
 		];
@@ -797,13 +796,41 @@ amiTwig.expr.Compiler = function(code, line) {
 
 	this.parseBitwiseAnd = function()
 	{
-		var left = this.parseComp(), right, node;
+		var left = this.parseNot(), right, node;
 
 		/*---------------------------------------------------------*/
-		/* BitwiseAnd : Comp ('b-and' Comp)*                       */
+		/* BitwiseAnd : Not ('b-and' Not)*                         */
 		/*---------------------------------------------------------*/
 
 		while(this.tokenizer.checkType(amiTwig.expr.tokens.BITWISE_AND))
+		{
+			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
+			this.tokenizer.next();
+
+			right = this.parseNot();
+
+			node.nodeLeft = left;
+			node.nodeRight = right;
+
+			left = node;
+		}
+
+		/*---------------------------------------------------------*/
+
+		return left;
+	};
+
+	/*-----------------------------------------------------------------*/
+
+	this.parseNot = function()
+	{
+		var left = this.parseComp(), right, node;
+
+		/*---------------------------------------------------------*/
+		/* Not : Comp ('not' Comp)*                                */
+		/*---------------------------------------------------------*/
+
+		while(this.tokenizer.checkType(amiTwig.expr.tokens.NOT))
 		{
 			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
@@ -972,10 +999,10 @@ amiTwig.expr.Compiler = function(code, line) {
 
 	this.parseMulDiv = function()
 	{
-		var left = this.parsePower(), right, node;
+		var left = this.parsePlusMinus(), right, node;
 
 		/*---------------------------------------------------------*/
-		/* MulDiv : Power (('*' | '//' | '/' | '%') Power)*        */
+		/* MulDiv : PlusMinus (('*' | '//' | '/' | '%') PlusMinus)**/
 		/*---------------------------------------------------------*/
 
 		while(this.tokenizer.checkType(amiTwig.expr.tokens.MUL_FLDIV_DIV_MOD))
@@ -983,7 +1010,7 @@ amiTwig.expr.Compiler = function(code, line) {
 			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
 
-			right = this.parsePower();
+			right = this.parsePlusMinus();
 
 			node.nodeLeft = left;
 			node.nodeRight = right;
@@ -998,48 +1025,20 @@ amiTwig.expr.Compiler = function(code, line) {
 
 	/*-----------------------------------------------------------------*/
 
-	this.parsePower = function()
-	{
-		var left = this.parseNotPlusMinus(), right, node;
-
-		/*---------------------------------------------------------*/
-		/* Power : NotPlusMinus ('**' NotPlusMinus)*               */
-		/*---------------------------------------------------------*/
-
-		while(this.tokenizer.checkType(amiTwig.expr.tokens.POWER))
-		{
-			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
-			this.tokenizer.next();
-
-			right = this.parseNotPlusMinus();
-
-			node.nodeLeft = left;
-			node.nodeRight = right;
-
-			left = node;
-		}
-
-		/*---------------------------------------------------------*/
-
-		return left;
-	};
-
-	/*-----------------------------------------------------------------*/
-
-	this.parseNotPlusMinus = function()
+	this.parsePlusMinus = function()
 	{
 		var right, node;
 
 		/*---------------------------------------------------------*/
-		/* NotPlusMinus : ('not' | '-' | '+') Dot1                 */
+		/* PlusMinus : ('-' | '+') Power                           */
 		/*---------------------------------------------------------*/
 
-		if(this.tokenizer.checkType(amiTwig.expr.tokens.NOT_PLUS_MINUS))
+		if(this.tokenizer.checkType(amiTwig.expr.tokens.PLUS_MINUS))
 		{
 			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
 
-			right = this.parseDot1();
+			right = this.parsePower();
 
 			node.nodeLeft = null;
 			node.nodeRight = right;
@@ -1051,7 +1050,35 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*              | Dot1                                     */
 		/*---------------------------------------------------------*/
 
-		return this.parseDot1();
+		return this.parsePower();
+	};
+
+	/*-----------------------------------------------------------------*/
+
+	this.parsePower = function()
+	{
+		var left = this.parseDot1(), right, node;
+
+		/*---------------------------------------------------------*/
+		/* Power : Dot1 ('**' Dot1)*                               */
+		/*---------------------------------------------------------*/
+
+		while(this.tokenizer.checkType(amiTwig.expr.tokens.POWER))
+		{
+			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
+			this.tokenizer.next();
+
+			right = this.parseDot1();
+
+			node.nodeLeft = left;
+			node.nodeRight = right;
+
+			left = node;
+		}
+
+		/*---------------------------------------------------------*/
+
+		return left;
 	};
 
 	/*-----------------------------------------------------------------*/
