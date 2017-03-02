@@ -3,7 +3,7 @@
  *
  * Version: 0.2.0
  *
- * Copyright (c) 2014-2015 The AMI Team
+ * Copyright (c) 2014-![VALUE YEAR] The AMI Team
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -34,7 +34,7 @@ if(typeof exports !== 'undefined')
 /*
  * AMI TWIG Engine
  *
- * Copyright (c) 2014-2015 The AMI Team
+ * Copyright (c) 2014-![VALUE YEAR] The AMI Team
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -281,7 +281,7 @@ amiTwig.tokenizer = {
 /*
  * AMI TWIG Engine
  *
- * Copyright (c) 2014-2015 The AMI Team
+ * Copyright (c) 2014-![VALUE YEAR] The AMI Team
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -1611,7 +1611,7 @@ amiTwig.expr.Node = function(nodeType, nodeValue) {
 /*
  * AMI TWIG Engine
  *
- * Copyright (c) 2014-2015 The AMI Team
+ * Copyright (c) 2014-![VALUE YEAR] The AMI Team
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -1693,7 +1693,7 @@ amiTwig.ajax = {
 /*
  * AMI TWIG Engine
  *
- * Copyright (c) 2014-2015 The AMI Team
+ * Copyright (c) 2014-![VALUE YEAR] The AMI Team
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -2247,7 +2247,7 @@ amiTwig.engine = {
 /*
  * AMI TWIG Engine
  *
- * Copyright (c) 2014-2015 The AMI Team
+ * Copyright (c) 2014-![VALUE YEAR] The AMI Team
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -2304,7 +2304,7 @@ amiTwig.expr.cache = {
 /*
  * AMI TWIG Engine
  *
- * Copyright (c) 2014-2015 The AMI Team
+ * Copyright (c) 2014-![VALUE YEAR] The AMI Team
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -3069,7 +3069,7 @@ amiTwig.stdlib.filter_e = amiTwig.stdlib.filter_escape;
 /*
  * AMI TWIG Engine
  *
- * Copyright (c) 2014-2015 The AMI Team
+ * Copyright (c) 2014-![VALUE YEAR] The AMI Team
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
