@@ -1631,8 +1631,26 @@ amiTwig.expr.Node = function(nodeType, nodeValue) {
 amiTwig.ajax = {
 	/*-----------------------------------------------------------------*/
 
-	get: function(fileName, done, fail)
+	dict: {},
+
+	/*-----------------------------------------------------------------*/
+
+	get: function(url, done, fail)
 	{
+		var txt;
+
+		/*---------------------------------------------------------*/
+
+		if(url in this.dict)
+		{
+			if(done)
+			{
+				done(this.dict[url]);
+			}
+		}
+
+		/*---------------------------------------------------------*/
+
 		if(typeof exports !== 'undefined')
 		{
 			/*-------------------------------------------------*/
@@ -1641,15 +1659,17 @@ amiTwig.ajax = {
 
 			try
 			{
-				var txt = amiTwig.fs.readFileSync(fileName, 'utf8');
+				txt = this.dict[url] = amiTwig.fs.readFileSync(url, 'utf8');
 
-				if(done) {
+				if(done)
+				{
 					done(txt);
 				}
 			}
 			catch(err)
 			{
-				if(fail) {
+				if(fail)
+				{
 					fail(err);
 				}
 			}
@@ -1664,26 +1684,34 @@ amiTwig.ajax = {
 
 			var xmlHttpRequest = new XMLHttpRequest();
 
-			xmlHttpRequest.open('GET', fileName, false);
+			xmlHttpRequest.open('GET', url, false);
 			xmlHttpRequest.send();
 
 			/*-------------------------------------------------*/
 
 			if(xmlHttpRequest.status === 200)
 			{
-				if(done) {
-					done(xmlHttpRequest.responseText);
+				txt = this.dict[url] = xmlHttpRequest.responseText;
+
+				if(done)
+				{
+					done(txt);
 				}
 			}
 			else
 			{
-				if(fail) {
-					fail(xmlHttpRequest.responseText);
+				txt = /**************/ xmlHttpRequest.responseText;
+
+				if(fail)
+				{
+					fail(txt);
 				}
 			}
 
 			/*-------------------------------------------------*/
 		}
+
+		/*---------------------------------------------------------*/
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -1996,6 +2024,8 @@ amiTwig.engine = {
 
 		var m, symb, expr, value;
 
+		this.dict = dict || {};
+
 		switch(item.keyword)
 		{
 			/*-------------------------------------------------*/
@@ -2003,8 +2033,11 @@ amiTwig.engine = {
 			/*-------------------------------------------------*/
 
 			case 'do':
+				/*-----------------------------------------*/
 
 				amiTwig.expr.cache.eval(item.expression, item.line, dict);
+
+				/*-----------------------------------------*/
 
 				break;
 
@@ -2035,6 +2068,7 @@ amiTwig.engine = {
 			/*-------------------------------------------------*/
 
 			case '@text':
+				/*-----------------------------------------*/
 
 				result.push(item.value.replace(this.VARIABLE_RE, function(match, expression) {
 
@@ -2042,6 +2076,8 @@ amiTwig.engine = {
 
 					return (value !== undefined && value !== null) ? value : '';
 				}));
+
+				/*-----------------------------------------*/
 
 				break;
 
@@ -2051,6 +2087,7 @@ amiTwig.engine = {
 
 			case 'if':
 			case '@root':
+				/*-----------------------------------------*/
 
 				for(i in item.blocks)
 				{
@@ -2068,6 +2105,8 @@ amiTwig.engine = {
 						break;
 					}
 				}
+
+				/*-----------------------------------------*/
 
 				break;
 
@@ -2185,7 +2224,7 @@ amiTwig.engine = {
 
 				expression = expression.trim();
 
-				if((m = expression.match(/with\s+(([a-zA-Z_$]|{).*)$/)))
+				if((m = expression.match(/with\s+(.+)$/)))
 				{
 					expression = expression.substr(expression, expression.length - m[0].length - 1);
 
@@ -3031,31 +3070,31 @@ amiTwig.stdlib = {
 
 		if(withContext)
 		{
-			/* for(var i in dict) variables[i] = dict[i]; */
+			for(var i in amiTwig.engine.dict) variables[i] = amiTwig.engine.dict[i];
 		}
 
 		/*---------------------------------------------------------*/
+
+		var result = '';
 
 		amiTwig.ajax.get(
 			fileName,
 			function(data)
 			{
-				return amiTwig.engine.render(data, variables);
+				result = amiTwig.engine.render(data, variables);
 			},
 			function(/**/)
 			{
-				if(ignoreMissing)
+				if(ignoreMissing === false)
 				{
-					return '';
+					throw 'runtime error, could not open `' + fileName + '`';
 				}
 			}
 		);
 
 		/*---------------------------------------------------------*/
 
-		throw 'runtime error, could not open `' + fileName + '`';
-
-		/*---------------------------------------------------------*/
+		return result;
 	},
 
 	/*-----------------------------------------------------------------*/

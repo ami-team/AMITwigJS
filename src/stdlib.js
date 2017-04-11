@@ -728,31 +728,31 @@ amiTwig.stdlib = {
 
 		if(withContext)
 		{
-			/* for(var i in dict) variables[i] = dict[i]; */
+			for(var i in amiTwig.engine.dict) variables[i] = amiTwig.engine.dict[i];
 		}
 
 		/*---------------------------------------------------------*/
+
+		var result = '';
 
 		amiTwig.ajax.get(
 			fileName,
 			function(data)
 			{
-				return amiTwig.engine.render(data, variables);
+				result = amiTwig.engine.render(data, variables);
 			},
 			function(/**/)
 			{
-				if(ignoreMissing)
+				if(ignoreMissing === false)
 				{
-					return '';
+					throw 'runtime error, could not open `' + fileName + '`';
 				}
 			}
 		);
 
 		/*---------------------------------------------------------*/
 
-		throw 'runtime error, could not open `' + fileName + '`';
-
-		/*---------------------------------------------------------*/
+		return result;
 	},
 
 	/*-----------------------------------------------------------------*/

@@ -21,8 +21,26 @@
 amiTwig.ajax = {
 	/*-----------------------------------------------------------------*/
 
-	get: function(fileName, done, fail)
+	dict: {},
+
+	/*-----------------------------------------------------------------*/
+
+	get: function(url, done, fail)
 	{
+		var txt;
+
+		/*---------------------------------------------------------*/
+
+		if(url in this.dict)
+		{
+			if(done)
+			{
+				done(this.dict[url]);
+			}
+		}
+
+		/*---------------------------------------------------------*/
+
 		if(typeof exports !== 'undefined')
 		{
 			/*-------------------------------------------------*/
@@ -31,15 +49,17 @@ amiTwig.ajax = {
 
 			try
 			{
-				var txt = amiTwig.fs.readFileSync(fileName, 'utf8');
+				txt = this.dict[url] = amiTwig.fs.readFileSync(url, 'utf8');
 
-				if(done) {
+				if(done)
+				{
 					done(txt);
 				}
 			}
 			catch(err)
 			{
-				if(fail) {
+				if(fail)
+				{
 					fail(err);
 				}
 			}
@@ -54,26 +74,34 @@ amiTwig.ajax = {
 
 			var xmlHttpRequest = new XMLHttpRequest();
 
-			xmlHttpRequest.open('GET', fileName, false);
+			xmlHttpRequest.open('GET', url, false);
 			xmlHttpRequest.send();
 
 			/*-------------------------------------------------*/
 
 			if(xmlHttpRequest.status === 200)
 			{
-				if(done) {
-					done(xmlHttpRequest.responseText);
+				txt = this.dict[url] = xmlHttpRequest.responseText;
+
+				if(done)
+				{
+					done(txt);
 				}
 			}
 			else
 			{
-				if(fail) {
-					fail(xmlHttpRequest.responseText);
+				txt = /**************/ xmlHttpRequest.responseText;
+
+				if(fail)
+				{
+					fail(txt);
 				}
 			}
 
 			/*-------------------------------------------------*/
 		}
+
+		/*---------------------------------------------------------*/
 	},
 
 	/*-----------------------------------------------------------------*/

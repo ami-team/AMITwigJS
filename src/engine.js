@@ -304,6 +304,8 @@ amiTwig.engine = {
 
 		var m, symb, expr, value;
 
+		this.dict = dict || {};
+
 		switch(item.keyword)
 		{
 			/*-------------------------------------------------*/
@@ -311,8 +313,11 @@ amiTwig.engine = {
 			/*-------------------------------------------------*/
 
 			case 'do':
+				/*-----------------------------------------*/
 
 				amiTwig.expr.cache.eval(item.expression, item.line, dict);
+
+				/*-----------------------------------------*/
 
 				break;
 
@@ -343,6 +348,7 @@ amiTwig.engine = {
 			/*-------------------------------------------------*/
 
 			case '@text':
+				/*-----------------------------------------*/
 
 				result.push(item.value.replace(this.VARIABLE_RE, function(match, expression) {
 
@@ -350,6 +356,8 @@ amiTwig.engine = {
 
 					return (value !== undefined && value !== null) ? value : '';
 				}));
+
+				/*-----------------------------------------*/
 
 				break;
 
@@ -359,6 +367,7 @@ amiTwig.engine = {
 
 			case 'if':
 			case '@root':
+				/*-----------------------------------------*/
 
 				for(i in item.blocks)
 				{
@@ -376,6 +385,8 @@ amiTwig.engine = {
 						break;
 					}
 				}
+
+				/*-----------------------------------------*/
 
 				break;
 
@@ -493,7 +504,7 @@ amiTwig.engine = {
 
 				expression = expression.trim();
 
-				if((m = expression.match(/with\s+(([a-zA-Z_$]|{).*)$/)))
+				if((m = expression.match(/with\s+(.+)$/)))
 				{
 					expression = expression.substr(expression, expression.length - m[0].length - 1);
 
