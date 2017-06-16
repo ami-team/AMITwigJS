@@ -55,11 +55,6 @@ amiTwig.expr.tokens = {
 			this.MOD,
 		];
 
-		this.PLUS_MINUS = [
-			this.PLUS,
-			this.MINUS,
-		];
-
 		this.RX = [
 			this.RP,
 			this.RB1,

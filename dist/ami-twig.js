@@ -335,11 +335,6 @@ amiTwig.expr.tokens = {
 			this.MOD,
 		];
 
-		this.PLUS_MINUS = [
-			this.PLUS,
-			this.MINUS,
-		];
-
 		this.RX = [
 			this.RP,
 			this.RB1,
@@ -3066,11 +3061,18 @@ amiTwig.stdlib = {
 	{
 		/*---------------------------------------------------------*/
 
-		variables = variables || {};
+		var i;
 
-		if(withContext)
-		{
-			for(var i in amiTwig.engine.dict) variables[i] = amiTwig.engine.dict[i];
+		var temp = {};
+
+		/*---------------------------------------------------------*/
+
+		if(withContext) {
+			for(i in amiTwig.engine.dict) temp[i] = amiTwig.engine.dict[i];
+		}
+
+		if(variables) {
+			for(i in /**/ variables /**/) temp[i] = /**/ variables /**/[i];
 		}
 
 		/*---------------------------------------------------------*/
@@ -3081,7 +3083,7 @@ amiTwig.stdlib = {
 			fileName,
 			function(data)
 			{
-				result = amiTwig.engine.render(data, variables);
+				result = amiTwig.engine.render(data, temp);
 			},
 			function(/**/)
 			{
