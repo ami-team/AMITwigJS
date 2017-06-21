@@ -722,8 +722,6 @@ amiTwig.stdlib = {
 
 	'include': function(fileName, variables, withContext, ignoreMissing)
 	{
-		/*---------------------------------------------------------*/
-
 		var i;
 
 		var temp = {};
