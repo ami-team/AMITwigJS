@@ -66,11 +66,9 @@ amiTwig.tokenizer = {
 
 		var word = '', c;
 
-		var found;
 		var token;
-		var type;
 		var idx;
-
+__loop0:
 		while(i < l)
 		{
 			c = code.charAt(0);
@@ -98,7 +96,7 @@ amiTwig.tokenizer = {
 					}
 
 					result_tokens.push(word);
-					result_types.push((-1));
+					result_types.push(-1);
 					result_lines.push(line);
 					word = '';
 				}
@@ -106,14 +104,12 @@ amiTwig.tokenizer = {
 				code = code.substring(1);
 				i += 1;
 
-				continue;
+				continue __loop0;
 			}
 
 			/*-------------------------------------------------*/
 			/* EAT REGEXES                                     */
 			/*-------------------------------------------------*/
-
-			found = false;
 
 			for(idx in tokenDefs)
 			{
@@ -129,28 +125,20 @@ amiTwig.tokenizer = {
 						}
 
 						result_tokens.push(word);
-						result_types.push((-1));
+						result_types.push(-1);
 						result_lines.push(line);
 						word = '';
 					}
 
-					type = tokenTypes[idx];
-
 					result_tokens.push(token);
-					result_types.push(type);
+					result_types.push(tokenTypes[idx]);
 					result_lines.push(line);
 
 					code = code.substring(token.length);
 					i += token.length;
-					found = true;
 
-					break;
+					continue __loop0;
 				}
-			}
-
-			if(found)
-			{
-				continue;
 			}
 
 			/*-------------------------------------------------*/
@@ -173,7 +161,7 @@ amiTwig.tokenizer = {
 			}
 
 			result_tokens.push(word);
-			result_types.push((-1));
+			result_types.push(-1);
 			result_lines.push(line);
 			word = '';
 		}

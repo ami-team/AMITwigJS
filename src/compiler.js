@@ -347,6 +347,8 @@ amiTwig.expr.Compiler = function(code, line) {
 
 		this.rootNode = this.parseFilter();
 
+		/*---------------------------------------------------------*/
+
 		if(!this.tokenizer.isEmpty())
 		{
 			throw 'syntax error, line `' + this.line + '`, unexpected token `' + this.tokenizer.peekToken() + '`';
