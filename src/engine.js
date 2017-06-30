@@ -91,7 +91,7 @@ amiTwig.engine = {
 					line: line,
 					keyword: '@text',
 					expression: '',
-					blocks: (([])),
+					blocks: [],
 					value: s,
 				});
 
