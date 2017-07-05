@@ -68,7 +68,7 @@ amiTwig.tokenizer = {
 
 		var token;
 		var idx;
-__loop0:
+__l0:
 		while(i < l)
 		{
 			c = code.charAt(0);
@@ -104,7 +104,7 @@ __loop0:
 				code = code.substring(1);
 				i += 1;
 
-				continue __loop0;
+				continue __l0;
 			}
 
 			/*-------------------------------------------------*/
@@ -137,7 +137,7 @@ __loop0:
 					code = code.substring(token.length);
 					i += token.length;
 
-					continue __loop0;
+					continue __l0;
 				}
 			}
 
