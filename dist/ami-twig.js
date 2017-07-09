@@ -1806,7 +1806,7 @@ amiTwig.engine = {
 				{
 					/**/ if(stack1[i].keyword === 'if')
 					{
-					 	errors.push('missing keyword `endif`');
+						errors.push('missing keyword `endif`');
 					}
 					else if(stack1[i].keyword === 'for')
 					{
@@ -1877,8 +1877,8 @@ amiTwig.engine = {
 				/*-----------------------------------------*/
 
 				case 'do':
-			        case 'set':
-			        case 'include':
+				case 'set':
+				case 'include':
 
 					item = {
 						line: line,
@@ -2370,7 +2370,7 @@ amiTwig.stdlib = {
 		   ||
 		   x === ((''))
 		 ) {
-		 	return true;
+			return true;
 		}
 		else
 		{
@@ -2449,7 +2449,7 @@ amiTwig.stdlib = {
 		   ||
 		   this.isString(y)
 		 ) {
-		 	return y.indexOf(x) >= 0;
+			return y.indexOf(x) >= 0;
 		}
 
 		if(this.isObject(y))
@@ -2530,7 +2530,7 @@ amiTwig.stdlib = {
 		   ||
 		   this.isArray(x)
 		 ) {
-		 	return x.length;
+			return x.length;
 		}
 
 		if(this.isObject(x))
@@ -2805,16 +2805,16 @@ amiTwig.stdlib = {
 				||
 				mode === 'html_attr'
 			 ) {
-			 	_map = this._internal_escape_map1;
+				_map = this._internal_escape_map1;
 
-			 	return s.replace(/[<>"&]/g, function(s) {
+				return s.replace(/[<>"&]/g, function(s) {
 
 					return _map[s];
 				});
 			}
 			else if(mode === 'js')
 			{
-			 	_map = this._internal_escape_map2;
+				_map = this._internal_escape_map2;
 
 				return s.replace(/[\\\n"']/g, function(s) {
 
@@ -3135,7 +3135,7 @@ amiTwig.expr.interpreter = {
 			/*-------------------------------------------------*/
 
 			case amiTwig.expr.tokens.LST:
-		 		/*-----------------------------------------*/
+				/*-----------------------------------------*/
 
 				L = [];
 
@@ -3144,7 +3144,7 @@ amiTwig.expr.interpreter = {
 					L.push(/* (i) */ this._getJS(node.list[i]));
 				}
 
-		 		/*-----------------------------------------*/
+				/*-----------------------------------------*/
 
 				return '[' + L.join(',') + ']';
 
@@ -3153,7 +3153,7 @@ amiTwig.expr.interpreter = {
 			/*-------------------------------------------------*/
 
 			case amiTwig.expr.tokens.DIC:
-		 		/*-----------------------------------------*/
+				/*-----------------------------------------*/
 
 				L = [];
 	
@@ -3189,7 +3189,7 @@ amiTwig.expr.interpreter = {
 			/*-------------------------------------------------*/
 
 			case amiTwig.expr.tokens.VAR:
-		 		/*-----------------------------------------*/
+				/*-----------------------------------------*/
 
 				L = [];
 
@@ -3198,7 +3198,7 @@ amiTwig.expr.interpreter = {
 					L.push('[' + this._getJS(node.list[i]) + ']');
 				}
 
-			 	/*-----------------------------------------*/
+				/*-----------------------------------------*/
 
 				return L.length > 0 ? node.nodeValue + L.join('') : node.nodeValue;
 

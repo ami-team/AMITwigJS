@@ -45,7 +45,7 @@ amiTwig.stdlib = {
 		   ||
 		   x === ((''))
 		 ) {
-		 	return true;
+			return true;
 		}
 		else
 		{
@@ -124,7 +124,7 @@ amiTwig.stdlib = {
 		   ||
 		   this.isString(y)
 		 ) {
-		 	return y.indexOf(x) >= 0;
+			return y.indexOf(x) >= 0;
 		}
 
 		if(this.isObject(y))
@@ -205,7 +205,7 @@ amiTwig.stdlib = {
 		   ||
 		   this.isArray(x)
 		 ) {
-		 	return x.length;
+			return x.length;
 		}
 
 		if(this.isObject(x))
@@ -480,16 +480,16 @@ amiTwig.stdlib = {
 				||
 				mode === 'html_attr'
 			 ) {
-			 	_map = this._internal_escape_map1;
+				_map = this._internal_escape_map1;
 
-			 	return s.replace(/[<>"&]/g, function(s) {
+				return s.replace(/[<>"&]/g, function(s) {
 
 					return _map[s];
 				});
 			}
 			else if(mode === 'js')
 			{
-			 	_map = this._internal_escape_map2;
+				_map = this._internal_escape_map2;
 
 				return s.replace(/[\\\n"']/g, function(s) {
 

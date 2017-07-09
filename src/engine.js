@@ -103,7 +103,7 @@ amiTwig.engine = {
 				{
 					/**/ if(stack1[i].keyword === 'if')
 					{
-					 	errors.push('missing keyword `endif`');
+						errors.push('missing keyword `endif`');
 					}
 					else if(stack1[i].keyword === 'for')
 					{
@@ -174,8 +174,8 @@ amiTwig.engine = {
 				/*-----------------------------------------*/
 
 				case 'do':
-			        case 'set':
-			        case 'include':
+				case 'set':
+				case 'include':
 
 					item = {
 						line: line,
