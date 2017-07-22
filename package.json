@@ -1,0 +1,25 @@
+{
+  "name": "ami-twig",
+  "version": "1.0.0",
+  "description": "AMI TWIG Engine",
+  "author": "The AMI Team, Jerome Odier <jerome.odier@lpsc.in2p3.fr>",
+  "license": "CECILL-C",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ami-team/AMITwigJS/"
+  },
+  "homepage": "https://github.com/ami-team/AMITwigJS/",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "grunt": "^1.0.1",
+    "grunt-babel": "^6.0.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-cssmin": "^2.2.0",
+    "grunt-contrib-uglify": "git://github.com/gruntjs/grunt-contrib-uglify.git#harmony",
+    "grunt-eslint": "^20.0.0"
+  },
+  "keywords": [
+    "ami",
+    "twig"
+  ]
+}

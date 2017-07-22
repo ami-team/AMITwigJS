@@ -25,7 +25,7 @@ if(typeof exports !== 'undefined')
 {
 	amiTwig.fs = require('fs');
 
-	exports.amiTwig = amiTwig;
+	module.exports.amiTwig = amiTwig;
 }
 
 /*-------------------------------------------------------------------------*/

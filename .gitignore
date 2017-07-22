@@ -1,1 +1,7 @@
 .DS_Store
+.DS_Store?
+
+.settings
+.classpath
+
+node_modules
