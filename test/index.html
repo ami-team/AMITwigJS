@@ -3,106 +3,102 @@
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TWIG Expression Compiler</title>
+		<title>TWIG Expression Compiler</title>
 
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
 
-    <style type="text/css">
-	pre {
-		background-image: url("images/blueprint-dark.png");
-	}
-    </style>
+		<style type="text/css">
 
-    <script type="text/javascript" src="js/viz.js"></script>
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+			pre {
+				background-image: url("images/blueprint-dark.png");
+			}
 
-    <script type="text/javascript" src="../dist/ami-twig.js"></script>
+		</style>
 
-    <!--[if lt IE 9]>
-      <script type="text/javascript" src="html5shiv.min.js"></script>
-      <script type="text/javascript" src="respond.min.js"></script>
-    <![endif]-->
+		<script type="text/javascript" src="js/viz.js"></script>
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
 
-    <script type="text/javascript">
-	/*-----------------------------------------------------------------*/
+		<script type="text/javascript" src="../dist/ami-twig.js"></script>
 
-	function viewExpr()
-	{
-		$('#code').empty();
-		$('#tree').empty();
+		<script type="text/javascript">
+		/*---------------------------------------------------------*/
 
-		try
+		function viewExpr()
 		{
-			var expr = new amiTwig.expr.Compiler($('#expr').val(), 1);
+			$('#code').empty();
+			$('#tree').empty();
 
-			var tree = Viz(expr.dump(), 'svg', undefined);
-			$('#tree').html(tree);
+			try
+			{
+				var expr = new amiTwig.expr.Compiler($('#expr').val(), 1);
 
-			var code = amiTwig.expr.interpreter.getJS(expr);
-			$('#code').html(code);
+				var tree = Viz(expr.dump(), 'svg', undefined);
+				$('#tree').html(tree);
+
+				var code = amiTwig.expr.interpreter.getJS(expr);
+				$('#code').html(code);
+
+				$('#message').empty();
+			}
+			catch(e)
+			{
+				$('#message').html('<div class="alert alert-danger alert-dismissible" role="alert"><button class="close" data-dismiss="alert"><span>&times;</span><span class="sr-only">Close</span></button><strong>Error!</strong> ' + e + '</div');
+			}
+		}
+
+		/*---------------------------------------------------------*/
+
+		function clearExpr()
+		{
+			$('#code').empty();
+			$('#tree').empty();
 
 			$('#message').empty();
 		}
-		catch(e)
-		{
-			$('#message').html('<div class="alert alert-danger alert-dismissible" role="alert"><button class="close" data-dismiss="alert"><span>&times;</span><span class="sr-only">Close</span></button><strong>Error!</strong> ' + e + '</div');
-		}
-	}
 
-	/*-----------------------------------------------------------------*/
+		/*---------------------------------------------------------*/
 
-	function clearExpr()
-	{
-		$('#code').empty();
-		$('#tree').empty();
+		$(function() {
 
-		$('#message').empty();
-	}
+			document.getElementById('expr').addEventListener('keypress', function(e) {
 
-	/*-----------------------------------------------------------------*/
-
-	$(function() {
-
-		document.getElementById('expr').addEventListener('keypress', function(e) {
-
-			if(e.keyCode === 13)
-			{
-				viewExpr();
-			}
+				if(e.keyCode === 13)
+				{
+					viewExpr();
+				}
+			});
 		});
-	});
 
-	/*-----------------------------------------------------------------*/
-    </script>
+		/*---------------------------------------------------------*/
+		</script>
+	</head>
+	<body>
 
-  </head>
-  <body>
+		<div class="container">
 
-    <div class="container">
+			<div id="message"></div>
 
-      <div id="message"></div>
+			<h1>TWIG expression</h1>
 
-      <h1>TWIG expression</h1>
+			<div class="input-group">
+				<input type="text" class="form-control" id="expr" placeholder="Expression...">
+				<span class="input-group-btn">
+					<button class="btn btn-default" onclick="viewExpr();">View</button>
+				</span>
+			</div>
 
-      <div class="input-group">
-        <input type="text" class="form-control" id="expr" placeholder="Expression...">
-        <span class="input-group-btn">
-          <button class="btn btn-default" onclick="viewExpr();">View</button>
-        </span>
-      </div>
+			<div class="text-right"><a href="javascript:clearExpr();">clear</a></div>
 
-      <div class="text-right"><a href="javascript:clearExpr();">clear</a></div>
+			<div class="text-center" id="code"></div>
+			<div class="text-center" id="tree"></div>
 
-      <div class="text-center" id="code"></div>
-      <div class="text-center" id="tree"></div>
+		<div>
 
-    <div>
-
-  </body>
+	</body>
 </html>
