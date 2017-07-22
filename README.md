@@ -1,7 +1,7 @@
 AMI-TWIG.js
 ===========
 
-[AMI-TWIG.js](http://www.cern.ch/ami/twig/) is a JavaScript implementation of the [SensioLabs's TWIG template engine](http://twig.sensiolabs.org/) for NodeJS and browsers.
+[AMI-TWIG.js](http://www.cern.ch/ami/twig/) is a JavaScript implementation for NodeJS and browsers of the [SensioLabs's TWIG template engine](http://twig.sensiolabs.org/).
 
 
 Getting started
@@ -38,7 +38,7 @@ var textResult = amiTwig.engine.render(compiledTemplate, optionalDict);
 License
 =======
 
-Copyright or © or Copr. The AMI Team (2015)
+Copyright or © or Copr. CNRS / IN2P3 / AMI Team (2017)
 
 ami@lpsc.in2p3.fr
 
