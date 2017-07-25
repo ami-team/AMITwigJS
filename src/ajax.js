@@ -13,11 +13,6 @@
 /* amiTwig.ajax                                                            */
 /*-------------------------------------------------------------------------*/
 
-/**
- * The AMI TWIG Ajax
- * @namespace ami/twig/ajax
- */
-
 amiTwig.ajax = {
 	/*-----------------------------------------------------------------*/
 
@@ -27,7 +22,7 @@ amiTwig.ajax = {
 
 	get: function(url, done, fail)
 	{
-		var txt;
+		let txt;
 
 		/*---------------------------------------------------------*/
 
@@ -37,6 +32,8 @@ amiTwig.ajax = {
 			{
 				done(this.dict[url]);
 			}
+
+			return;
 		}
 
 		/*---------------------------------------------------------*/
@@ -72,7 +69,7 @@ amiTwig.ajax = {
 			/* BROWSER                                         */
 			/*-------------------------------------------------*/
 
-			var xmlHttpRequest = new XMLHttpRequest();
+			const xmlHttpRequest = new XMLHttpRequest();
 
 			xmlHttpRequest.open('GET', url, false);
 			xmlHttpRequest.send();

@@ -58,6 +58,7 @@ console.log(amiTwig.engine.render('{% for i in t1 %} {{i}} {% endfor %}', dict))
 console.log(amiTwig.engine.render('||{% if true %} {% include \'test/template.html\' with {\'foo\': \'bar\'} %} {% endif %}||', dict));
 */
 
+console.log(amiTwig.engine.render('{# this is a comment #}'));
 
 console.log(amiTwig.engine.render('{% set b = [1, 2, 3] %}'));
 console.log(amiTwig.engine.render('{% set b = [1, 2, 3] %}', dict));

@@ -13,296 +13,20 @@
 /* amiTwig.engine                                                          */
 /*-------------------------------------------------------------------------*/
 
-/**
- * The AMI TWIG Engine
- * @namespace ami/twig
- */
-
 amiTwig.engine = {
 	/*-----------------------------------------------------------------*/
 
-	STATEMENT_RE: /\{%\s*([a-zA-Z]+)\s+(.*?)\s*%\}/m,
-
 	VARIABLE_RE: /\{\{\s*(.*?)\s*\}\}/g,
-
-	COMMENT_RE: /\{#\s*(.*?)\s*#\}/g,
-
-	/*-----------------------------------------------------------------*/
-
-	compile: function(s)
-	{
-		/*---------------------------------------------------------*/
-
-		var result = {
-			line: line,
-			keyword: '@root',
-			expression: '',
-			blocks: [{
-				expression: '@else',
-				list: [],
-			}],
-			value: '',
-		};
-
-		/*---------------------------------------------------------*/
-
-		var stack1 = [result];
-		var stack2 = [0x0000];
-
-		var item;
-
-		/*---------------------------------------------------------*/
-
-		var column_nr = 0;
-		var COLUMN_NR = 0;
-
-		var line = 1;
-
-		var i;
-
-		/*---------------------------------------------------------*/
-
-		for(s = s.replace(this.COMMENT_RE, '');; s = s.substr(COLUMN_NR))
-		{
-			/*-------------------------------------------------*/
-
-			var curr = stack1[stack1.length - 1];
-			var indx = stack2[stack2.length - 1];
-
-			/*-------------------------------------------------*/
-
-			var m = s.match(this.STATEMENT_RE);
-
-			if(m === null)
-			{
-				/*-----------------------------------------*/
-
-				for(i in s)
-				{
-					if(s[i] === '\n')
-					{
-						line++;
-					}
-				}
-
-				/*-----------------------------------------*/
-
-				curr.blocks[indx].list.push({
-					line: line,
-					keyword: '@text',
-					expression: '',
-					blocks: [],
-					value: s,
-				});
-
-				/*-----------------------------------------*/
-
-				var errors = [];
-
-				for(i = stack1.length - 1; i > 0; i--)
-				{
-					/**/ if(stack1[i].keyword === 'if')
-					{
-						errors.push('missing keyword `endif`');
-					}
-					else if(stack1[i].keyword === 'for')
-					{
-					 	errors.push('missing keyword `endfor`');
-					}
-				}
-
-				if(errors.length > 0)
-				{
-					throw 'syntax error, line `' + line + '`, ' + errors.join(', ');
-				}
-
-				/*-----------------------------------------*/
-
-				return result;
-			}
-
-			/*-------------------------------------------------*/
-
-			var match = m[0];
-			var keyword = m[1];
-			var expression = m[2];
-
-			column_nr = m.index + 0x0000000000;
-			COLUMN_NR = m.index + match.length;
-
-			var value = s.substr(0, column_nr);
-			var VALUE = s.substr(0, COLUMN_NR);
-
-			for(i in VALUE)
-			{
-				if(VALUE[i] === '\n')
-				{
-					line++;
-				}
-			}
-
-			/*-------------------------------------------------*/
-
-			if(value)
-			{
-				item = {
-					line: line,
-					keyword: '@text',
-					expression: '',
-					blocks: [],
-					value: value,
-				}
-
-				curr.blocks[indx].list.push(item);
-			}
-
-			/*-------------------------------------------------*/
-
-			switch(keyword)
-			{
-				/*-----------------------------------------*/
-
-				case 'flush':
-				case 'autoescape':
-				case 'spaceless':
-				case 'verbatim':
-
-					/* IGNORE */
-
-					break;
-
-				/*-----------------------------------------*/
-
-				case 'do':
-				case 'set':
-				case 'include':
-
-					item = {
-						line: line,
-						keyword: keyword,
-						expression: expression,
-						blocks: [],
-						value: '',
-					};
-
-					curr.blocks[indx].list.push(item);
-
-					break;
-
-				/*-----------------------------------------*/
-
-				case 'if':
-				case 'for':
-
-					item = {
-						line: line,
-						keyword: keyword,
-						blocks: [{
-							expression: expression,
-							list: [],
-						}],
-						value: '',
-					};
-
-					curr.blocks[indx].list.push(item);
-
-					stack1.push(item);
-					stack2.push(0x00);
-
-					break;
-
-				/*-----------------------------------------*/
-
-				case 'elseif':
-
-					if(curr['keyword'] !== 'if')
-					{
-						throw 'syntax error, line `' + line + '`, unexpected keyword `elseif`';
-					}
-
-					indx = curr.blocks.length;
-
-					curr.blocks.push({
-						expression: expression,
-						list: [],
-					});
-
-					stack2[stack2.length - 1] = indx;
-
-					break;
-
-				/*-----------------------------------------*/
-
-				case 'else':
-
-					if(curr['keyword'] !== 'if')
-					{
-						throw 'syntax error, line `' + line + '`, unexpected keyword `else`';
-					}
-
-					indx = curr.blocks.length;
-
-					curr.blocks.push({
-						expression: '@else',
-						list: [],
-					});
-
-					stack2[stack2.length - 1] = indx;
-
-					break;
-
-				/*-----------------------------------------*/
-
-				case 'endif':
-
-					if(curr['keyword'] !== 'if')
-					{
-						throw 'syntax error, line `' + line + '`, unexpected keyword `endif`';
-					}
-
-					stack1.pop();
-					stack2.pop();
-
-					break;
-
-				/*-----------------------------------------*/
-
-				case 'endfor':
-
-					if(curr['keyword'] !== 'for')
-					{
-						throw 'syntax error, line `' + line + '`, unexpected keyword `endfor`';
-					}
-
-					stack1.pop();
-					stack2.pop();
-
-					break;
-
-				/*-----------------------------------------*/
-
-				default:
-
-					throw 'syntax error, line `' + line + '`, unknown keyword `' + keyword + '`';
-
-				/*-----------------------------------------*/
-			}
-
-			/*-------------------------------------------------*/
-		}
-
-		/*---------------------------------------------------------*/
-	},
 
 	/*-----------------------------------------------------------------*/
 
 	_render: function(result, item, dict)
 	{
-		var i, j, k, l;
+		let k, l;
 
-		var expression, list;
+		let expression, list;
 
-		var m, symb, expr, value;
+		let m, symb, expr, value;
 
 		this.dict = dict || {};
 
@@ -369,15 +93,15 @@ amiTwig.engine = {
 			case '@root':
 				/*-----------------------------------------*/
 
-				for(i in item.blocks)
+				for(const i in item.blocks)
 				{
 					expression = item.blocks[i].expression;
 
-					if(expression === '@else' || amiTwig.expr.cache.eval(expression, item.line, dict))
+					if(expression === '@root' || expression === '@else' || amiTwig.expr.cache.eval(expression, item.line, dict))
 					{
 						list = item.blocks[i].list;
 
-						for(j in list)
+						for(const j in list)
 						{
 							this._render(result, list[j], dict);
 						}
@@ -445,7 +169,7 @@ amiTwig.engine = {
 
 				list = item.blocks[0].list;
 
-				for(i in value)
+				for(const i in value)
 				{
 					dict[symb] = value[i];
 
@@ -456,7 +180,7 @@ amiTwig.engine = {
 					k++;
 					dict.loop.index = k;
 
-					for(j in list)
+					for(const j in list)
 					{
 						this._render(result, list[j], dict);
 					}
@@ -552,9 +276,9 @@ amiTwig.engine = {
 
 	render: function(tmpl, dict)
 	{
-		var result = [];
+		const result = [];
 
-		this._render(result, Object.prototype.toString.call(tmpl) === '[object String]' ? this.compile(tmpl) : tmpl, dict || {});
+		this._render(result, Object.prototype.toString.call(tmpl) === '[object String]' ? new amiTwig.tmpl.Compiler(tmpl).rootNode : tmpl, dict || {});
 
 		return result.join('');
 	},

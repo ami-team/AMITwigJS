@@ -13,11 +13,6 @@
 /* amiTwig.expr.cache                                                      */
 /*-------------------------------------------------------------------------*/
 
-/**
- * The AMI TWIG cache interpreter
- * @namespace ami/twig/expr/cache
- */
-
 amiTwig.expr.cache = {
 	/*-----------------------------------------------------------------*/
 
@@ -29,7 +24,7 @@ amiTwig.expr.cache = {
 	{
 		/*---------------------------------------------------------*/
 
-		var f;
+		let f;
 
 		if(expression in this.dict)
 		{
@@ -37,9 +32,11 @@ amiTwig.expr.cache = {
 		}
 		else
 		{
-			f = this.dict[expression] = eval(amiTwig.expr.interpreter.getJS(
-			                                         new amiTwig.expr.Compiler(expression, line)
-			));
+			f = this.dict[expression] = eval(
+				amiTwig.expr.interpreter.getJS(
+					new amiTwig.expr.Compiler(expression, line)
+				)
+			);
 		}
 
 		/*---------------------------------------------------------*/

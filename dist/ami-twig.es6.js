@@ -45,42 +45,8 @@ if(typeof exports !== 'undefined')
 /* amiTwig.tokenizer                                                       */
 /*-------------------------------------------------------------------------*/
 
-/**
- * The AMI TWIG tokenizer
- * @namespace ami/twig/tokenizer
- */
-
 amiTwig.tokenizer = {
 	/*-----------------------------------------------------------------*/
-
-	/**
-	  * Tokenize a string
-	  * @param {String} code the code
-	  * @param {Number} line the line
-	  * @param {Array<String>} spaces the array of spaces
-	  * @param {Array<String>|Array<RegExp>} tokenDefs the array of token defs
-	  * @param {Array<Number>}               tokenTypes the array of token types
-	  * @param {Boolean} [error=false] throw an exception on invalid tokens
-	  * @throws {String} The error description
-	  * @return {Object} The resulting object
-	  * @example
-	  * var PLUS = 0;
-	  * var EQUAL = 1;
-	  * var NUMBER = 2;
-	  *
-	  * var result = amiTwig.tokenizer.tokenize(
-	  * 	'1+2=3',
-	  *	1,
-	  *	[' ', '\t'],
-	  *	['+', '-', '=', /[0-9]+/],
-	  *	[PLUS, MINUS, EQUAL, NUMBER],
-	  *	true
-	  * );
-	  *
-	  * console.debug(result.tokens); // ['1', '+', '2', '=', '3']
-	  * console.debug(result.types); // [ 2 ,  0 ,  2 ,  1 ,  2 ]
-	  * console.debug(result.lines); // [ 1 ,  1 ,  1 ,  1 ,  1 ]
-	  */
 
 	tokenize: function(code, line, spaces, tokenDefs, tokenTypes, error)
 	{
@@ -89,19 +55,16 @@ amiTwig.tokenizer = {
 			throw '`tokenDefs.length != tokenTypes.length`';
 		}
 
-		var result_tokens = [];
-		var result_types = [];
-		var result_lines = [];
+		const result_tokens = [];
+		const result_types = [];
+		const result_lines = [];
 
-		var i = 0x000000000;
-		var l = code.length;
+		let i = 0x000000000;
+		const l = code.length;
 
-		var word = '', c;
+		let word = '', token, c;
 
-		var token;
-		var idx;
-__l0:
-		while(i < l)
+__l0:		while(i < l)
 		{
 			c = code.charAt(0);
 
@@ -143,9 +106,9 @@ __l0:
 			/* EAT REGEXES                                     */
 			/*-------------------------------------------------*/
 
-			for(idx in tokenDefs)
+			for(const j in tokenDefs)
 			{
-				token = this._match(code, tokenDefs[idx]);
+				token = this._match(code, tokenDefs[j]);
 
 				if(token)
 				{
@@ -163,7 +126,7 @@ __l0:
 					}
 
 					result_tokens.push(token);
-					result_types.push(tokenTypes[idx]);
+					result_types.push(tokenTypes[j]);
 					result_lines.push(line);
 
 					code = code.substring(token.length);
@@ -209,13 +172,13 @@ __l0:
 
 	_match: function(s, stringOrRegExp)
 	{
-		var m;
+		let m;
 
 		if(stringOrRegExp instanceof RegExp)
 		{
 			m = s.match(stringOrRegExp);
 
-			return m !== null && this._checkNextChar(s, (((((m[0])))))) ? (((((m[0]))))) : null;
+			return m !== null && this._checkNextChar(s, /*-*/m[0]/*-*/) ? /*-*/m[0]/*-*/ : null;
 		}
 		else
 		{
@@ -248,10 +211,10 @@ __l0:
 
 	_checkNextChar: function(s, token)
 	{
-		var length = token.length;
+		const length = token.length;
 
-		var charCode2 = s.charCodeAt(length - 0);
-		var charCode1 = s.charCodeAt(length - 1);
+		const charCode2 = s.charCodeAt(length - 0);
+		const charCode1 = s.charCodeAt(length - 1);
 
 		return isNaN(charCode2)
 		       ||
@@ -518,7 +481,7 @@ amiTwig.expr.Tokenizer = function(code, line) {
 	{
 		/*---------------------------------------------------------*/
 
-		var result = amiTwig.tokenizer.tokenize(
+		const result = amiTwig.tokenizer.tokenize(
 			code,
 			line,
 			this._spaces,
@@ -571,7 +534,7 @@ amiTwig.expr.Tokenizer = function(code, line) {
 	{
 		if(this.i < this.tokens.length)
 		{
-			var TYPE = this.types[this.i];
+			const TYPE = this.types[this.i];
 
 			return (type instanceof Array) ? (type.indexOf(TYPE) >= 0) : (type === TYPE);
 		}
@@ -590,19 +553,17 @@ amiTwig.expr.Tokenizer = function(code, line) {
 /* amiTwig.expr.Compiler                                                   */
 /*-------------------------------------------------------------------------*/
 
-/**
- * The AMI TWIG expression compiler
- * @see An online <a href="http://cern.ch/ami/twig/" target="_blank">demo</a>.
- * @class ami/twig/expr/Compiler
- * @param {String} code the code
- * @param {Number} line the line
- * @throws {String} The error description
- */
-
 amiTwig.expr.Compiler = function(code, line) {
+
+	this.$init(code, line);
+};
+
+/*-------------------------------------------------------------------------*/
+
+amiTwig.expr.Compiler.prototype = {
 	/*-----------------------------------------------------------------*/
 
-	this.$init = function(code, line)
+	$init: function(code, line)
 	{
 		/*---------------------------------------------------------*/
 
@@ -617,31 +578,26 @@ amiTwig.expr.Compiler = function(code, line) {
 
 		/*---------------------------------------------------------*/
 
-		if(!this.tokenizer.isEmpty())
+		if(this.tokenizer.isEmpty() === false)
 		{
 			throw 'syntax error, line `' + this.line + '`, unexpected token `' + this.tokenizer.peekToken() + '`';
 		}
 
 		/*---------------------------------------------------------*/
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	/**
-	  * Dump the abstract abstract syntax tree to a dot diagram
-	  * @returns {String} The dot diagram
-	  */
-
-	this.dump = function()
+	dump: function()
 	{
 		return this.rootNode.dump();
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseFilter = function()
+	parseFilter: function()
 	{
-		var left = this.parseLogicalOr(), node, temp;
+		let left = this.parseLogicalOr(), node, temp;
 
 		/*---------------------------------------------------------*/
 		/* Filter : LogicalOr ('|' Dot1)*                          */
@@ -667,9 +623,9 @@ amiTwig.expr.Compiler = function(code, line) {
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseLogicalOr = function()
+	parseLogicalOr: function()
 	{
-		var left = this.parseLogicalAnd(), right, node;
+		let left = this.parseLogicalAnd(), right, node;
 
 		/*---------------------------------------------------------*/
 		/* LogicalOr : LogicalAnd ('or' LogicalAnd)*               */
@@ -691,13 +647,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return left;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseLogicalAnd = function()
+	parseLogicalAnd: function()
 	{
-		var left = this.parseBitwiseOr(), right, node;
+		let left = this.parseBitwiseOr(), right, node;
 
 		/*---------------------------------------------------------*/
 		/* LogicalAnd : BitwiseOr ('and' BitwiseOr)*               */
@@ -719,13 +675,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return left;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseBitwiseOr = function()
+	parseBitwiseOr: function()
 	{
-		var left = this.parseBitwiseXor(), right, node;
+		let left = this.parseBitwiseXor(), right, node;
 
 		/*---------------------------------------------------------*/
 		/* BitwiseOr : BitwiseXor ('b-or' BitwiseXor)*             */
@@ -747,13 +703,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return left;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseBitwiseXor = function()
+	parseBitwiseXor: function()
 	{
-		var left = this.parseBitwiseAnd(), right, node;
+		let left = this.parseBitwiseAnd(), right, node;
 
 		/*---------------------------------------------------------*/
 		/* BitwiseXor : BitwiseAnd ('b-xor' BitwiseAnd)*           */
@@ -775,13 +731,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return left;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseBitwiseAnd = function()
+	parseBitwiseAnd: function()
 	{
-		var left = this.parseNot(), right, node;
+		let left = this.parseNot(), right, node;
 
 		/*---------------------------------------------------------*/
 		/* BitwiseAnd : Not ('b-and' Not)*                         */
@@ -803,13 +759,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return left;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseNot = function()
+	parseNot: function()
 	{
-		var right, node;
+		let right, node;
 
 		/*---------------------------------------------------------*/
 		/* Not : 'not' Comp                                        */
@@ -822,8 +778,8 @@ amiTwig.expr.Compiler = function(code, line) {
 
 			right = this.parseComp();
 
-			node.nodeLeft = null;
-			node.nodeRight = right;
+			node.nodeLeft = right;
+			node.nodeRight = null;
 
 			return node;
 		}
@@ -833,13 +789,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return this.parseComp();
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseComp = function()
+	parseComp: function()
 	{
-		var left = this.parseAddSub(), right, node, swap;
+		let left = this.parseAddSub(), right, node, swap;
 
 		/*---------------------------------------------------------*/
 		/* Comp : AddSub 'is' 'not'? ('defined' | 'null' | ...)    */
@@ -859,8 +815,8 @@ amiTwig.expr.Compiler = function(code, line) {
 				node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 				this.tokenizer.next();
 
-				node.nodeLeft = null;
-				node.nodeRight = swap;
+				node.nodeLeft = swap;
+				node.nodeRight = null;
 			}
 
 			if(this.tokenizer.checkType(amiTwig.expr.tokens.IS_XXX))
@@ -952,13 +908,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return left;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseAddSub = function()
+	parseAddSub: function()
 	{
-		var left = this.parseMulDiv(), right, node;
+		let left = this.parseMulDiv(), right, node;
 
 		/*---------------------------------------------------------*/
 		/* AddSub : MulDiv (('+' | '-') MulDiv)*                   */
@@ -980,13 +936,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return left;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseMulDiv = function()
+	parseMulDiv: function()
 	{
-		var left = this.parsePlusMinus(), right, node;
+		let left = this.parsePlusMinus(), right, node;
 
 		/*---------------------------------------------------------*/
 		/* MulDiv : PlusMinus (('*' | '//' | '/' | '%') PlusMinus)**/
@@ -1008,13 +964,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return left;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parsePlusMinus = function()
+	parsePlusMinus: function()
 	{
-		var right, node;
+		let left, node;
 
 		/*---------------------------------------------------------*/
 		/* PlusMinus : ('-' | '+') Power                           */
@@ -1025,10 +981,10 @@ amiTwig.expr.Compiler = function(code, line) {
 			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
 
-			right = this.parsePower();
+			left = this.parsePower();
 
-			node.nodeLeft = null;
-			node.nodeRight = right;
+			node.nodeLeft = left;
+			node.nodeRight = null;
 
 			return node;
 		}
@@ -1038,13 +994,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return this.parsePower();
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parsePower = function()
+	parsePower: function()
 	{
-		var left = this.parseDot1(), right, node;
+		let left = this.parseDot1(), right, node;
 
 		/*---------------------------------------------------------*/
 		/* Power : Dot1 ('**' Dot1)*                               */
@@ -1066,19 +1022,19 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return left;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseDot1 = function(isFilter)
+	parseDot1: function(isFilter)
 	{
-		var node = this.parseDot2(isFilter), temp;
+		const node = this.parseDot2(isFilter);
 
 		if(node)
 		{
 			/*-------------------------------------------------*/
 
-			for(temp = node; temp.nodeType === amiTwig.expr.tokens.DOT; temp = temp.nodeLeft);
+			for(var temp = node; temp.nodeType === amiTwig.expr.tokens.DOT; temp = temp.nodeLeft);
 
 			/*-------------------------------------------------*/
 
@@ -1092,12 +1048,12 @@ amiTwig.expr.Compiler = function(code, line) {
 					}
 					else
 					{
-						temp.nodeValue = ((((((('_.'))))))) + temp.nodeValue;
+						temp.nodeValue = /*---*/'_.'/*---*/ + temp.nodeValue;
 					}
 				}
 				else if(temp.nodeType === amiTwig.expr.tokens.VAR)
 				{
-					temp.nodeValue = ((((((('_.'))))))) + temp.nodeValue;
+					temp.nodeValue = /*---*/'_.'/*---*/ + temp.nodeValue;
 				}
 
 				temp.q = false;
@@ -1107,13 +1063,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		}
 
 		return node;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseDot2 = function(isFilter)
+	parseDot2: function(isFilter)
 	{
-		var left = this.parseDot3(isFilter), right, node;
+		let left = this.parseDot3(isFilter), right, node;
 
 		/*---------------------------------------------------------*/
 		/* Dot2 : Dot3 ('.' Dot3)*                                 */
@@ -1135,13 +1091,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return left;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseDot3 = function(isFilter)
+	parseDot3: function(isFilter)
 	{
-		var left = this.parseX(isFilter), right, node;
+		let left = this.parseX(isFilter), right, node;
 
 		/*---------------------------------------------------------*/
 		/* parseDot3 : X ('[' Filter ']')*                         */
@@ -1175,13 +1131,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return left;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseX = function(isFilter)
+	parseX: function(isFilter)
 	{
-		var node;
+		let node;
 
 		/*---------------------------------------------------------*/
 		/* X : Group | Array | Object | FunVar | Terminal          */
@@ -1214,13 +1170,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		throw 'syntax error, line `' + this.line + '`, syntax error or tuncated expression';
 
 		/*---------------------------------------------------------*/
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseGroup = function()
+	parseGroup: function()
 	{
-		var node;
+		let node;
 
 		/*---------------------------------------------------------*/
 		/* Group : '(' Filter ')'                                  */
@@ -1247,13 +1203,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return null;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseArray = function()
+	parseArray: function()
 	{
-		var node, list;
+		let node, list;
 
 		/*---------------------------------------------------------*/
 		/* Array : '[' Singlets ']'                                */
@@ -1284,13 +1240,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return null;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseObject = function()
+	parseObject: function()
 	{
-		var node, dict;
+		let node, dict;
 
 		/*---------------------------------------------------------*/
 		/* Object : '{' Doublets '}'                               */
@@ -1321,13 +1277,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return null;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseFunVar = function(isFilter)
+	parseFunVar: function(isFilter)
 	{
-		var node;
+		let node;
 
 		if(this.tokenizer.checkType(amiTwig.expr.tokens.SID))
 		{
@@ -1382,9 +1338,9 @@ amiTwig.expr.Compiler = function(code, line) {
 
 	/*-----------------------------------------------------------------*/
 
-	this._parseSinglets = function()
+	_parseSinglets: function()
 	{
-		var result = [];
+		const result = [];
 
 		while(this.tokenizer.checkType(amiTwig.expr.tokens.RX) === false)
 		{
@@ -1401,13 +1357,13 @@ amiTwig.expr.Compiler = function(code, line) {
 		}
 
 		return result;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this._parseDoublets = function()
+	_parseDoublets: function()
 	{
-		var result = {};
+		const result = {};
 
 		while(this.tokenizer.checkType(amiTwig.expr.tokens.RB2) === false)
 		{
@@ -1424,27 +1380,27 @@ amiTwig.expr.Compiler = function(code, line) {
 		}
 
 		return result;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this._parseSinglet = function(result)
+	_parseSinglet: function(result)
 	{
 		result.push(this.parseFilter());
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	this._parseDoublet = function(result)
+	_parseDoublet: function(result)
 	{
 		if(this.tokenizer.checkType(amiTwig.expr.tokens.TERMINAL))
 		{
-			var key = this.tokenizer.peekToken();
+			const key = this.tokenizer.peekToken();
 			this.tokenizer.next();
 
 			if(this.tokenizer.checkType(amiTwig.expr.tokens.COLON))
 			{
-/*				var colon = this.tokenizer.peekToken();
+/*				const colon = this.tokenizer.peekToken();
  */				this.tokenizer.next();
 
 				/*-----------------------------------------*/
@@ -1466,9 +1422,9 @@ amiTwig.expr.Compiler = function(code, line) {
 
 	/*-----------------------------------------------------------------*/
 
-	this.parseTerminal = function()
+	parseTerminal: function()
 	{
-		var left, right, node;
+		let left, right, node;
 
 		/*---------------------------------------------------------*/
 		/* Terminal : TERMINAL | RANGE                             */
@@ -1504,11 +1460,7 @@ amiTwig.expr.Compiler = function(code, line) {
 		/*---------------------------------------------------------*/
 
 		return null;
-	};
-
-	/*-----------------------------------------------------------------*/
-
-	this.$init(code, line);
+	},
 
 	/*-----------------------------------------------------------------*/
 };
@@ -1518,9 +1470,16 @@ amiTwig.expr.Compiler = function(code, line) {
 /*-------------------------------------------------------------------------*/
 
 amiTwig.expr.Node = function(nodeType, nodeValue) {
+
+	this.$init(nodeType, nodeValue);
+};
+
+/*-------------------------------------------------------------------------*/
+
+amiTwig.expr.Node.prototype = {
 	/*-----------------------------------------------------------------*/
 
-	this.$init = function(nodeType, nodeValue)
+	$init: function(nodeType, nodeValue)
 	{
 		this.nodeType = nodeType;
 		this.nodeValue = nodeValue;
@@ -1528,13 +1487,15 @@ amiTwig.expr.Node = function(nodeType, nodeValue) {
 		this.nodeRight = null;
 		this.list = null;
 		this.dict = null;
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this._dump = function(nodes, edges, pCnt)
+	_dump: function(nodes, edges, pCnt)
 	{
-		var i, cnt = pCnt[0], CNT;
+		let CNT;
+
+		const cnt = pCnt[0];
 
 		nodes.push('\tnode' + cnt + ' [label="' + this.nodeValue.replace(/"/g, '\\"') + '"];');
 
@@ -1554,7 +1515,7 @@ amiTwig.expr.Node = function(nodeType, nodeValue) {
 
 		if(this.list)
 		{
-			for(i in this.list)
+			for(const i in this.list)
 			{
 				CNT = ++pCnt[0];
 				edges.push('\tnode' + cnt + ' -> node' + CNT + ' [label="[' + i.replace(/"/g, '\\"') + ']"];');
@@ -1564,30 +1525,26 @@ amiTwig.expr.Node = function(nodeType, nodeValue) {
 
 		if(this.dict)
 		{
-			for(i in this.dict)
+			for(const i in this.dict)
 			{
 				CNT = ++pCnt[0];
 				edges.push('\tnode' + cnt + ' -> node' + CNT + ' [label="[' + i.replace(/"/g, '\\"') + ']"];');
 				this.dict[i]._dump(nodes, edges, pCnt);
 			}
 		}
-	};
+	},
 
 	/*-----------------------------------------------------------------*/
 
-	this.dump = function()
+	dump: function()
 	{
-		var nodes = [];
-		var edges = [];
+		const nodes = [];
+		const edges = [];
 
 		this._dump(nodes, edges, [0]);
 
 		return 'digraph ast {\n\trankdir=TB;\n' + nodes.join('\n') + '\n' + edges.join('\n') + '\n}';
-	};
-
-	/*-----------------------------------------------------------------*/
-
-	this.$init(nodeType, nodeValue);
+	},
 
 	/*-----------------------------------------------------------------*/
 };
@@ -1606,35 +1563,48 @@ amiTwig.expr.Node = function(nodeType, nodeValue) {
  */
 
 /*-------------------------------------------------------------------------*/
-/* amiTwig.engine                                                          */
+/* amiTwig.tmpl                                                            */
 /*-------------------------------------------------------------------------*/
 
-/**
- * The AMI TWIG Engine
- * @namespace ami/twig
- */
+amiTwig.tmpl = {};
 
-amiTwig.engine = {
+/*-------------------------------------------------------------------------*/
+/* amiTwig.tmpl.Compiler                                                   */
+/*-------------------------------------------------------------------------*/
+
+amiTwig.tmpl.Compiler = function(tmpl) {
+
+	this.$init(tmpl);
+};
+
+/*-------------------------------------------------------------------------*/
+
+amiTwig.tmpl.Compiler.prototype = {
 	/*-----------------------------------------------------------------*/
 
 	STATEMENT_RE: /\{%\s*([a-zA-Z]+)\s+(.*?)\s*%\}/m,
-
-	VARIABLE_RE: /\{\{\s*(.*?)\s*\}\}/g,
 
 	COMMENT_RE: /\{#\s*(.*?)\s*#\}/g,
 
 	/*-----------------------------------------------------------------*/
 
-	compile: function(s)
+	$init: function(tmpl)
 	{
 		/*---------------------------------------------------------*/
 
-		var result = {
+		let line = 1;
+
+		let column = 0;
+		let COLUMN = 0;
+
+		/*---------------------------------------------------------*/
+
+		this.rootNode = {
 			line: line,
 			keyword: '@root',
 			expression: '',
 			blocks: [{
-				expression: '@else',
+				expression: '@root',
 				list: [],
 			}],
 			value: '',
@@ -1642,40 +1612,33 @@ amiTwig.engine = {
 
 		/*---------------------------------------------------------*/
 
-		var stack1 = [result];
-		var stack2 = [0x0000];
+		const stack1 = [this.rootNode];
+		const stack2 = [0x00000000000];
 
-		var item;
-
-		/*---------------------------------------------------------*/
-
-		var column_nr = 0;
-		var COLUMN_NR = 0;
-
-		var line = 1;
-
-		var i;
+		let item;
 
 		/*---------------------------------------------------------*/
 
-		for(s = s.replace(this.COMMENT_RE, '');; s = s.substr(COLUMN_NR))
+		for(tmpl = tmpl.replace(this.COMMENT_RE, '');; tmpl = tmpl.substr(COLUMN))
 		{
 			/*-------------------------------------------------*/
 
-			var curr = stack1[stack1.length - 1];
-			var indx = stack2[stack2.length - 1];
+			const curr = stack1[stack1.length - 1];
+			 let  indx = stack2[stack2.length - 1];
 
 			/*-------------------------------------------------*/
 
-			var m = s.match(this.STATEMENT_RE);
+			const m = tmpl.match(this.STATEMENT_RE);
+
+			/*-------------------------------------------------*/
 
 			if(m === null)
 			{
 				/*-----------------------------------------*/
 
-				for(i in s)
+				for(const c of tmpl)
 				{
-					if(s[i] === '\n')
+					if(c === '\n')
 					{
 						line++;
 					}
@@ -1688,14 +1651,14 @@ amiTwig.engine = {
 					keyword: '@text',
 					expression: '',
 					blocks: [],
-					value: s,
+					value: tmpl,
 				});
 
 				/*-----------------------------------------*/
 
 				var errors = [];
 
-				for(i = stack1.length - 1; i > 0; i--)
+				for(let i = stack1.length - 1; i > 0; i--)
 				{
 					/**/ if(stack1[i].keyword === 'if')
 					{
@@ -1714,24 +1677,26 @@ amiTwig.engine = {
 
 				/*-----------------------------------------*/
 
-				return result;
+				return;
 			}
 
 			/*-------------------------------------------------*/
 
-			var match = m[0];
-			var keyword = m[1];
-			var expression = m[2];
+			const match = m[0];
+			const keyword = m[1];
+			const expression = m[2];
 
-			column_nr = m.index + 0x0000000000;
-			COLUMN_NR = m.index + match.length;
+			column = m.index + 0x0000000000;
+			COLUMN = m.index + match.length;
 
-			var value = s.substr(0, column_nr);
-			var VALUE = s.substr(0, COLUMN_NR);
+			const value = tmpl.substr(0, column);
+			const VALUE = tmpl.substr(0, COLUMN);
 
-			for(i in VALUE)
+			/*-------------------------------------------------*/
+
+			for(const c in VALUE)
 			{
-				if(VALUE[i] === '\n')
+				if(c === '\n')
 				{
 					line++;
 				}
@@ -1892,13 +1857,45 @@ amiTwig.engine = {
 
 	/*-----------------------------------------------------------------*/
 
+	dump: function()
+	{
+		return JSON.stringify(this.rootNode, null, 2);
+	},
+
+	/*-----------------------------------------------------------------*/
+};
+
+/*-------------------------------------------------------------------------*/
+
+/*
+ * AMI TWIG Engine
+ *
+ * Copyright (c) 2014-2017 The AMI Team / LPSC / IN2P3
+ *
+ * This file must be used under the terms of the CeCILL-C:
+ * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
+ * http://www.cecill.info/licences/Licence_CeCILL-C_V1-fr.html
+ *
+ */
+
+/*-------------------------------------------------------------------------*/
+/* amiTwig.engine                                                          */
+/*-------------------------------------------------------------------------*/
+
+amiTwig.engine = {
+	/*-----------------------------------------------------------------*/
+
+	VARIABLE_RE: /\{\{\s*(.*?)\s*\}\}/g,
+
+	/*-----------------------------------------------------------------*/
+
 	_render: function(result, item, dict)
 	{
-		var i, j, k, l;
+		let k, l;
 
-		var expression, list;
+		let expression, list;
 
-		var m, symb, expr, value;
+		let m, symb, expr, value;
 
 		this.dict = dict || {};
 
@@ -1965,15 +1962,15 @@ amiTwig.engine = {
 			case '@root':
 				/*-----------------------------------------*/
 
-				for(i in item.blocks)
+				for(const i in item.blocks)
 				{
 					expression = item.blocks[i].expression;
 
-					if(expression === '@else' || amiTwig.expr.cache.eval(expression, item.line, dict))
+					if(expression === '@root' || expression === '@else' || amiTwig.expr.cache.eval(expression, item.line, dict))
 					{
 						list = item.blocks[i].list;
 
-						for(j in list)
+						for(const j in list)
 						{
 							this._render(result, list[j], dict);
 						}
@@ -2041,7 +2038,7 @@ amiTwig.engine = {
 
 				list = item.blocks[0].list;
 
-				for(i in value)
+				for(const i in value)
 				{
 					dict[symb] = value[i];
 
@@ -2052,7 +2049,7 @@ amiTwig.engine = {
 					k++;
 					dict.loop.index = k;
 
-					for(j in list)
+					for(const j in list)
 					{
 						this._render(result, list[j], dict);
 					}
@@ -2148,9 +2145,9 @@ amiTwig.engine = {
 
 	render: function(tmpl, dict)
 	{
-		var result = [];
+		const result = [];
 
-		this._render(result, Object.prototype.toString.call(tmpl) === '[object String]' ? this.compile(tmpl) : tmpl, dict || {});
+		this._render(result, Object.prototype.toString.call(tmpl) === '[object String]' ? new amiTwig.tmpl.Compiler(tmpl).rootNode : tmpl, dict || {});
 
 		return result.join('');
 	},
@@ -2175,11 +2172,6 @@ amiTwig.engine = {
 /* amiTwig.expr.cache                                                      */
 /*-------------------------------------------------------------------------*/
 
-/**
- * The AMI TWIG cache interpreter
- * @namespace ami/twig/expr/cache
- */
-
 amiTwig.expr.cache = {
 	/*-----------------------------------------------------------------*/
 
@@ -2191,7 +2183,7 @@ amiTwig.expr.cache = {
 	{
 		/*---------------------------------------------------------*/
 
-		var f;
+		let f;
 
 		if(expression in this.dict)
 		{
@@ -2199,9 +2191,11 @@ amiTwig.expr.cache = {
 		}
 		else
 		{
-			f = this.dict[expression] = eval(amiTwig.expr.interpreter.getJS(
-			                                         new amiTwig.expr.Compiler(expression, line)
-			));
+			f = this.dict[expression] = eval(
+				amiTwig.expr.interpreter.getJS(
+					new amiTwig.expr.Compiler(expression, line)
+				)
+			);
 		}
 
 		/*---------------------------------------------------------*/
@@ -2251,11 +2245,6 @@ amiTwig.expr.cache = {
 /* amiTwig.ajax                                                            */
 /*-------------------------------------------------------------------------*/
 
-/**
- * The AMI TWIG Ajax
- * @namespace ami/twig/ajax
- */
-
 amiTwig.ajax = {
 	/*-----------------------------------------------------------------*/
 
@@ -2265,7 +2254,7 @@ amiTwig.ajax = {
 
 	get: function(url, done, fail)
 	{
-		var txt;
+		let txt;
 
 		/*---------------------------------------------------------*/
 
@@ -2275,6 +2264,8 @@ amiTwig.ajax = {
 			{
 				done(this.dict[url]);
 			}
+
+			return;
 		}
 
 		/*---------------------------------------------------------*/
@@ -2310,7 +2301,7 @@ amiTwig.ajax = {
 			/* BROWSER                                         */
 			/*-------------------------------------------------*/
 
-			var xmlHttpRequest = new XMLHttpRequest();
+			const xmlHttpRequest = new XMLHttpRequest();
 
 			xmlHttpRequest.open('GET', url, false);
 			xmlHttpRequest.send();
@@ -2362,14 +2353,16 @@ amiTwig.ajax = {
 /* amiTwig.stdlib                                                         */
 /*-------------------------------------------------------------------------*/
 
-/**
- * The AMI TWIG StdLib
- * @namespace ami/twig/stdlib
- */
-
 amiTwig.stdlib = {
 	/*-----------------------------------------------------------------*/
 	/* VARIABLES                                                       */
+	/*-----------------------------------------------------------------*/
+
+	'isUndefined': function(x)
+	{
+		return x === undefined;
+	},
+
 	/*-----------------------------------------------------------------*/
 
 	'isDefined': function(x)
@@ -2386,6 +2379,13 @@ amiTwig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
+	'isNotNull': function(x)
+	{
+		return x !== null;
+	},
+
+	/*-----------------------------------------------------------------*/
+
 	'isEmpty': function(x)
 	{
 		if(x === null
@@ -2396,15 +2396,13 @@ amiTwig.stdlib = {
 		 ) {
 			return true;
 		}
-		else
-		{
-			var typeName = Object.prototype.toString.call(x);
 
-			return (typeName === '[object Array]' && x.length === 0)
-			       ||
-			       (typeName === '[object Object]' && Object.keys(x).length === 0)
-			;
-		}
+		const typeName = Object.prototype.toString.call(x);
+
+		return (typeName === '[object Array]' && x.length === 0)
+		       ||
+		       (typeName === '[object Object]' && Object.keys(x).length === 0)
+		;
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -2439,7 +2437,7 @@ amiTwig.stdlib = {
 
 	'isIterable': function(x)
 	{
-		var typeName = Object.prototype.toString.call(x);
+		const typeName = Object.prototype.toString.call(x);
 
 		return typeName === '[object String]'
 		       ||
@@ -2492,9 +2490,9 @@ amiTwig.stdlib = {
 		   &&
 		   this.isNumber(x2)
 		 ) {
-			return ((((((((x))))))) >= (((((((x1))))))))
+			return (/*---*/x/*---*/ >= /*---*/x1/*---*/)
 			       &&
-			       ((((((((x))))))) <= (((((((x2))))))))
+			       (/*---*/x/*---*/ <= /*---*/x2/*---*/)
 			;
 		}
 
@@ -2515,20 +2513,18 @@ amiTwig.stdlib = {
 
 	'range': function(x1, x2, step)
 	{
-		var i;
-
-		var result = [];
-
 		if(!step)
 		{
 			step = 1;
 		}
 
+		const result = [];
+
 		/**/ if(this.isNumber(x1)
 		        &&
 		        this.isNumber(x2)
 		 ) {
-			for(i = (((((((x1))))))); i <= (((((((x2))))))); i += step)
+			for(let i = /*---*/x1/*---*/; i <= /*---*/x2/*---*/; i += step)
 			{
 				result.push(/*---------------*/(i));
 			}
@@ -2537,7 +2533,7 @@ amiTwig.stdlib = {
 		        &&
 		        this.isString(x2) && x2.length === 1
 		 ) {
-			for(i = x1.charCodeAt(0); i <= x2.charCodeAt(0); i += step)
+			for(let i = x1.charCodeAt(0); i <= x2.charCodeAt(0); i += step)
 			{
 				result.push(String.fromCharCode(i));
 			}
@@ -2590,51 +2586,72 @@ amiTwig.stdlib = {
 
 	'filter_merge': function()
 	{
-		var i, j;
-
 		if(arguments.length > 1)
 		{
+			/*-------------------------------------------------*/
+
 			if(this.isString(arguments[0]))
 			{
-				var s = '';
+				const L = [];
 
-				for(i in arguments)
+				for(const i in arguments)
 				{
-					s += arguments[i];
+					const item = arguments[i];
+
+					if(!this.isString(item))
+					{
+						return null;
+					}
+
+					L.push(arguments[i]);
 				}
 
-				return s;
+				return L.join('');
 			}
+
+			/*-------------------------------------------------*/
 
 			if(this.isArray(arguments[0]))
 			{
-				var L = []
+				const L = []
 
-				for(i in arguments)
+				for(const i in arguments)
 				{
-					for(j in arguments[i])
+					const item = arguments[i];
+
+					if(!this.isArray(item))
 					{
-						L.push(arguments[i][j]);
+						return null;
 					}
+
+					for(const j in item) L.push(item[j]);
 				}
 
 				return L;
 			}
 
+			/*-------------------------------------------------*/
+
 			if(this.isObject(arguments[0]))
 			{
-				var D = {}
+				const D = {}
 
-				for(i in arguments)
+				for(const i in arguments)
 				{
-					for(j in arguments[i])
+					const item = arguments[i];
+
+					if(!this.isObject(item))
 					{
-						D[j] = arguments[i][j];
+						return null;
 					}
+
+					for(const j in item) D[j] = item[j];
 				}
 
 				return D;
 			}
+
+			/*-------------------------------------------------*/
 		}
 
 		return null;
@@ -2678,7 +2695,7 @@ amiTwig.stdlib = {
 		   &&
 		   this.isString(s2)
 		 ) {
-			var base = 0x0000000000000000000;
+			const base = 0x0000000000000000000;
 
 			return s1.indexOf(s2, base) === base;
 		}
@@ -2694,7 +2711,7 @@ amiTwig.stdlib = {
 		   &&
 		   this.isString(s2)
 		 ) {
-			var base = s1.length - s2.length;
+			const base = s1.length - s2.length;
 
 			return s1.indexOf(s2, base) === base;
 		}
@@ -2710,8 +2727,8 @@ amiTwig.stdlib = {
 		   &&
 		   this.isString(regex)
 		 ) {
-			var idx1 = regex.  indexOf  ('/');
-			var idx2 = regex.lastIndexOf('/');
+			const idx1 = regex.  indexOf  ('/');
+			const idx2 = regex.lastIndexOf('/');
 
 			if(idx1 === 0 || idx1 < idx2)
 			{
@@ -2733,16 +2750,7 @@ amiTwig.stdlib = {
 
 	'filter_default': function(s1, s2)
 	{
-		/**/ if(s1)
-		{
-			return s1;
-		}
-		else if(s2)
-		{
-			return s2;
-		}
-
-		return '';
+		return s1 || s2 || '';
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -2798,21 +2806,41 @@ amiTwig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'_internal_escape_map1': {
-		'<': '&lt;',
-		'>': '&gt;',
-		'"': '&quot;',
-		'&': '&amp;',
+	'_replace': function(s, oldStrs, newStrs)
+	{
+		const result = [];
+
+		const l = s.length;
+
+__l0:		for(let i = 0; i < l;)
+		{
+			for(const j in oldStrs)
+			{
+				if(s.substring(i).indexOf(oldStrs[j]) === 0)
+				{
+					result.push(newStrs[j]);
+
+					i += oldStrs[j].length;
+
+					continue __l0;
+				}
+			}
+
+			result.push(s.charAt(i++));
+		}
+
+		return result.join('');
 	},
 
 	/*-----------------------------------------------------------------*/
 
-	'_internal_escape_map2': {
-		'\\': '\\\\',
-		'\n': '\\n',
-		'\"': '\\\"',
-		'\'': '\\\'',
-	},
+	'_textToHtmlX': ['&'    , '"'     , '<'   , '>'   ],
+	'_textToHtmlY': ['&amp;', '&quot;', '&lt;', '&gt;'],
+
+	/*-----------------------------------------------------------------*/
+
+	'_textToStringX': ['\\'  , '\n' , '"'  , '\''  ],
+	'_textToStringY': ['\\\\', '\\n', '\\"', '\\\''],
 
 	/*-----------------------------------------------------------------*/
 
@@ -2820,34 +2848,21 @@ amiTwig.stdlib = {
 	{
 		if(this.isString(s))
 		{
-			var _map;
-
-			/**/ if(!
-			        mode
-			        ||
-				mode === 'html'
-				||
-				mode === 'html_attr'
-			 ) {
-				_map = this._internal_escape_map1;
-
-				return s.replace(/[<>"&]/g, function(s) {
-
-					return _map[s];
-				});
-			}
-			else if(mode === 'js')
+			switch(mode || 'html')
 			{
-				_map = this._internal_escape_map2;
+				case 'html':
+				case 'html_attr':
+					return this._replace(s, this._textToHtmlX, this._textToHtmlY);
 
-				return s.replace(/[\\\n"']/g, function(s) {
+				case 'js':
+				case 'string':
+					return this._replace(s, this._textToStringX, this._textToStringY);
 
-					return _map[s];
-				});
-			}
-			else if(mode === 'url')
-			{
-				return encodeURIComponent(s);
+				case 'url':
+					return encodeURIComponent(s);
+
+				default:
+					return s;
 			}
 		}
 
@@ -2879,43 +2894,34 @@ amiTwig.stdlib = {
 
 	'filter_replace': function(s, dict)
 	{
-		if(this.isString(s) && this.isObject(dict))
-		{
-			var q;
+		const result = [];
 
-			var t = '';
+		if(this.isString(s)
+		   &&
+		   this.isObject(dict)
+		 ) {
+			let i = 0x000000;
+			const l = s.length;
 
-			var i = 0x000000;
-			var l = s.length;
-
-			while(i < l)
+__l0:			while(i < l)
 			{
-				q = true;
-
-				for(var name in dict)
+				for(const name in dict)
 				{
 					if(s.substring(i).indexOf(name) === 0)
 					{
-						t += dict[name];
+						result.push(dict[name]);
 
 						i += name.length;
 
-						q = false;
-
-						break;
+						continue __l0;
 					}
 				}
 
-				if(q)
-				{
-					t += s.charAt(i++);
-				}
+				result.push(s.charAt(i++));
 			}
-
-			return t;
 		}
 
-		return '';
+		return result.join('');
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -2938,17 +2944,16 @@ amiTwig.stdlib = {
 
 	'filter_round': function(x, mode)
 	{
-		/**/ if(mode === 'ceil')
+		switch(mode)
 		{
-			return Math.ceil(x);
-		}
-		else if(mode === 'floor')
-		{
-			return Math.floor(x);
-		}
-		else
-		{
-			return Math.round(x);
+			case 'ceil':
+				return Math.ceil(x);
+
+			case 'floor':
+				return Math.floor(x);
+
+			default:
+				return Math.round(x);
 		}
 	},
 
@@ -2958,19 +2963,17 @@ amiTwig.stdlib = {
 	{
 		/*---------------------------------------------------------*/
 
-		var args = (arguments.length === 1) && (this.isArray(arguments[0]) || this.isObject(arguments[0])) ? arguments[0]
-		                                                                                                   : arguments
+		const args = (arguments.length === 1) && (this.isArray(arguments[0]) || this.isObject(arguments[0])) ? arguments[0]
+		                                                                                                     : arguments
 		;
 
 		/*---------------------------------------------------------*/
 
-		var result = Number.POSITIVE_INFINITY;
+		let result = Number.POSITIVE_INFINITY;
 
-		for(var i in args)
+		for(const arg of args)
 		{
-			var arg = args[i];
-
-			if(this.isNumber(arg) == false)
+			if(!this.isNumber(arg))
 			{
 				return Number.NaN;
 			}
@@ -2992,19 +2995,17 @@ amiTwig.stdlib = {
 	{
 		/*---------------------------------------------------------*/
 
-		var args = (arguments.length === 1) && (this.isArray(arguments[0]) || this.isObject(arguments[0])) ? arguments[0]
-		                                                                                                   : arguments
+		const args = (arguments.length === 1) && (this.isArray(arguments[0]) || this.isObject(arguments[0])) ? arguments[0]
+		                                                                                                     : arguments
 		;
 
 		/*---------------------------------------------------------*/
 
-		var result = Number.NEGATIVE_INFINITY;
+		let result = Number.NEGATIVE_INFINITY;
 
-		for(var i in args)
+		for(const arg of args)
 		{
-			var arg = args[i];
-
-			if(this.isNumber(arg) == false)
+			if(!this.isNumber(arg))
 			{
 				return Number.NaN;
 			}
@@ -3026,19 +3027,18 @@ amiTwig.stdlib = {
 
 	'random': function(x)
 	{
-		var y = Math.random();
+		const y = Math.random();
 
 		if(x)
 		{
-			/**/ if(this.isString(x))
-			{
+			if(this.isString(x)
+			   ||
+			   this.isArray(x)
+			 ) {
 				return x[Math.floor(x.length * y)];
 			}
-			else if(this.isArray(x))
-			{
-				return x[Math.floor(x.length * y)];
-			}
-			else if(this.isNumber(x))
+
+			if(this.isNumber(x))
 			{
 				return Math.floor(x * y);
 			}
@@ -3071,23 +3071,29 @@ amiTwig.stdlib = {
 
 	'include': function(fileName, variables, withContext, ignoreMissing)
 	{
-		var i;
-
-		var temp = {};
+		const temp = {};
 
 		/*---------------------------------------------------------*/
 
-		if(withContext) {
-			for(i in amiTwig.engine.dict) temp[i] = amiTwig.engine.dict[i];
+		if(withContext)
+		{
+			for(const i in amiTwig.engine.dict)
+			{
+				temp[i] = amiTwig.engine.dict[i];
+			}
 		}
 
-		if(variables) {
-			for(i in /**/ variables /**/) temp[i] = /**/ variables /**/[i];
+		if(variables)
+		{
+			for(const i in /*-*/variables/*-*/)
+			{
+				temp[i] = /*-*/variables/*-*/[i];
+			}
 		}
 
 		/*---------------------------------------------------------*/
 
-		var result = '';
+		let result = '';
 
 		amiTwig.ajax.get(
 			fileName,
@@ -3097,7 +3103,7 @@ amiTwig.stdlib = {
 			},
 			function(/**/)
 			{
-				if(ignoreMissing === false)
+				if(!ignoreMissing)
 				{
 					throw 'runtime error, could not open `' + fileName + '`';
 				}
@@ -3133,25 +3139,16 @@ amiTwig.stdlib.filter_e = amiTwig.stdlib.filter_escape;
 /* amiTwig.expr.interpreter                                                */
 /*-------------------------------------------------------------------------*/
 
-/**
- * The AMI TWIG expression interpreter
- * @see An online <a href="http://cern.ch/ami/twig/" target="_blank">demo</a>.
- * @namespace ami/twig/expr/interpreter
- */
-
 amiTwig.expr.interpreter = {
 	/*-----------------------------------------------------------------*/
 
 	_getJS: function(node)
 	{
-		var L;
-		var i;
-		var x;
-
-		var left;
-		var right;
-
-		var operator;
+		let L;
+		let x;
+		let left;
+		let right;
+		let operator;
 
 		switch(node.nodeType)
 		{
@@ -3164,9 +3161,9 @@ amiTwig.expr.interpreter = {
 
 				L = [];
 
-				for(i in node.list)
+				for(const i in node.list)
 				{
-					L.push(/* (i) */ this._getJS(node.list[i]));
+					L.push(/*-----*/ this._getJS(node.list[i]));
 				}
 
 				/*-----------------------------------------*/
@@ -3182,7 +3179,7 @@ amiTwig.expr.interpreter = {
 
 				L = [];
 	
-				for(i in node.dict)
+				for(const i in node.dict)
 				{
 					L.push(i + ':' + this._getJS(node.dict[i]));
 				}
@@ -3200,7 +3197,7 @@ amiTwig.expr.interpreter = {
 
 				L = [];
 
-				for(i in node.list)
+				for(const i in node.list)
 				{
 					L.push(this._getJS(node.list[i]));
 				}
@@ -3218,7 +3215,7 @@ amiTwig.expr.interpreter = {
 
 				L = [];
 
-				for(i in node.list)
+				for(const i in node.list)
 				{
 					L.push('[' + this._getJS(node.list[i]) + ']');
 				}
@@ -3396,7 +3393,7 @@ amiTwig.expr.interpreter = {
 				 ) {
 					operator = (node.nodeType !== amiTwig.expr.tokens.NOT) ? node.nodeValue : '!';
 
-					return operator + '(' + this._getJS(node.nodeRight) + ')';
+					return '(' + this._getJS(node.nodeRight) + ')' + operator;
 				}
 
 				/*-----------------------------------------*/
@@ -3468,25 +3465,12 @@ amiTwig.expr.interpreter = {
 
 	/*-----------------------------------------------------------------*/
 
-	/**
-	  * Convert a compiled TWIG expression to JavaScript
-	  * @param {String} expr the compiled expression
-	  * @returns {String} The JavaScript result
-	  */
-
 	getJS: function(expr)
 	{
 		return '(function(_) { return ' + this._getJS(expr.rootNode) + '; })';
 	},
 
 	/*-----------------------------------------------------------------*/
-
-	/**
-	  * Evaluate the compiled TWIG expression
-	  * @param {String} expr the compiled expression
-	  * @param {Object} [dict] the dictionary of definitions
-	  * @returns {?} The evaluated result
-	  */
 
 	eval: function(expr, _)
 	{

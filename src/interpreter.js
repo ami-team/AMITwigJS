@@ -13,25 +13,16 @@
 /* amiTwig.expr.interpreter                                                */
 /*-------------------------------------------------------------------------*/
 
-/**
- * The AMI TWIG expression interpreter
- * @see An online <a href="http://cern.ch/ami/twig/" target="_blank">demo</a>.
- * @namespace ami/twig/expr/interpreter
- */
-
 amiTwig.expr.interpreter = {
 	/*-----------------------------------------------------------------*/
 
 	_getJS: function(node)
 	{
-		var L;
-		var i;
-		var x;
-
-		var left;
-		var right;
-
-		var operator;
+		let L;
+		let x;
+		let left;
+		let right;
+		let operator;
 
 		switch(node.nodeType)
 		{
@@ -44,9 +35,9 @@ amiTwig.expr.interpreter = {
 
 				L = [];
 
-				for(i in node.list)
+				for(const i in node.list)
 				{
-					L.push(/* (i) */ this._getJS(node.list[i]));
+					L.push(/*-----*/ this._getJS(node.list[i]));
 				}
 
 				/*-----------------------------------------*/
@@ -62,7 +53,7 @@ amiTwig.expr.interpreter = {
 
 				L = [];
 	
-				for(i in node.dict)
+				for(const i in node.dict)
 				{
 					L.push(i + ':' + this._getJS(node.dict[i]));
 				}
@@ -80,7 +71,7 @@ amiTwig.expr.interpreter = {
 
 				L = [];
 
-				for(i in node.list)
+				for(const i in node.list)
 				{
 					L.push(this._getJS(node.list[i]));
 				}
@@ -98,7 +89,7 @@ amiTwig.expr.interpreter = {
 
 				L = [];
 
-				for(i in node.list)
+				for(const i in node.list)
 				{
 					L.push('[' + this._getJS(node.list[i]) + ']');
 				}
@@ -276,7 +267,7 @@ amiTwig.expr.interpreter = {
 				 ) {
 					operator = (node.nodeType !== amiTwig.expr.tokens.NOT) ? node.nodeValue : '!';
 
-					return operator + '(' + this._getJS(node.nodeRight) + ')';
+					return '(' + this._getJS(node.nodeRight) + ')' + operator;
 				}
 
 				/*-----------------------------------------*/
@@ -348,25 +339,12 @@ amiTwig.expr.interpreter = {
 
 	/*-----------------------------------------------------------------*/
 
-	/**
-	  * Convert a compiled TWIG expression to JavaScript
-	  * @param {String} expr the compiled expression
-	  * @returns {String} The JavaScript result
-	  */
-
 	getJS: function(expr)
 	{
 		return '(function(_) { return ' + this._getJS(expr.rootNode) + '; })';
 	},
 
 	/*-----------------------------------------------------------------*/
-
-	/**
-	  * Evaluate the compiled TWIG expression
-	  * @param {String} expr the compiled expression
-	  * @param {Object} [dict] the dictionary of definitions
-	  * @returns {?} The evaluated result
-	  */
 
 	eval: function(expr, _)
 	{

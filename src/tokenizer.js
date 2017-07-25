@@ -13,42 +13,8 @@
 /* amiTwig.tokenizer                                                       */
 /*-------------------------------------------------------------------------*/
 
-/**
- * The AMI TWIG tokenizer
- * @namespace ami/twig/tokenizer
- */
-
 amiTwig.tokenizer = {
 	/*-----------------------------------------------------------------*/
-
-	/**
-	  * Tokenize a string
-	  * @param {String} code the code
-	  * @param {Number} line the line
-	  * @param {Array<String>} spaces the array of spaces
-	  * @param {Array<String>|Array<RegExp>} tokenDefs the array of token defs
-	  * @param {Array<Number>}               tokenTypes the array of token types
-	  * @param {Boolean} [error=false] throw an exception on invalid tokens
-	  * @throws {String} The error description
-	  * @return {Object} The resulting object
-	  * @example
-	  * var PLUS = 0;
-	  * var EQUAL = 1;
-	  * var NUMBER = 2;
-	  *
-	  * var result = amiTwig.tokenizer.tokenize(
-	  * 	'1+2=3',
-	  *	1,
-	  *	[' ', '\t'],
-	  *	['+', '-', '=', /[0-9]+/],
-	  *	[PLUS, MINUS, EQUAL, NUMBER],
-	  *	true
-	  * );
-	  *
-	  * console.debug(result.tokens); // ['1', '+', '2', '=', '3']
-	  * console.debug(result.types); // [ 2 ,  0 ,  2 ,  1 ,  2 ]
-	  * console.debug(result.lines); // [ 1 ,  1 ,  1 ,  1 ,  1 ]
-	  */
 
 	tokenize: function(code, line, spaces, tokenDefs, tokenTypes, error)
 	{
@@ -57,19 +23,16 @@ amiTwig.tokenizer = {
 			throw '`tokenDefs.length != tokenTypes.length`';
 		}
 
-		var result_tokens = [];
-		var result_types = [];
-		var result_lines = [];
+		const result_tokens = [];
+		const result_types = [];
+		const result_lines = [];
 
-		var i = 0x000000000;
-		var l = code.length;
+		let i = 0x000000000;
+		const l = code.length;
 
-		var word = '', c;
+		let word = '', token, c;
 
-		var token;
-		var idx;
-__l0:
-		while(i < l)
+__l0:		while(i < l)
 		{
 			c = code.charAt(0);
 
@@ -111,9 +74,9 @@ __l0:
 			/* EAT REGEXES                                     */
 			/*-------------------------------------------------*/
 
-			for(idx in tokenDefs)
+			for(const j in tokenDefs)
 			{
-				token = this._match(code, tokenDefs[idx]);
+				token = this._match(code, tokenDefs[j]);
 
 				if(token)
 				{
@@ -131,7 +94,7 @@ __l0:
 					}
 
 					result_tokens.push(token);
-					result_types.push(tokenTypes[idx]);
+					result_types.push(tokenTypes[j]);
 					result_lines.push(line);
 
 					code = code.substring(token.length);
@@ -177,13 +140,13 @@ __l0:
 
 	_match: function(s, stringOrRegExp)
 	{
-		var m;
+		let m;
 
 		if(stringOrRegExp instanceof RegExp)
 		{
 			m = s.match(stringOrRegExp);
 
-			return m !== null && this._checkNextChar(s, (((((m[0])))))) ? (((((m[0]))))) : null;
+			return m !== null && this._checkNextChar(s, /*-*/m[0]/*-*/) ? /*-*/m[0]/*-*/ : null;
 		}
 		else
 		{
@@ -216,10 +179,10 @@ __l0:
 
 	_checkNextChar: function(s, token)
 	{
-		var length = token.length;
+		const length = token.length;
 
-		var charCode2 = s.charCodeAt(length - 0);
-		var charCode1 = s.charCodeAt(length - 1);
+		const charCode2 = s.charCodeAt(length - 0);
+		const charCode1 = s.charCodeAt(length - 1);
 
 		return isNaN(charCode2)
 		       ||

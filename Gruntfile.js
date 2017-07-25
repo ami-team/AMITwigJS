@@ -12,6 +12,29 @@ module.exports = function(grunt) {
 
 		/*---------------------------------------------------------*/
 
+		"jsdoc": {
+			"js": {
+				"options": {
+/*					"template": "./tools/jsdoc"
+ */				},
+				"src": [
+					"src/main.js",
+					"src/tokenizer.js",
+					"src/expression_compiler.js",
+					"src/template_compiler.js",
+					"src/engine.js",
+					"src/cache.js",
+					"src/date.js",
+					"src/ajax.js",
+					"src/stdlib.js",
+					"src/interpreter.js",
+				],
+				"dest": "doc"
+			},
+		},
+
+		/*---------------------------------------------------------*/
+
 		"concat": {
 			"src": {
 				"options": {
@@ -28,7 +51,8 @@ module.exports = function(grunt) {
 				"src": [
 					"src/main.js",
 					"src/tokenizer.js",
-					"src/compiler.js",
+					"src/expression_compiler.js",
+					"src/template_compiler.js",
 					"src/engine.js",
 					"src/cache.js",
 					"src/date.js",
@@ -86,12 +110,13 @@ module.exports = function(grunt) {
 
 	/**/
 
+	grunt.loadNpmTasks("grunt-jsdoc");
 	grunt.loadNpmTasks("grunt-eslint");
 	grunt.loadNpmTasks("grunt-babel");
 
 	/*-----------------------------------------------------------------*/
 
-	grunt.registerTask("build", ["concat", "eslint", "babel", "uglify"]);
+	grunt.registerTask("build", ["jsdoc", "concat", "eslint", "babel", "uglify"]);
 
 	/*-----------------------------------------------------------------*/
 };
