@@ -414,8 +414,8 @@ amiTwig.expr.Tokenizer = function(code, line) {
 		'false',
 		/^[0-9]+\.[0-9]+/,
 		/^[0-9]+/,
-		/^'(\\'|[^\'])*'/,
-		/^"(\\"|[^\"])*"/,
+		/^'(\\'|[^'])*'/,
+		/^"(\\"|[^"])*"/,
 		/^[a-zA-Z_$][a-zA-Z0-9_$]*/,
 	];
 
@@ -2971,16 +2971,16 @@ __l0:			while(i < l)
 
 		let result = Number.POSITIVE_INFINITY;
 
-		for(const arg of args)
+		for(const i in args)
 		{
-			if(!this.isNumber(arg))
+			if(!this.isNumber(args[i]))
 			{
 				return Number.NaN;
 			}
 
-			if(result > arg)
+			if(result > args[i])
 			{
-				result = arg;
+				result = args[i];
 			}
 		}
 
@@ -3003,16 +3003,16 @@ __l0:			while(i < l)
 
 		let result = Number.NEGATIVE_INFINITY;
 
-		for(const arg of args)
+		for(const i in args)
 		{
-			if(!this.isNumber(arg))
+			if(!this.isNumber(args[i]))
 			{
 				return Number.NaN;
 			}
 
-			if(result < arg)
+			if(result < args[i])
 			{
-				result = arg;
+				result = args[i];
 			}
 		}
 
@@ -3031,10 +3031,19 @@ __l0:			while(i < l)
 
 		if(x)
 		{
-			if(this.isString(x)
+			if(this.isArray(x)
 			   ||
-			   this.isArray(x)
+			   this.isObject(x)
 			 ) {
+			 	const X = Object.keys(x);
+
+				return x[
+					X[Math.floor(X.length * y)]
+				];
+			}
+
+			if(this.isString(x))
+			{
 				return x[Math.floor(x.length * y)];
 			}
 

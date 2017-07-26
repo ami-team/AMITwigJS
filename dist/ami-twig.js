@@ -303,7 +303,7 @@ amiTwig.expr.Tokenizer = function (code, line) {
 
 	/*-----------------------------------------------------------------*/
 
-	this._tokenDefs = ['or', 'and', 'b-or', 'b-xor', 'b-and', 'not', 'is', 'defined', 'null', 'empty', 'iterable', 'even', 'odd', '===', '==', '!==', '!=', '<=', '>=', '<', '>', /^starts\s+with/, /^ends\s+with/, 'matches', 'in', '..', '~', '+', '-', '**', '*', '//', '/', '%', ':', '.', ',', '|', '(', ')', '[', ']', '{', '}', 'true', 'false', /^[0-9]+\.[0-9]+/, /^[0-9]+/, /^'(\\'|[^\'])*'/, /^"(\\"|[^\"])*"/, /^[a-zA-Z_$][a-zA-Z0-9_$]*/];
+	this._tokenDefs = ['or', 'and', 'b-or', 'b-xor', 'b-and', 'not', 'is', 'defined', 'null', 'empty', 'iterable', 'even', 'odd', '===', '==', '!==', '!=', '<=', '>=', '<', '>', /^starts\s+with/, /^ends\s+with/, 'matches', 'in', '..', '~', '+', '-', '**', '*', '//', '/', '%', ':', '.', ',', '|', '(', ')', '[', ']', '{', '}', 'true', 'false', /^[0-9]+\.[0-9]+/, /^[0-9]+/, /^'(\\'|[^'])*'/, /^"(\\"|[^"])*"/, /^[a-zA-Z_$][a-zA-Z0-9_$]*/];
 
 	/*-----------------------------------------------------------------*/
 
@@ -2547,38 +2547,17 @@ amiTwig.stdlib = {
 
 		var result = Number.POSITIVE_INFINITY;
 
-		var _iteratorNormalCompletion2 = true;
-		var _didIteratorError2 = false;
-		var _iteratorError2 = undefined;
-
-		try {
-			for (var _iterator2 = args[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-				var arg = _step2.value;
-
-				if (!this.isNumber(arg)) {
-					return Number.NaN;
-				}
-
-				if (result > arg) {
-					result = arg;
-				}
+		for (var i in args) {
+			if (!this.isNumber(args[i])) {
+				return Number.NaN;
 			}
 
-			/*---------------------------------------------------------*/
-		} catch (err) {
-			_didIteratorError2 = true;
-			_iteratorError2 = err;
-		} finally {
-			try {
-				if (!_iteratorNormalCompletion2 && _iterator2.return) {
-					_iterator2.return();
-				}
-			} finally {
-				if (_didIteratorError2) {
-					throw _iteratorError2;
-				}
+			if (result > args[i]) {
+				result = args[i];
 			}
 		}
+
+		/*---------------------------------------------------------*/
 
 		return result;
 	},
@@ -2594,38 +2573,17 @@ amiTwig.stdlib = {
 
 		var result = Number.NEGATIVE_INFINITY;
 
-		var _iteratorNormalCompletion3 = true;
-		var _didIteratorError3 = false;
-		var _iteratorError3 = undefined;
-
-		try {
-			for (var _iterator3 = args[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-				var arg = _step3.value;
-
-				if (!this.isNumber(arg)) {
-					return Number.NaN;
-				}
-
-				if (result < arg) {
-					result = arg;
-				}
+		for (var i in args) {
+			if (!this.isNumber(args[i])) {
+				return Number.NaN;
 			}
 
-			/*---------------------------------------------------------*/
-		} catch (err) {
-			_didIteratorError3 = true;
-			_iteratorError3 = err;
-		} finally {
-			try {
-				if (!_iteratorNormalCompletion3 && _iterator3.return) {
-					_iterator3.return();
-				}
-			} finally {
-				if (_didIteratorError3) {
-					throw _iteratorError3;
-				}
+			if (result < args[i]) {
+				result = args[i];
 			}
 		}
+
+		/*---------------------------------------------------------*/
 
 		return result;
 	},
@@ -2638,7 +2596,13 @@ amiTwig.stdlib = {
 		var y = Math.random();
 
 		if (x) {
-			if (this.isString(x) || this.isArray(x)) {
+			if (this.isArray(x) || this.isObject(x)) {
+				var X = Object.keys(x);
+
+				return x[X[Math.floor(X.length * y)]];
+			}
+
+			if (this.isString(x)) {
 				return x[Math.floor(x.length * y)];
 			}
 
