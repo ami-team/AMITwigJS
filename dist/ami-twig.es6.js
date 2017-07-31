@@ -145,8 +145,8 @@ __l0:		while(i < l)
 			code = code.substring(1);
 			i += 1;
 
-			continue __l0;
-
+/*			continue __l0;
+ */
 			/*-------------------------------------------------*/
 		}
 
@@ -160,8 +160,8 @@ __l0:		while(i < l)
 			result_tokens.push(word);
 			result_types.push(-1);
 			result_lines.push(line);
-			word = '';
-		}
+/*			word = '';
+ */		}
 
 		return {
 			tokens: result_tokens,
@@ -1614,8 +1614,8 @@ amiTwig.tmpl.Compiler.prototype = {
 
 		let line = 1;
 
-		let column = 0;
-		let COLUMN = 0;
+		let column;
+		let COLUMN;
 
 		/*---------------------------------------------------------*/
 
@@ -1986,7 +1986,7 @@ amiTwig.engine = {
 
 						return false;
 					}
-					
+
 					return true;
 				});
 

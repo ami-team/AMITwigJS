@@ -113,8 +113,8 @@ __l0:		while(i < l)
 			code = code.substring(1);
 			i += 1;
 
-			continue __l0;
-
+/*			continue __l0;
+ */
 			/*-------------------------------------------------*/
 		}
 
@@ -128,8 +128,8 @@ __l0:		while(i < l)
 			result_tokens.push(word);
 			result_types.push(-1);
 			result_lines.push(line);
-			word = '';
-		}
+/*			word = '';
+ */		}
 
 		return {
 			tokens: result_tokens,

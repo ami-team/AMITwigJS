@@ -57,8 +57,8 @@ amiTwig.tmpl.Compiler.prototype = {
 
 		let line = 1;
 
-		let column = 0;
-		let COLUMN = 0;
+		let column;
+		let COLUMN;
 
 		/*---------------------------------------------------------*/
 

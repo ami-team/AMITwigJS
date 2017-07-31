@@ -135,8 +135,8 @@ amiTwig.tokenizer = {
 			code = code.substring(1);
 			i += 1;
 
-			continue __l0;
-
+			/*			continue __l0;
+    */
 			/*-------------------------------------------------*/
 		}
 
@@ -148,7 +148,8 @@ amiTwig.tokenizer = {
 			result_tokens.push(word);
 			result_types.push(-1);
 			result_lines.push(line);
-			word = '';
+			/*			word = '';
+    */
 		}
 
 		return {
@@ -1352,8 +1353,8 @@ amiTwig.tmpl.Compiler.prototype = {
 
 		var line = 1;
 
-		var column = 0;
-		var COLUMN = 0;
+		var column = void 0;
+		var COLUMN = void 0;
 
 		/*---------------------------------------------------------*/
 

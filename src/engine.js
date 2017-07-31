@@ -109,7 +109,7 @@ amiTwig.engine = {
 
 						return false;
 					}
-					
+
 					return true;
 				});
 
