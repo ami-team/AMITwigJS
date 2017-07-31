@@ -271,9 +271,9 @@ amiTwig.expr.Tokenizer = function(code, line) {
 
 	/*-----------------------------------------------------------------*/
 
-	this.next = function(n)
+	this.next = function(n = 1)
 	{
-		this.i += n || 1;
+		this.i += n;
 	};
 
 	/*-----------------------------------------------------------------*/

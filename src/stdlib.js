@@ -171,13 +171,8 @@ amiTwig.stdlib = {
 
 	/*-----------------------------------------------------------------*/
 
-	'range': function(x1, x2, step)
+	'range': function(x1, x2, step = 1)
 	{
-		if(!step)
-		{
-			step = 1;
-		}
-
 		const result = [];
 
 		/**/ if(this.isNumber(x1)
@@ -273,7 +268,7 @@ amiTwig.stdlib = {
 
 			if(this.isArray(arguments[0]))
 			{
-				const L = []
+				const L = [];
 
 				for(const i in arguments)
 				{
@@ -294,7 +289,7 @@ amiTwig.stdlib = {
 
 			if(this.isObject(arguments[0]))
 			{
-				const D = {}
+				const D = {};
 
 				for(const i in arguments)
 				{

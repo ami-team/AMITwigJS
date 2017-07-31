@@ -20,15 +20,13 @@ amiTwig.engine = {
 
 	/*-----------------------------------------------------------------*/
 
-	_render: function(result, item, dict)
+	_render: function(result, item, dict = {})
 	{
-		let k, l;
+		let m;
 
-		let expression, list;
+		let expression;
 
-		let m, symb, expr, value;
-
-		this.dict = dict || {};
+		this.dict = dict;
 
 		switch(item.keyword)
 		{
@@ -37,6 +35,7 @@ amiTwig.engine = {
 			/*-------------------------------------------------*/
 
 			case 'do':
+			{
 				/*-----------------------------------------*/
 
 				amiTwig.expr.cache.eval(item.expression, item.line, dict);
@@ -44,12 +43,14 @@ amiTwig.engine = {
 				/*-----------------------------------------*/
 
 				break;
+			}
 
 			/*-------------------------------------------------*/
 			/* SET                                             */
 			/*-------------------------------------------------*/
 
 			case 'set':
+			{
 				/*-----------------------------------------*/
 
 				m = item.expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(.+)/)
@@ -66,24 +67,25 @@ amiTwig.engine = {
 				/*-----------------------------------------*/
 
 				break;
+			}
 
 			/*-------------------------------------------------*/
 			/* @TEXT                                           */
 			/*-------------------------------------------------*/
 
 			case '@text':
+			{
 				/*-----------------------------------------*/
 
 				result.push(item.value.replace(this.VARIABLE_RE, function(match, expression) {
 
-					value = amiTwig.expr.cache.eval(expression, item.line, dict);
-
-					return (value !== undefined && value !== null) ? value : '';
+					return amiTwig.expr.cache.eval(expression, item.line, dict) || '';
 				}));
 
 				/*-----------------------------------------*/
 
 				break;
+			}
 
 			/*-------------------------------------------------*/
 			/* IF                                              */
@@ -91,34 +93,37 @@ amiTwig.engine = {
 
 			case 'if':
 			case '@root':
+			{
 				/*-----------------------------------------*/
 
-				for(const i in item.blocks)
-				{
-					expression = item.blocks[i].expression;
+				item.blocks.every((block) => {
 
-					if(expression === '@root' || expression === '@else' || amiTwig.expr.cache.eval(expression, item.line, dict))
+					expression = block.expression;
+
+					if(expression === '@true' || amiTwig.expr.cache.eval(expression, item.line, dict))
 					{
-						list = item.blocks[i].list;
+						block.list.forEach((item) => {
 
-						for(const j in list)
-						{
-							this._render(result, list[j], dict);
-						}
+							this._render(result, item, dict);
+						});
 
-						break;
+						return false;
 					}
-				}
+					
+					return true;
+				});
 
 				/*-----------------------------------------*/
 
 				break;
+			}
 
 			/*-------------------------------------------------*/
 			/* FOR                                             */
 			/*-------------------------------------------------*/
 
 			case 'for':
+			{
 				/*-----------------------------------------*/
 
 				m = item.blocks[0].expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s+in\s+(.+)/)
@@ -130,44 +135,44 @@ amiTwig.engine = {
 
 				/*-----------------------------------------*/
 
-				symb = m[1];
-				expr = m[2];
-
-				value = amiTwig.expr.cache.eval(expr, item.line, dict);
+				const symb = m[1];
+				const expr = m[2];
 
 				/*-----------------------------------------*/
 
-				var typeName = Object.prototype.toString.call(value);
-
-				if(typeName !== '[object Array]'
-				   &&
-				   typeName !== '[object Object]'
-				   &&
-				   typeName !== '[object String]'
-				 ) {
-					throw 'syntax error, line `' + item.line + '`, right operande not iterable';
-				}
+				let value = amiTwig.expr.cache.eval(expr, item.line, dict);
 
 				/*-----------------------------------------*/
+
+				const typeName = Object.prototype.toString.call(value);
 
 				if(typeName === '[object Object]')
 				{
 					value = Object.keys(value);
 				}
+				else
+				{
+					if(typeName !== '[object Array]'
+					   &&
+					   typeName !== '[object String]'
+					 ) {
+						throw 'syntax error, line `' + item.line + '`, right operande not iterable';
+					}
+				}
 
 				/*-----------------------------------------*/
 
-				var old1 = dict[(symb)];
-				var old2 = dict['loop'];
+				const old1 = dict[(symb)];
+				const old2 = dict['loop'];
 
 				/*-----------------------------------------*/
 
-				k = 0x0000000000;
-				l = value.length;
+				let k = 0x0000000000;
+				const l = value.length;
 
 				dict.loop = {length: l};
 
-				list = item.blocks[0].list;
+				const list = item.blocks[0].list;
 
 				for(const i in value)
 				{
@@ -188,67 +193,63 @@ amiTwig.engine = {
 
 				/*-----------------------------------------*/
 
-				if(old2) {
-					dict['loop'] = old2;
-				}
-
-				if(old1) {
-					dict[(symb)] = old1;
-				}
+				dict['loop'] = old2;
+				dict[(symb)] = old1;
 
 				/*-----------------------------------------*/
 
 				break;
+			}
 
 			/*-------------------------------------------------*/
 			/* INCLUDE                                         */
 			/*-------------------------------------------------*/
 
 			case 'include':
+			{
 				/*-----------------------------------------*/
 
-				expression = item.expression;
+				let m_1_ = item.expression, with_subexpr, with_context;
 
-				/*-----------------------------------------*/
-
-				var with_context = true;
-
-				expression = expression.trim();
-
-				if((m = expression.match(/only$/)))
+				/**/ if((m = m_1_.match(/(.+)\s+with\s+(.+)\s+only$/)))
 				{
-					expression = expression.substr(expression, expression.length - m[0].length - 1);
-
+					expression = m[1];
+					with_subexpr = m[2];
 					with_context = false;
 				}
-
-				/*-----------------------------------------*/
-
-				var with_subexpr = '{}';
-
-				expression = expression.trim();
-
-				if((m = expression.match(/with\s+(.+)$/)))
+				else if((m = m_1_.match(/(.+)\s+with\s+(.+)$/)))
 				{
-					expression = expression.substr(expression, expression.length - m[0].length - 1);
-
-					with_subexpr = m[1];
+					expression = m[1];
+					with_subexpr = m[2];
+					with_context = true;
+				}
+				else if((m = m_1_.match(/(.+)\s+only$/)))
+				{
+					expression = m[1];
+					with_subexpr = '{}';
+					with_context = false;
+				}
+				else
+				{
+					expression = m_1_;
+					with_subexpr = '{}';
+					with_context = true;
 				}
 
 				/*-----------------------------------------*/
 
-				var FILENAME = amiTwig.expr.cache.eval(expression, item.line, dict) || '';
+				const fileName = amiTwig.expr.cache.eval(expression, item.line, dict) || '';
 
-				if(Object.prototype.toString.call(FILENAME) !== '[object String]')
+				if(Object.prototype.toString.call(fileName) !== '[object String]')
 				{
 					throw 'runtime error, line `' + item.line + '`, string expected';
 				}
 
 				/*-----------------------------------------*/
 
-				var VARIABLES = amiTwig.expr.cache.eval(with_subexpr, item.line, dict) || {};
+				const variables = amiTwig.expr.cache.eval(with_subexpr, item.line, dict) || {};
 
-				if(Object.prototype.toString.call(VARIABLES) !== '[object Object]')
+				if(Object.prototype.toString.call(variables) !== '[object Object]')
 				{
 					throw 'runtime error, line `' + item.line + '`, object expected';
 				}
@@ -256,8 +257,8 @@ amiTwig.engine = {
 				/*-----------------------------------------*/
 
 				result.push(amiTwig.stdlib.include(
-					FILENAME,
-					VARIABLES,
+					fileName,
+					variables,
 					with_context,
 					false
 				));
@@ -265,6 +266,7 @@ amiTwig.engine = {
 				/*-----------------------------------------*/
 
 				break;
+			}
 
 			/*-------------------------------------------------*/
 		}
@@ -274,11 +276,20 @@ amiTwig.engine = {
 
 	/*-----------------------------------------------------------------*/
 
-	render: function(tmpl, dict)
+	render: function(tmpl, dict = {})
 	{
 		const result = [];
 
-		this._render(result, Object.prototype.toString.call(tmpl) === '[object String]' ? new amiTwig.tmpl.Compiler(tmpl).rootNode : tmpl, dict || {});
+		switch(Object.prototype.toString.call(tmpl))
+		{
+			case '[object String]':
+				this._render(result, new amiTwig.tmpl.Compiler(tmpl).rootNode, dict);
+				break;
+
+			case '[object Object]':
+				this._render(result, /*--------------*/tmpl/*--------------*/, dict);
+				break;
+		}
 
 		return result.join('');
 	},

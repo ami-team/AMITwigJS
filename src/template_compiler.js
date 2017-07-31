@@ -35,6 +35,22 @@ amiTwig.tmpl.Compiler.prototype = {
 
 	/*-----------------------------------------------------------------*/
 
+	_count: function(s)
+	{
+		let result = 0;
+
+		const l = s.length;
+
+		for(let i = 0; i < l; i++)
+		{
+			if(s[i] === '\n') result++;
+		}
+
+		return result;
+	},
+
+	/*-----------------------------------------------------------------*/
+
 	$init: function(tmpl)
 	{
 		/*---------------------------------------------------------*/
@@ -51,7 +67,7 @@ amiTwig.tmpl.Compiler.prototype = {
 			keyword: '@root',
 			expression: '',
 			blocks: [{
-				expression: '@root',
+				expression: '@true',
 				list: [],
 			}],
 			value: '',
@@ -83,13 +99,7 @@ amiTwig.tmpl.Compiler.prototype = {
 			{
 				/*-----------------------------------------*/
 
-				for(const c of tmpl)
-				{
-					if(c === '\n')
-					{
-						line++;
-					}
-				}
+				line += this._count(tmpl);
 
 				/*-----------------------------------------*/
 
@@ -124,7 +134,7 @@ amiTwig.tmpl.Compiler.prototype = {
 
 				/*-----------------------------------------*/
 
-				return;
+				break;
 			}
 
 			/*-------------------------------------------------*/
@@ -141,13 +151,7 @@ amiTwig.tmpl.Compiler.prototype = {
 
 			/*-------------------------------------------------*/
 
-			for(const c in VALUE)
-			{
-				if(c === '\n')
-				{
-					line++;
-				}
-			}
+			line += this._count(VALUE);
 
 			/*-------------------------------------------------*/
 
@@ -251,7 +255,7 @@ amiTwig.tmpl.Compiler.prototype = {
 					indx = curr.blocks.length;
 
 					curr.blocks.push({
-						expression: '@else',
+						expression: '@true',
 						list: [],
 					});
 
