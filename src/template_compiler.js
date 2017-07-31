@@ -113,7 +113,7 @@ amiTwig.tmpl.Compiler.prototype = {
 
 				/*-----------------------------------------*/
 
-				var errors = [];
+				const errors = [];
 
 				for(let i = stack1.length - 1; i > 0; i--)
 				{

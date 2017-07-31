@@ -803,7 +803,9 @@ amiTwig.expr.Compiler.prototype = {
 		{
 			/*-------------------------------------------------*/
 
-			for(var temp = node; temp.nodeType === amiTwig.expr.tokens.DOT; temp = temp.nodeLeft);
+			let temp = node;
+
+			for(; temp.nodeType === amiTwig.expr.tokens.DOT; temp = temp.nodeLeft);
 
 			/*-------------------------------------------------*/
 

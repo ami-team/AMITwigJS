@@ -1036,7 +1036,9 @@ amiTwig.expr.Compiler.prototype = {
 		{
 			/*-------------------------------------------------*/
 
-			for(var temp = node; temp.nodeType === amiTwig.expr.tokens.DOT; temp = temp.nodeLeft);
+			let temp = node;
+
+			for(; temp.nodeType === amiTwig.expr.tokens.DOT; temp = temp.nodeLeft);
 
 			/*-------------------------------------------------*/
 
@@ -1668,7 +1670,7 @@ amiTwig.tmpl.Compiler.prototype = {
 
 				/*-----------------------------------------*/
 
-				var errors = [];
+				const errors = [];
 
 				for(let i = stack1.length - 1; i > 0; i--)
 				{
