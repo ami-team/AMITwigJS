@@ -2631,7 +2631,11 @@ amiTwig.stdlib = {
 	/* TEMPLATES                                                       */
 	/*-----------------------------------------------------------------*/
 
-	'include': function include(fileName, variables, withContext, ignoreMissing) {
+	'include': function include(fileName) {
+		var variables = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+		var withContext = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+		var ignoreMissing = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
 		var temp = {};
 
 		/*---------------------------------------------------------*/

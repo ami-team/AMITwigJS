@@ -733,7 +733,7 @@ __l0:			while(i < l)
 	/* TEMPLATES                                                       */
 	/*-----------------------------------------------------------------*/
 
-	'include': function(fileName, variables, withContext, ignoreMissing)
+	'include': function(fileName, variables = {}, withContext = true, ignoreMissing = false)
 	{
 		const temp = {};
 
