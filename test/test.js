@@ -111,5 +111,10 @@ console.log(amiTwig.engine.render('{{ random([1,2,3]) }}'));
 console.log(amiTwig.engine.render('{{ random("azerty") }}'));
 console.log(amiTwig.engine.render('{{ random(100) }}'));
 console.log(amiTwig.engine.render('{{ random() }}'));
+console.log('-------');
+console.log(amiTwig.engine.render('{% for i in [1,2,3] %}{{loop.index}} {% endfor %}', dict));
+console.log('-------');
+console.log(amiTwig.engine.render('{% for i in [1,2,3] %}{{loop.index0}} {% endfor %}', dict));
+console.log('-------');
 
 /*-------------------------------------------------------------------------*/

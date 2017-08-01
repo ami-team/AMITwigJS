@@ -79,7 +79,9 @@ amiTwig.engine = {
 
 				result.push(item.value.replace(this.VARIABLE_RE, function(match, expression) {
 
-					return amiTwig.expr.cache.eval(expression, item.line, dict) || '';
+					let value = amiTwig.expr.cache.eval(expression, item.line, dict);
+
+					return value !== null && value !== undefined ? value : '';
 				}));
 
 				/*-----------------------------------------*/
