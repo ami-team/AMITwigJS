@@ -2817,7 +2817,9 @@ amiTwig.stdlib = {
 
 	'filter_trim': function(s)
 	{
-		return this.isString(s) ? s.trim() : '';
+		return this.isString(s) ? s.trim()
+		                        : ''
+		;
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -2826,13 +2828,22 @@ amiTwig.stdlib = {
 	{
 		const result = [];
 
-		const l = s.length;
+		const l = (((s))).length;
+		const m = oldStrs.length;
+		const n = newStrs.length;
 
-__l0:		for(let i = 0; i < l;)
+		if(m != n)
 		{
-			for(const j in oldStrs)
+			throw 'internal error';
+		}
+
+__l0:		for(let i = 0; i < l; i += 0)
+		{
+			const p = s.substring(i);
+
+			for(let j = 0; j < m; j += 1)
 			{
-				if(s.substring(i).indexOf(oldStrs[j]) === 0)
+				if(p.indexOf(oldStrs[j]) === 0)
 				{
 					result.push(newStrs[j]);
 
@@ -2889,62 +2900,45 @@ __l0:		for(let i = 0; i < l;)
 
 	'filter_url_encode': function(s)
 	{
-		return this.isString(s) ? encodeURIComponent(s) : '';
+		return this.isString(s) ? encodeURIComponent(s)
+		                        : ''
+		;
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	'filter_nl2br': function(s)
 	{
-		return this.isString(s) ? s.replace(/\n/g, '<br/>') : '';
+		return this.isString(s) ? s.replace(/\n/g, '<br/>')
+		                        : ''
+		;
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	'filter_raw': function(s)
 	{
-		return this.isString(s) ? s : '';
+		return this.isString(s) ? s
+		                        : ''
+		;
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	'filter_replace': function(s, dict)
 	{
-		const result = [];
-
-		if(this.isString(s)
-		   &&
-		   this.isObject(dict)
-		 ) {
-			let i = 0x000000;
-			const l = s.length;
-
-__l0:			while(i < l)
-			{
-				for(const name in dict)
-				{
-					if(s.substring(i).indexOf(name) === 0)
-					{
-						result.push(dict[name]);
-
-						i += name.length;
-
-						continue __l0;
-					}
-				}
-
-				result.push(s.charAt(i++));
-			}
-		}
-
-		return result.join('');
+		return this.isString(s) && this.isObject(dict) ? this._replace(s, Object.keys(dict), Object.values(dict))
+		                                               : ''
+		;
 	},
 
 	/*-----------------------------------------------------------------*/
 
 	'filter_split': function(s, sep, max)
 	{
-		return this.isString(s) ? s.split(sep, max) : [];
+		return this.isString(s) ? s.split(sep, max)
+		                        : []
+		;
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -3087,7 +3081,9 @@ __l0:			while(i < l)
 
 	'filter_json_jspath': function(x, path)
 	{
-		return typeof JSPath !== 'undefined' ? JSPath.apply(path, x) : [];
+		return typeof JSPath !== 'undefined' ? JSPath.apply(path, x)
+		                                     : []
+		;
 	},
 
 	/*-----------------------------------------------------------------*/

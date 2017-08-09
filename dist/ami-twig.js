@@ -2412,10 +2412,18 @@ amiTwig.stdlib = {
 		var result = [];
 
 		var l = s.length;
+		var m = oldStrs.length;
+		var n = newStrs.length;
 
-		__l0: for (var i = 0; i < l;) {
-			for (var j in oldStrs) {
-				if (s.substring(i).indexOf(oldStrs[j]) === 0) {
+		if (m != n) {
+			throw 'internal error';
+		}
+
+		__l0: for (var i = 0; i < l; i += 0) {
+			var p = s.substring(i);
+
+			for (var j = 0; j < m; j += 1) {
+				if (p.indexOf(oldStrs[j]) === 0) {
 					result.push(newStrs[j]);
 
 					i += oldStrs[j].length;
@@ -2485,28 +2493,7 @@ amiTwig.stdlib = {
 	/*-----------------------------------------------------------------*/
 
 	'filter_replace': function filter_replace(s, dict) {
-		var result = [];
-
-		if (this.isString(s) && this.isObject(dict)) {
-			var i = 0x000000;
-			var l = s.length;
-
-			__l0: while (i < l) {
-				for (var name in dict) {
-					if (s.substring(i).indexOf(name) === 0) {
-						result.push(dict[name]);
-
-						i += name.length;
-
-						continue __l0;
-					}
-				}
-
-				result.push(s.charAt(i++));
-			}
-		}
-
-		return result.join('');
+		return this.isString(s) && this.isObject(dict) ? this._replace(s, Object.keys(dict), Object.values(dict)) : '';
 	},
 
 	/*-----------------------------------------------------------------*/
