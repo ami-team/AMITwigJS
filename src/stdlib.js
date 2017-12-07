@@ -711,9 +711,9 @@ __l0:		for(let i = 0; i < l; i += 0)
 	/* JSON                                                            */
 	/*-----------------------------------------------------------------*/
 
-	'filter_json_encode': function(x)
+	'filter_json_encode': function(x, indent)
 	{
-		return JSON.stringify(x, null, 2);
+		return JSON.stringify(x, null, this.isNumber(indent) ? indent : 2);
 	},
 
 	/*-----------------------------------------------------------------*/

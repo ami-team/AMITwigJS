@@ -252,22 +252,22 @@ amiTwig.expr.interpreter = {
 				/* UNIARY OPERATOR                         */
 				/*-----------------------------------------*/
 
-				if(node.nodeLeft !== null
-				   &&
-				   node.nodeRight === null
-				 ) {
-					operator = (node.nodeType !== amiTwig.expr.tokens.NOT) ? node.nodeValue : '!';
-
-					return operator + '(' + this._getJS(node.nodeLeft) + ')';
-				}
-
 				if(node.nodeLeft === null
 				   &&
 				   node.nodeRight !== null
 				 ) {
 					operator = (node.nodeType !== amiTwig.expr.tokens.NOT) ? node.nodeValue : '!';
 
-					return '(' + this._getJS(node.nodeRight) + ')' + operator;
+					return operator + '(' + this._getJS(node.nodeRight) + ')';
+				}
+
+				if(node.nodeLeft !== null
+				   &&
+				   node.nodeRight === null
+				 ) {
+					operator = (node.nodeType !== amiTwig.expr.tokens.NOT) ? node.nodeValue : '!';
+
+					return '(' + this._getJS(node.nodeLeft) + ')' + operator;
 				}
 
 				/*-----------------------------------------*/

@@ -547,8 +547,8 @@ amiTwig.expr.Compiler.prototype = {
 
 			right = this.parseComp();
 
-			node.nodeLeft = right;
-			node.nodeRight = null;
+			node.nodeLeft = null;
+			node.nodeRight = right;
 
 			return node;
 		}
@@ -584,8 +584,8 @@ amiTwig.expr.Compiler.prototype = {
 				node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 				this.tokenizer.next();
 
-				node.nodeLeft = swap;
-				node.nodeRight = null;
+				node.nodeLeft = null;
+				node.nodeRight = swap;
 			}
 
 			if(this.tokenizer.checkType(amiTwig.expr.tokens.IS_XXX))
@@ -739,7 +739,7 @@ amiTwig.expr.Compiler.prototype = {
 
 	parsePlusMinus: function()
 	{
-		let left, node;
+		let right, node;
 
 		/*---------------------------------------------------------*/
 		/* PlusMinus : ('-' | '+') Power                           */
@@ -750,16 +750,16 @@ amiTwig.expr.Compiler.prototype = {
 			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
 
-			left = this.parsePower();
+			right = this.parsePower();
 
-			node.nodeLeft = left;
-			node.nodeRight = null;
+			node.nodeLeft = null;
+			node.nodeRight = right;
 
 			return node;
 		}
 
 		/*---------------------------------------------------------*/
-		/*              | Dot1                                     */
+		/*           | Dot1                                        */
 		/*---------------------------------------------------------*/
 
 		return this.parsePower();

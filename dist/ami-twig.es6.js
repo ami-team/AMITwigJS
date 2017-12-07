@@ -780,8 +780,8 @@ amiTwig.expr.Compiler.prototype = {
 
 			right = this.parseComp();
 
-			node.nodeLeft = right;
-			node.nodeRight = null;
+			node.nodeLeft = null;
+			node.nodeRight = right;
 
 			return node;
 		}
@@ -817,8 +817,8 @@ amiTwig.expr.Compiler.prototype = {
 				node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 				this.tokenizer.next();
 
-				node.nodeLeft = swap;
-				node.nodeRight = null;
+				node.nodeLeft = null;
+				node.nodeRight = swap;
 			}
 
 			if(this.tokenizer.checkType(amiTwig.expr.tokens.IS_XXX))
@@ -972,7 +972,7 @@ amiTwig.expr.Compiler.prototype = {
 
 	parsePlusMinus: function()
 	{
-		let left, node;
+		let right, node;
 
 		/*---------------------------------------------------------*/
 		/* PlusMinus : ('-' | '+') Power                           */
@@ -983,16 +983,16 @@ amiTwig.expr.Compiler.prototype = {
 			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
 
-			left = this.parsePower();
+			right = this.parsePower();
 
-			node.nodeLeft = left;
-			node.nodeRight = null;
+			node.nodeLeft = null;
+			node.nodeRight = right;
 
 			return node;
 		}
 
 		/*---------------------------------------------------------*/
-		/*              | Dot1                                     */
+		/*           | Dot1                                        */
 		/*---------------------------------------------------------*/
 
 		return this.parsePower();
@@ -3072,9 +3072,9 @@ __l0:		for(let i = 0; i < l; i += 0)
 	/* JSON                                                            */
 	/*-----------------------------------------------------------------*/
 
-	'filter_json_encode': function(x)
+	'filter_json_encode': function(x, indent)
 	{
-		return JSON.stringify(x, null, 2);
+		return JSON.stringify(x, null, this.isNumber(indent) ? indent : 2);
 	},
 
 	/*-----------------------------------------------------------------*/
@@ -3399,22 +3399,22 @@ amiTwig.expr.interpreter = {
 				/* UNIARY OPERATOR                         */
 				/*-----------------------------------------*/
 
-				if(node.nodeLeft !== null
-				   &&
-				   node.nodeRight === null
-				 ) {
-					operator = (node.nodeType !== amiTwig.expr.tokens.NOT) ? node.nodeValue : '!';
-
-					return operator + '(' + this._getJS(node.nodeLeft) + ')';
-				}
-
 				if(node.nodeLeft === null
 				   &&
 				   node.nodeRight !== null
 				 ) {
 					operator = (node.nodeType !== amiTwig.expr.tokens.NOT) ? node.nodeValue : '!';
 
-					return '(' + this._getJS(node.nodeRight) + ')' + operator;
+					return operator + '(' + this._getJS(node.nodeRight) + ')';
+				}
+
+				if(node.nodeLeft !== null
+				   &&
+				   node.nodeRight === null
+				 ) {
+					operator = (node.nodeType !== amiTwig.expr.tokens.NOT) ? node.nodeValue : '!';
+
+					return '(' + this._getJS(node.nodeLeft) + ')' + operator;
 				}
 
 				/*-----------------------------------------*/
