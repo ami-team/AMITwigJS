@@ -3,6 +3,24 @@ module.exports = function(grunt) {
 
 	var year = grunt.template.today("yyyy");
 
+	/*---------------------------------------------------------------------*/
+
+	var browserslist = [
+		">= 1%",
+		"last 1 major version",
+		"not dead",
+		"Chrome >= 45",
+		"Firefox >= 38",
+		"Edge >= 12",
+		"Explorer >= 10",
+		"iOS >= 9",
+		"Safari >= 9",
+		"Android >= 4.4",
+		"Opera >= 30"
+	];
+
+	grunt.log.writeln('Building AWF for: ' + browserslist.join(', '));
+
 	/*-----------------------------------------------------------------*/
 
 	grunt.initConfig({
@@ -75,9 +93,17 @@ module.exports = function(grunt) {
 		/*---------------------------------------------------------*/
 
 		"babel": {
-			"dist": {
+			"js": {
 				"options": {
-					"presets": ["babel-preset-es2015"]
+					"sourceMap": false,
+					"presets": [["@babel/preset-env", {
+						"debug": false,
+						"loose": true,
+						"modules": false,
+						"targets": {
+							"browsers": browserslist
+						}
+					}]]
 				},
 				"files": {
 					"dist/ami-twig.js": "dist/ami-twig.es6.js"
@@ -90,7 +116,7 @@ module.exports = function(grunt) {
 		"uglify": {
 			"dist": {
 				"options": {
-					"banner": "/*!\n * AMI TWIG Engine\n *\n * Copyright (c) 2014-" + year + " The AMI Team / LPSC / IN2P3\n *\n * This file must be used under the terms of the CeCILL-C:\n * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html\n * http://www.cecill.info/licences/Licence_CeCILL-C_V1-fr.html\n *\n */\n",
+					"banner": "/*!\n * AMI Twig Engine\n *\n * Copyright (c) 2014-" + year + " The AMI Team / LPSC / IN2P3\n *\n * This file must be used under the terms of the CeCILL-C:\n * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html\n * http://www.cecill.info/licences/Licence_CeCILL-C_V1-fr.html\n *\n */\n",
 					"compress": true
 				},
 				"files": {
@@ -106,7 +132,7 @@ module.exports = function(grunt) {
 	/*-----------------------------------------------------------------*/
 
 	grunt.loadNpmTasks("grunt-contrib-concat");
-	grunt.loadNpmTasks("grunt-contrib-uglify");
+	grunt.loadNpmTasks("grunt-contrib-uglify-es");
 
 	/**/
 

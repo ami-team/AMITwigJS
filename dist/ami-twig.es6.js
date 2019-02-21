@@ -1,9 +1,9 @@
 'use strict';
 
 /*!
- * AMI TWIG Engine
+ * AMI Twig Engine
  *
- * Copyright (c) 2014-2017 The AMI Team / LPSC / IN2P3
+ * Copyright (c) 2014-2019 The AMI Team / LPSC / IN2P3
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -15,7 +15,9 @@
 /* amiTwig                                                                 */
 /*-------------------------------------------------------------------------*/
 
-var amiTwig = {};
+var amiTwig = {
+	version: '1.0.0'
+};
 
 /*-------------------------------------------------------------------------*/
 /* exports.amiTwig                                                         */
@@ -31,9 +33,9 @@ if(typeof exports !== 'undefined')
 /*-------------------------------------------------------------------------*/
 
 /*
- * AMI TWIG Engine
+ * AMI Twig Engine
  *
- * Copyright (c) 2014-2017 The AMI Team / LPSC / IN2P3
+ * Copyright (c) 2014-2019 The AMI Team / LPSC / IN2P3
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -232,9 +234,9 @@ __l0:		while(i < l)
 /*-------------------------------------------------------------------------*/
 
 /*
- * AMI TWIG Engine
+ * AMI Twig Engine
  *
- * Copyright (c) 2014-2017 The AMI Team / LPSC / IN2P3
+ * Copyright (c) 2014-2019 The AMI Team / LPSC / IN2P3
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -1556,9 +1558,9 @@ amiTwig.expr.Node.prototype = {
 /*-------------------------------------------------------------------------*/
 
 /*
- * AMI TWIG Engine
+ * AMI Twig Engine
  *
- * Copyright (c) 2014-2017 The AMI Team / LPSC / IN2P3
+ * Copyright (c) 2014-2019 The AMI Team / LPSC / IN2P3
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -1876,9 +1878,9 @@ amiTwig.tmpl.Compiler.prototype = {
 /*-------------------------------------------------------------------------*/
 
 /*
- * AMI TWIG Engine
+ * AMI Twig Engine
  *
- * Copyright (c) 2014-2017 The AMI Team / LPSC / IN2P3
+ * Copyright (c) 2014-2019 The AMI Team / LPSC / IN2P3
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -2179,9 +2181,9 @@ amiTwig.engine = {
 /*-------------------------------------------------------------------------*/
 
 /*
- * AMI TWIG Engine
+ * AMI Twig Engine
  *
- * Copyright (c) 2014-2017 The AMI Team / LPSC / IN2P3
+ * Copyright (c) 2014-2019 The AMI Team / LPSC / IN2P3
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -2234,9 +2236,9 @@ amiTwig.expr.cache = {
 /*-------------------------------------------------------------------------*/
 
 /*
- * AMI TWIG Engine
+ * AMI Twig Engine
  *
- * Copyright (c) 2014-2017 The AMI Team / LPSC / IN2P3
+ * Copyright (c) 2014-2019 The AMI Team / LPSC / IN2P3
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -2252,9 +2254,9 @@ amiTwig.expr.cache = {
 /*-------------------------------------------------------------------------*/
 
 /*
- * AMI TWIG Engine
+ * AMI Twig Engine
  *
- * Copyright (c) 2014-2017 The AMI Team / LPSC / IN2P3
+ * Copyright (c) 2014-2019 The AMI Team / LPSC / IN2P3
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -2360,9 +2362,9 @@ amiTwig.ajax = {
 /*-------------------------------------------------------------------------*/
 
 /*
- * AMI TWIG Engine
+ * AMI Twig Engine
  *
- * Copyright (c) 2014-2017 The AMI Team / LPSC / IN2P3
+ * Copyright (c) 2014-2019 The AMI Team / LPSC / IN2P3
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
@@ -3146,9 +3148,9 @@ amiTwig.stdlib.filter_e = amiTwig.stdlib.filter_escape;
 /*-------------------------------------------------------------------------*/
 
 /*
- * AMI TWIG Engine
+ * AMI Twig Engine
  *
- * Copyright (c) 2014-2017 The AMI Team / LPSC / IN2P3
+ * Copyright (c) 2014-2019 The AMI Team / LPSC / IN2P3
  *
  * This file must be used under the terms of the CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html

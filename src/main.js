@@ -1,5 +1,5 @@
 /*!
- * AMI TWIG Engine
+ * AMI Twig Engine
  *
  * Copyright (c) 2014-{{YEAR}} The AMI Team / LPSC / IN2P3
  *
@@ -15,7 +15,9 @@
 /* amiTwig                                                                 */
 /*-------------------------------------------------------------------------*/
 
-var amiTwig = {};
+var amiTwig = {
+	version: '1.0.0'
+};
 
 /*-------------------------------------------------------------------------*/
 /* exports.amiTwig                                                         */
