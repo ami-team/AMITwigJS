@@ -2873,6 +2873,11 @@ __l0:		for(let i = 0; i < l; i += 0)
 
 	/*-----------------------------------------------------------------*/
 
+	'_textToJsonStringX': ['\\'  , '\n' , '"'  ],
+	'_textToJsonStringY': ['\\\\', '\\n', '\\"'],
+
+	/*-----------------------------------------------------------------*/
+
 	'filter_escape': function(s, mode)
 	{
 		if(this.isString(s))
@@ -2886,6 +2891,9 @@ __l0:		for(let i = 0; i < l; i += 0)
 				case 'js':
 				case 'string':
 					return this._replace(s, this._textToStringX, this._textToStringY);
+
+				case 'json':
+					return this._replace(s, this._textToJsonStringX, this._textToJsonStringY);
 
 				case 'url':
 					return encodeURIComponent(s);
