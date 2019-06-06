@@ -29,7 +29,7 @@ amiTwig.tmpl.Compiler = function(tmpl) {
 amiTwig.tmpl.Compiler.prototype = {
 	/*---------------------------------------------------------------------*/
 
-	STATEMENT_RE: /\{%\s*([a-zA-Z]+)\s+(.*?)\s*%\}/m,
+	STATEMENT_RE: /\{%\s*([a-zA-Z]+)\s*((?:.|\n)*?)\s*%\}/,
 
 	COMMENT_RE: /\{#\s*(.*?)\s*#\}/g,
 
