@@ -1,11 +1,19 @@
 module.exports = function(grunt) {
-	/*-----------------------------------------------------------------*/
+	/*----------------------------------------------------------------------------------------------------------------*/
 
-	var year = grunt.template.today("yyyy");
+	const PACKAGE_JSON = grunt.file.readJSON("package.json");
 
-	/*---------------------------------------------------------------------*/
+	/*----------------------------------------------------------------------------------------------------------------*/
 
-	var browserslist = [
+	const CURRENT_YEAR = grunt.template.today("yyyy");
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	const TWIG_VERSION = PACKAGE_JSON["version"];
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	const browserslist = [
 		">= 1%",
 		"last 1 major version",
 		"not dead",
@@ -21,20 +29,17 @@ module.exports = function(grunt) {
 
 	grunt.log.writeln('Building AWF for: ' + browserslist.join(', '));
 
-	/*-----------------------------------------------------------------*/
+	/*----------------------------------------------------------------------------------------------------------------*/
 
 	grunt.initConfig({
-		/*---------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------------------------------*/
 
 		"pkg": grunt.file.readJSON("package.json"),
 
-		/*---------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------------------------------*/
 
 		"jsdoc": {
 			"js": {
-				"options": {
-/*					"template": "./tools/jsdoc"
- */				},
 				"src": [
 					"src/main.js",
 					"src/tokenizer.js",
@@ -51,18 +56,23 @@ module.exports = function(grunt) {
 			},
 		},
 
-		/*---------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------------------------------*/
 
 		"concat": {
 			"src": {
 				"options": {
+					"sourceMap": true,
+					"sourceMapStyle": "inline",
+
+					"stripBanners": true,
 					"banner": "'use strict';\n\n",
 
 					"process": function(src) {
 
 						return src.replace(/\'use strict\'\s*;\n*/g, "")
 						          .replace(/\"use strict\"\s*;\n*/g, "")
-						          .replace(/{{YEAR}}/g, year)
+						          .replace(/{{CURRENT_YEAR}}/g, CURRENT_YEAR)
+						          .replace(/{{TWIG_VERSION}}/g, TWIG_VERSION)
 						;
 					}
 				},
@@ -73,7 +83,6 @@ module.exports = function(grunt) {
 					"src/template_compiler.js",
 					"src/engine.js",
 					"src/cache.js",
-					"src/date.js",
 					"src/ajax.js",
 					"src/stdlib.js",
 					"src/interpreter.js",
@@ -82,7 +91,7 @@ module.exports = function(grunt) {
 			},
 		},
 
-		/*---------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------------------------------*/
 
 		"eslint": {
 			"target": [
@@ -90,12 +99,16 @@ module.exports = function(grunt) {
 			]
 		},
 
-		/*---------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------------------------------*/
 
 		"babel": {
 			"js": {
 				"options": {
-					"sourceMap": false,
+					"inputSourceMap": true,
+					"sourceMaps": "inline",
+					"compact": false,
+					"minified": false,
+					"shouldPrintComment": (txt) => /Copyright/.test(txt),
 					"presets": [["@babel/preset-env", {
 						"debug": false,
 						"loose": true,
@@ -111,12 +124,12 @@ module.exports = function(grunt) {
 			}
 		},
 
-		/*---------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------------------------------*/
 
 		"uglify": {
 			"dist": {
 				"options": {
-					"banner": "/*!\n * AMI Twig Engine\n *\n * Copyright (c) 2014-" + year + " The AMI Team / LPSC / IN2P3\n *\n * This file must be used under the terms of the CeCILL-C:\n * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html\n * http://www.cecill.info/licences/Licence_CeCILL-C_V1-fr.html\n *\n */\n",
+					"banner": "/*!\n * AMI Web Framework\n *\n * Copyright (c) 2014-" + CURRENT_YEAR + " The AMI Team / LPSC / CNRS\n *\n * This file must be used under the terms of the CeCILL-C:\n * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html\n * http://www.cecill.info/licences/Licence_CeCILL-C_V1-fr.html\n *\n */\n",
 					"compress": true
 				},
 				"files": {
@@ -126,10 +139,10 @@ module.exports = function(grunt) {
 			}
 		}
 
-		/*---------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------------------------------*/
 	});
 
-	/*-----------------------------------------------------------------*/
+	/*----------------------------------------------------------------------------------------------------------------*/
 
 	grunt.loadNpmTasks("grunt-contrib-concat");
 	grunt.loadNpmTasks("grunt-contrib-uglify-es");
@@ -140,9 +153,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-eslint");
 	grunt.loadNpmTasks("grunt-babel");
 
-	/*-----------------------------------------------------------------*/
+	/*----------------------------------------------------------------------------------------------------------------*/
 
 	grunt.registerTask("build", ["jsdoc", "concat", "eslint", "babel", "uglify"]);
 
-	/*-----------------------------------------------------------------*/
+	/*----------------------------------------------------------------------------------------------------------------*/
 };
