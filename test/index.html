@@ -19,7 +19,7 @@
 		<script type="text/javascript" src="../dist/ami-twig.js"></script>
 
 		<script type="text/javascript">
-		/*---------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------------------------------*/
 
 		function viewExpr()
 		{
@@ -44,7 +44,7 @@
 			}
 		}
 
-		/*---------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------------------------------*/
 
 		function clearExpr()
 		{
@@ -54,7 +54,7 @@
 			$('#message').empty();
 		}
 
-		/*---------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------------------------------*/
 
 		$(function() {
 
@@ -67,12 +67,64 @@
 			});
 		});
 
-		/*---------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		function execTemplate()
+		{
+			var twig = $('#html').empty();
+
+			try
+			{
+				var html = amiTwig.engine.render($('#twig').val(), {});
+
+				/**/
+
+				var lines = html.split('\n');
+				var LINES = [              ];
+
+				for(var i in lines)
+				{
+					if(lines[i].trim())
+					{
+						LINES.push(lines[i]);
+					}
+				}
+
+				html = LINES.join('\n');
+
+				/**/
+
+				$('#html').val(html);
+
+				$('#message').empty();
+			}
+			catch(e)
+			{
+				$('#html').val('');
+
+				$('#message').html('<div class="alert alert-danger alert-dismissible" role="alert"><button class="close" data-dismiss="alert"><span>&times;</span><span class="sr-only">Close</span></button><strong>Error!</strong> ' + e + '</div');
+			}
+		}
+
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		function clearTemplate()
+		{
+			$('#html').val('');
+
+			$('#message').empty();
+		}
+
+		/*------------------------------------------------------------------------------------------------------------*/
 		</script>
 	</head>
 	<body>
 
 		<div class="container">
+
+			<br />
+
+			<div id="message"></div>
 
 			<h1>TWIG expression</h1>
 
@@ -85,10 +137,29 @@
 
 			<div class="text-right"><a href="javascript:clearExpr();">clear</a></div>
 
-			<div id="message"></div>
-
 			<div class="text-center" id="code"></div>
 			<div class="text-center" id="tree"></div>
+
+			<h1>TWIG template</h1>
+
+			<div class="row">
+
+				<div class="col-md-6 form-group">
+					<textarea class="form-control" rows="10" required="required" id="twig"></textarea>
+				</div>
+
+				<div class="col-md-6 form-group">
+					<textarea class="form-control" rows="10" readonly="readonly" id="html"></textarea>
+				</div>
+
+			</div>
+
+			<div class="text-right">
+				<button type="button" class="btn btn-success" onclick="execTemplate();">Try !</button>
+				<button type="button" class="btn btn-primary" onclick="clearTemplate();">Clear</button>
+			</div>
+
+			<br />
 
 		<div>
 

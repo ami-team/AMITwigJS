@@ -248,7 +248,7 @@ amiTwig.tmpl.Compiler.prototype = {
 				case 'else':
 
 					if(curr['keyword'] !== 'if'
-					   ||
+					   &&
 					   curr['keyword'] !== 'for'
 					 ) {
 						throw 'syntax error, line `' + line + '`, unexpected keyword `else`';

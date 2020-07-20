@@ -343,7 +343,7 @@ amiTwig.expr.Compiler.prototype = {
 
 		/*------------------------------------------------------------------------------------------------------------*/
 
-		this.rootNode = this.parseFilter();
+		this.rootNode = this.parseLogicalOr();
 
 		/*------------------------------------------------------------------------------------------------------------*/
 
@@ -360,34 +360,6 @@ amiTwig.expr.Compiler.prototype = {
 	dump: function()
 	{
 		return this.rootNode.dump();
-	},
-
-	/*----------------------------------------------------------------------------------------------------------------*/
-
-	parseFilter: function()
-	{
-		let left = this.parseLogicalOr(), node, temp;
-
-		/*------------------------------------------------------------------------------------------------------------*/
-		/* Filter : LogicalOr ('|' Dot1)*                                                                             */
-		/*------------------------------------------------------------------------------------------------------------*/
-
-		while(this.tokenizer.checkType(amiTwig.expr.tokens.PIPE))
-		{
-			this.tokenizer.next();
-
-			node = this.parseDot1(true);
-
-			for(temp = node; temp.nodeType === amiTwig.expr.tokens.DOT; temp = temp.nodeLeft);
-
-			temp.list.unshift(left);
-
-			left = node;
-		}
-
-		/*------------------------------------------------------------------------------------------------------------*/
-
-		return left;
 	},
 
 	/*----------------------------------------------------------------------------------------------------------------*/
@@ -769,10 +741,10 @@ amiTwig.expr.Compiler.prototype = {
 
 	parsePower: function()
 	{
-		let left = this.parseDot1(), right, node;
+		let left = this.parseFilter(), right, node;
 
 		/*------------------------------------------------------------------------------------------------------------*/
-		/* Power : Dot1 ('**' Dot1)*                                                                                  */
+		/* Power : Filter ('**' Filter)*                                                                              */
 		/*------------------------------------------------------------------------------------------------------------*/
 
 		while(this.tokenizer.checkType(amiTwig.expr.tokens.POWER))
@@ -780,10 +752,38 @@ amiTwig.expr.Compiler.prototype = {
 			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
 
-			right = this.parseDot1();
+			right = this.parseFilter();
 
 			node.nodeLeft = left;
 			node.nodeRight = right;
+
+			left = node;
+		}
+
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		return left;
+	},
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	parseFilter: function()
+	{
+		let left = this.parseDot1(), node, temp;
+
+		/*------------------------------------------------------------------------------------------------------------*/
+		/* Filter : Dot1 ('|' Dot1)*                                                                                  */
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		while(this.tokenizer.checkType(amiTwig.expr.tokens.PIPE))
+		{
+			this.tokenizer.next();
+
+			node = this.parseDot1(true);
+
+			for(temp = node; temp.nodeType === amiTwig.expr.tokens.DOT; temp = temp.nodeLeft);
+
+			temp.list.unshift(left);
 
 			left = node;
 		}
@@ -871,14 +871,14 @@ amiTwig.expr.Compiler.prototype = {
 		let left = this.parseX(isFilter), right, node;
 
 		/*------------------------------------------------------------------------------------------------------------*/
-		/* parseDot3 : X ('[' Filter ']')*                                                                            */
+		/* parseDot3 : X ('[' parseLogicalOr ']')*                                                                    */
 		/*------------------------------------------------------------------------------------------------------------*/
 
 		while(this.tokenizer.checkType(amiTwig.expr.tokens.LB1))
 		{
 			this.tokenizer.next();
 
-			right = this.parseFilter();
+			right = this.parseLogicalOr();
 
 			if(this.tokenizer.checkType(amiTwig.expr.tokens.RB1))
 			{
@@ -950,14 +950,14 @@ amiTwig.expr.Compiler.prototype = {
 		let node;
 
 		/*------------------------------------------------------------------------------------------------------------*/
-		/* Group : '(' Filter ')'                                                                                     */
+		/* Group : '(' LogicalOr ')'                                                                                  */
 		/*------------------------------------------------------------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(amiTwig.expr.tokens.LP))
 		{
 			this.tokenizer.next();
 
-			node = this.parseFilter();
+			node = this.parseLogicalOr();
 
 			if(this.tokenizer.checkType(amiTwig.expr.tokens.RP))
 			{
@@ -1157,7 +1157,7 @@ amiTwig.expr.Compiler.prototype = {
 
 	_parseSinglet: function(result)
 	{
-		result.push(this.parseFilter());
+		result.push(this.parseLogicalOr());
 	},
 
 	/*----------------------------------------------------------------------------------------------------------------*/
@@ -1176,7 +1176,7 @@ amiTwig.expr.Compiler.prototype = {
 
 				/*----------------------------------------------------------------------------------------------------*/
 
-				result[key] = this.parseFilter();
+				result[key] = this.parseLogicalOr();
 
 				/*----------------------------------------------------------------------------------------------------*/
 			}
@@ -1198,7 +1198,7 @@ amiTwig.expr.Compiler.prototype = {
 		let left, right, node;
 
 		/*------------------------------------------------------------------------------------------------------------*/
-		/* Terminal : TERMINAL | RANGE                                     */
+		/* Terminal : TERMINAL | RANGE                                                                                */
 		/*------------------------------------------------------------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(amiTwig.expr.tokens.TERMINAL))
