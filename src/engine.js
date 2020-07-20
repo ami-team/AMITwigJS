@@ -128,85 +128,156 @@ amiTwig.engine = {
 			{
 				/*----------------------------------------------------------------------------------------------------*/
 
-				m = item.blocks[0].expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s+in\s+(.+)/)
+				let sym1;
+				let sym2;
+				let expr;
+
+				m = item.blocks[0].expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*,\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s+in\s+(.+)/)
 
 				if(!m)
 				{
-					throw 'syntax error, line `' + item.line + '`, invalid `for` statement';
-				}
+					m = item.blocks[0].expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s+in\s+(.+)/)
 
-				/*----------------------------------------------------------------------------------------------------*/
-
-				const symb = m[1];
-				const expr = m[2];
-
-				/*----------------------------------------------------------------------------------------------------*/
-
-				let value = amiTwig.expr.cache.eval(expr, item.line, dict);
-
-				/*----------------------------------------------------------------------------------------------------*/
-
-				const typeName = Object.prototype.toString.call(value);
-
-				if(typeName === '[object Object]')
-				{
-					value = Object.keys(value);
+					if(!m)
+					{
+						throw 'syntax error, line `' + item.line + '`, invalid `for` statement';
+					}
+					else
+					{
+						sym1 = m[1];
+						sym2 = null;
+						expr = m[2];
+					}
 				}
 				else
 				{
+					sym1 = m[1];
+					sym2 = m[2];
+					expr = m[3];
+				}
+
+				/*----------------------------------------------------------------------------------------------------*/
+
+				const origValue = amiTwig.expr.cache.eval(expr, item.line, dict);
+
+				const typeName = Object.prototype.toString.call(origValue);
+
+				let iterValue;
+
+				if(typeName === '[object Object]')
+				{
+					iterValue = sym2 ? Object.entries(origValue)
+					                 : Object.keys(origValue)
+					;
+				}
+				else
+				{
+					iterValue = origValue;
+
 					if(typeName !== '[object Array]'
 					   &&
 					   typeName !== '[object String]'
 					 ) {
 						throw 'syntax error, line `' + item.line + '`, right operande not iterable';
 					}
+
+					if(sym2)
+					{
+						throw 'syntax error, line `' + item.line + '`, right operande not an object';
+					}
 				}
 
 				/*----------------------------------------------------------------------------------------------------*/
 
-				if(value.length > 0)
+				const l = iterValue.length;
+
+				if(l > 0)
 				{
-					/*------------------------------------------------------------------------------------------------*/
-
-					const old1 = dict[(symb)];
-					const old2 = dict['loop'];
-
-					/*------------------------------------------------------------------------------------------------*/
-
-					let k = 0x0000000000;
-					const l = value.length;
-
-					dict.loop = {length: l, parent: old2};
-
-					/*------------------------------------------------------------------------------------------------*/
+					let k = 0x00000000000000;
 
 					const list = item.blocks[0].list;
 
-					for(const i in value)
+					if(sym2)
 					{
-						dict[symb] = value[i];
+						/*--------------------------------------------------------------------------------------------*/
 
-						dict.loop.first = (k === (0 - 0));
-						dict.loop.last = (k === (l - 1));
+						const old1 = dict[(sym1)];
+						const old2 = dict[(sym2)];
+						const old3 = dict['loop'];
 
-						dict.loop.revindex0 = l - k;
-						dict.loop.index0 = k;
-						k++;
-						dict.loop.revindex = l - k;
-						dict.loop.index = k;
+						/*--------------------------------------------------------------------------------------------*/
 
-						for(const j in list)
+						dict.loop = {length: l, parent: dict['loop']};
+
+						/*--------------------------------------------------------------------------------------------*/
+
+						for(const [key, val] of iterValue)
 						{
-							this._render(result, list[j], dict);
+							dict[sym1] = key;
+							dict[sym2] = val;
+
+							dict.loop.first = (k === (0 - 0));
+							dict.loop.last = (k === (l - 1));
+
+							dict.loop.revindex0 = l - k;
+							dict.loop.index0 = k;
+							k++;
+							dict.loop.revindex = l - k;
+							dict.loop.index = k;
+
+							for(const j in list)
+							{
+								this._render(result, list[j], dict);
+							}
 						}
+
+						/*--------------------------------------------------------------------------------------------*/
+
+						dict['loop'] = old3;
+						dict[(sym2)] = old2;
+						dict[(sym1)] = old1;
+
+						/*--------------------------------------------------------------------------------------------*/
 					}
+					else
+					{
+						/*--------------------------------------------------------------------------------------------*/
 
-					/*------------------------------------------------------------------------------------------------*/
+						const old1 = dict[(sym1)];
+						const old2 = dict['loop'];
 
-					dict['loop'] = old2;
-					dict[(symb)] = old1;
+						/*--------------------------------------------------------------------------------------------*/
 
-					/*------------------------------------------------------------------------------------------------*/
+						dict.loop = {length: l, parent: dict['loop']};
+
+						/*--------------------------------------------------------------------------------------------*/
+
+						for(const val of iterValue)
+						{
+							dict[sym1] = val;
+
+							dict.loop.first = (k === (0 - 0));
+							dict.loop.last = (k === (l - 1));
+
+							dict.loop.revindex0 = l - k;
+							dict.loop.index0 = k;
+							k++;
+							dict.loop.revindex = l - k;
+							dict.loop.index = k;
+
+							for(const j in list)
+							{
+								this._render(result, list[j], dict);
+							}
+						}
+
+						/*--------------------------------------------------------------------------------------------*/
+
+						dict['loop'] = old2;
+						dict[(sym1)] = old1;
+
+						/*--------------------------------------------------------------------------------------------*/
+					}
 				}
 				else
 				{
@@ -298,18 +369,18 @@ amiTwig.engine = {
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	render: function(tmpl, dict = {})
+	render: function(tmpl, dict = {}, settings = {})
 	{
 		const result = [];
 
 		switch(Object.prototype.toString.call(tmpl))
 		{
 			case '[object String]':
-				this._render(result, new amiTwig.tmpl.Compiler(tmpl).rootNode, dict);
+				this._render(result, new amiTwig.tmpl.Compiler(tmpl).rootNode, dict, settings);
 				break;
 
 			case '[object Object]':
-				this._render(result, /*--------------*/tmpl/*--------------*/, dict);
+				this._render(result, /*--------------*/tmpl/*--------------*/, dict, settings);
 				break;
 		}
 

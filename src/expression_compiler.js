@@ -94,18 +94,20 @@ amiTwig.expr.tokens = {
 	FLDIV: 124,
 	DIV: 125,
 	MOD: 126,
-	COLON: 127,
-	DOT: 128,
-	COMMA: 129,
-	PIPE: 130,
-	LP: 131,
-	RP: 132,
-	LB1: 133,
-	RB1: 134,
-	LB2: 135,
-	RB2: 136,
-	SID: 137,
-	TERMINAL: 138,
+ 	DOUBLE_QUESTION: 127,
+ 	QUESTION: 128,
+	COLON: 129,
+	DOT: 130,
+	COMMA: 131,
+	PIPE: 132,
+	LP: 133,
+	RP: 134,
+	LB1: 135,
+	RB1: 136,
+	LB2: 137,
+	RB2: 138,
+	SID: 139,
+	TERMINAL: 140,
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 	/* VIRTUAL TOKENS                                                                                                 */
@@ -169,6 +171,8 @@ amiTwig.expr.Tokenizer = function(code, line) {
 		'//',
 		'/',
 		'%',
+		'??',
+		'?',
 		':',
 		'.',
 		',',
@@ -225,6 +229,8 @@ amiTwig.expr.Tokenizer = function(code, line) {
 		amiTwig.expr.tokens.FLDIV,
 		amiTwig.expr.tokens.DIV,
 		amiTwig.expr.tokens.MOD,
+		amiTwig.expr.tokens.DOUBLE_QUESTION,
+		amiTwig.expr.tokens.QUESTION,
 		amiTwig.expr.tokens.COLON,
 		amiTwig.expr.tokens.DOT,
 		amiTwig.expr.tokens.COMMA,
@@ -741,13 +747,41 @@ amiTwig.expr.Compiler.prototype = {
 
 	parsePower: function()
 	{
-		let left = this.parseFilter(), right, node;
+		let left = this.parseNullCoalescing(), right, node;
 
 		/*------------------------------------------------------------------------------------------------------------*/
-		/* Power : Filter ('**' Filter)*                                                                              */
+		/* Power : NullCoalescing ('**' NullCoalescing)*                                                              */
 		/*------------------------------------------------------------------------------------------------------------*/
 
 		while(this.tokenizer.checkType(amiTwig.expr.tokens.POWER))
+		{
+			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
+			this.tokenizer.next();
+
+			right = this.parseNullCoalescing();
+
+			node.nodeLeft = left;
+			node.nodeRight = right;
+
+			left = node;
+		}
+
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		return left;
+	},
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	parseNullCoalescing: function()
+	{
+		let left = this.parseFilter(), right, node;
+
+		/*------------------------------------------------------------------------------------------------------------*/
+		/* NullCoalescing : Filter ('??' Filter)*                                                                     */
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		while(this.tokenizer.checkType(amiTwig.expr.tokens.DOUBLE_QUESTION))
 		{
 			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
