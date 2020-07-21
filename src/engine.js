@@ -163,6 +163,8 @@ amiTwig.engine = {
 
 				const typeName = Object.prototype.toString.call(origValue);
 
+				/*----------------------------------------------------------------------------------------------------*/
+
 				let iterValue;
 
 				if(typeName === '[object Object]')
