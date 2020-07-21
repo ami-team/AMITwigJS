@@ -20,13 +20,14 @@ amiTwig.engine = {
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	_render: function(result, item, dict = {})
+	_render: function(result, item, dict = {}, tmpls = {})
 	{
 		let m;
 
 		let expression;
 
 		this.dict = dict;
+		this.tmpls = tmpls;
 
 		switch(item.keyword)
 		{
@@ -106,7 +107,7 @@ amiTwig.engine = {
 					{
 						block.list.forEach((item) => {
 
-							this._render(result, item, dict);
+							this._render(result, item, dict, tmpls);
 						});
 
 						return false;
@@ -227,7 +228,7 @@ amiTwig.engine = {
 
 							for(const j in list)
 							{
-								this._render(result, list[j], dict);
+								this._render(result, list[j], dict, tmpls);
 							}
 						}
 
@@ -267,7 +268,7 @@ amiTwig.engine = {
 
 							for(const j in list)
 							{
-								this._render(result, list[j], dict);
+								this._render(result, list[j], dict, tmpls);
 							}
 						}
 
@@ -285,7 +286,7 @@ amiTwig.engine = {
 
 					for(const j in list)
 					{
-						this._render(result, list[j], dict);
+						this._render(result, list[j], dict, tmpls);
 					}
 				}
 
@@ -369,18 +370,18 @@ amiTwig.engine = {
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	render: function(tmpl, dict = {}, settings = {})
+	render: function(tmpl, dict = {}, tmpls = {})
 	{
 		const result = [];
 
 		switch(Object.prototype.toString.call(tmpl))
 		{
 			case '[object String]':
-				this._render(result, new amiTwig.tmpl.Compiler(tmpl).rootNode, dict, settings);
+				this._render(result, new amiTwig.tmpl.Compiler(tmpl).rootNode, dict, tmpls);
 				break;
 
 			case '[object Object]':
-				this._render(result, /*--------------*/tmpl/*--------------*/, dict, settings);
+				this._render(result, /*--------------*/tmpl/*--------------*/, dict, tmpls);
 				break;
 		}
 

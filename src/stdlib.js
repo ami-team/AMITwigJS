@@ -739,48 +739,49 @@ __l0:		for(let i = 0; i < l; i += 0)
 
 	'include': function(fileName, variables = {}, withContext = true, ignoreMissing = false)
 	{
-		const temp = {};
-
 		/*------------------------------------------------------------------------------------------------------------*/
 
-		if(withContext)
+		if(fileName in amiTwig.engine.tmpls)
 		{
-			for(const i in amiTwig.engine.dict)
-			{
-				temp[i] = amiTwig.engine.dict[i];
-			}
-		}
+			const temp = {};
 
-		if(variables)
-		{
-			for(const i in /*-*/variables/*-*/)
-			{
-				temp[i] = /*-*/variables/*-*/[i];
-			}
-		}
+			/*--------------------------------------------------------------------------------------------------------*/
 
-		/*------------------------------------------------------------------------------------------------------------*/
-
-		let result = '';
-
-		amiTwig.ajax.get(
-			fileName,
-			function(data)
+			if(withContext)
 			{
-				result = amiTwig.engine.render(data, temp);
-			},
-			function(/**/)
-			{
-				if(!ignoreMissing)
+				for(const i in amiTwig.engine.dict)
 				{
-					throw 'runtime error, could not open `' + fileName + '`';
+					temp[i] = amiTwig.engine.dict[i];
 				}
 			}
-		);
+
+			/*--------------------------------------------------------------------------------------------------------*/
+
+			if(variables)
+			{
+				for(const i in /*-*/variables/*-*/)
+				{
+					temp[i] = /*-*/variables/*-*/[i];
+				}
+			}
+
+			/*--------------------------------------------------------------------------------------------------------*/
+
+			return amiTwig.engine.render(amiTwig.engine.tmpls[fileName], temp);
+
+			/*--------------------------------------------------------------------------------------------------------*/
+		}
 
 		/*------------------------------------------------------------------------------------------------------------*/
 
-		return result;
+		if(!ignoreMissing)
+		{
+			throw 'runtime error, could not open `' + fileName + '`';
+		}
+
+		return '';
+
+		/*------------------------------------------------------------------------------------------------------------*/
 	},
 
 	/*----------------------------------------------------------------------------------------------------------------*/

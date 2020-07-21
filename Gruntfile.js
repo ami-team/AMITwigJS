@@ -48,7 +48,6 @@ module.exports = function(grunt) {
 					"src/engine.js",
 					"src/cache.js",
 					"src/date.js",
-					"src/ajax.js",
 					"src/stdlib.js",
 					"src/interpreter.js",
 				],

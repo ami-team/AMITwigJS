@@ -349,7 +349,7 @@ amiTwig.expr.Compiler.prototype = {
 
 		/*------------------------------------------------------------------------------------------------------------*/
 
-		this.rootNode = this.parseLogicalOr();
+		this.rootNode = this.parseNullCoalescing();
 
 		/*------------------------------------------------------------------------------------------------------------*/
 
@@ -366,6 +366,34 @@ amiTwig.expr.Compiler.prototype = {
 	dump: function()
 	{
 		return this.rootNode.dump();
+	},
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	parseNullCoalescing: function()
+	{
+		let left = this.parseLogicalOr(), right, node;
+
+		/*------------------------------------------------------------------------------------------------------------*/
+		/* NullCoalescing : LogicalOr ('??' LogicalOr)*                                                               */
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		while(this.tokenizer.checkType(amiTwig.expr.tokens.DOUBLE_QUESTION))
+		{
+			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
+			this.tokenizer.next();
+
+			right = this.parseLogicalOr();
+
+			node.nodeLeft = left;
+			node.nodeRight = right;
+
+			left = node;
+		}
+
+		/*------------------------------------------------------------------------------------------------------------*/
+
+		return left;
 	},
 
 	/*----------------------------------------------------------------------------------------------------------------*/
@@ -747,41 +775,13 @@ amiTwig.expr.Compiler.prototype = {
 
 	parsePower: function()
 	{
-		let left = this.parseNullCoalescing(), right, node;
-
-		/*------------------------------------------------------------------------------------------------------------*/
-		/* Power : NullCoalescing ('**' NullCoalescing)*                                                              */
-		/*------------------------------------------------------------------------------------------------------------*/
-
-		while(this.tokenizer.checkType(amiTwig.expr.tokens.POWER))
-		{
-			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
-			this.tokenizer.next();
-
-			right = this.parseNullCoalescing();
-
-			node.nodeLeft = left;
-			node.nodeRight = right;
-
-			left = node;
-		}
-
-		/*------------------------------------------------------------------------------------------------------------*/
-
-		return left;
-	},
-
-	/*----------------------------------------------------------------------------------------------------------------*/
-
-	parseNullCoalescing: function()
-	{
 		let left = this.parseFilter(), right, node;
 
 		/*------------------------------------------------------------------------------------------------------------*/
-		/* NullCoalescing : Filter ('??' Filter)*                                                                     */
+		/* Power : Filter ('**' Filter)*                                                                              */
 		/*------------------------------------------------------------------------------------------------------------*/
 
-		while(this.tokenizer.checkType(amiTwig.expr.tokens.DOUBLE_QUESTION))
+		while(this.tokenizer.checkType(amiTwig.expr.tokens.POWER))
 		{
 			node = new amiTwig.expr.Node(this.tokenizer.peekType(), this.tokenizer.peekToken());
 			this.tokenizer.next();
@@ -905,14 +905,14 @@ amiTwig.expr.Compiler.prototype = {
 		let left = this.parseX(isFilter), right, node;
 
 		/*------------------------------------------------------------------------------------------------------------*/
-		/* parseDot3 : X ('[' parseLogicalOr ']')*                                                                    */
+		/* Dot3 : X ('[' NullCoalescing ']')*                                                                         */
 		/*------------------------------------------------------------------------------------------------------------*/
 
 		while(this.tokenizer.checkType(amiTwig.expr.tokens.LB1))
 		{
 			this.tokenizer.next();
 
-			right = this.parseLogicalOr();
+			right = this.parseNullCoalescing();
 
 			if(this.tokenizer.checkType(amiTwig.expr.tokens.RB1))
 			{
@@ -984,14 +984,14 @@ amiTwig.expr.Compiler.prototype = {
 		let node;
 
 		/*------------------------------------------------------------------------------------------------------------*/
-		/* Group : '(' LogicalOr ')'                                                                                  */
+		/* Group : '(' NullCoalescing ')'                                                                             */
 		/*------------------------------------------------------------------------------------------------------------*/
 
 		if(this.tokenizer.checkType(amiTwig.expr.tokens.LP))
 		{
 			this.tokenizer.next();
 
-			node = this.parseLogicalOr();
+			node = this.parseNullCoalescing();
 
 			if(this.tokenizer.checkType(amiTwig.expr.tokens.RP))
 			{
@@ -1191,7 +1191,7 @@ amiTwig.expr.Compiler.prototype = {
 
 	_parseSinglet: function(result)
 	{
-		result.push(this.parseLogicalOr());
+		result.push(this.parseNullCoalescing());
 	},
 
 	/*----------------------------------------------------------------------------------------------------------------*/
@@ -1210,7 +1210,7 @@ amiTwig.expr.Compiler.prototype = {
 
 				/*----------------------------------------------------------------------------------------------------*/
 
-				result[key] = this.parseLogicalOr();
+				result[key] = this.parseNullCoalescing();
 
 				/*----------------------------------------------------------------------------------------------------*/
 			}
