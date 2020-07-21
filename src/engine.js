@@ -284,11 +284,14 @@ amiTwig.engine = {
 				}
 				else
 				{
-					const list = item.blocks[1].list;
-
-					for(const j in list)
+					if(item.blocks.length > 1)
 					{
-						this._render(result, list[j], dict, tmpls);
+						const list = item.blocks[1].list;
+
+						for(const j in list)
+						{
+							this._render(result, list[j], dict, tmpls);
+						}
 					}
 				}
 
