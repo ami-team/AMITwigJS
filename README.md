@@ -10,7 +10,7 @@ Getting started
 ### Loading AMI-Twig.js server-side:
 
 ```javascript
-var amiTwig = require('ami-twig.min.js').amiTwig;
+let amiTwig = require('ami-twig.min.js').amiTwig;
 ```
 
 ### Loading AMI-Twig.js client-side:
