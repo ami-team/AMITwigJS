@@ -1,8 +1,9 @@
 .DS_Store
 .DS_Store?
 
-.settings
-.classpath
+.idea
 
 node_modules
-/.project
+
+package-lock.json
+
