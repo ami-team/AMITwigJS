@@ -105,10 +105,10 @@ amiTwig.engine = {
 
 					if(expression === '@true' || amiTwig.expr.cache.eval(expression, item.line, dict))
 					{
-						block.list.forEach((item) => {
-
-							this._render(result, item, dict, tmpls);
-						});
+						for(const i in block.list)
+						{
+							this._render(result, block.list[i], dict, tmpls);
+						}
 
 						return false;
 					}
