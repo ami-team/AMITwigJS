@@ -9,4 +9,4 @@ test: all
 clean:
 	rm -fr dist
 
-.PHONY: all test lint clean
+.PHONY: all test clean
