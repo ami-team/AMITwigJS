@@ -476,7 +476,7 @@ amiTwig.stdlib = {
 			throw 'internal error';
 		}
 
-__l0:		for(let i = 0; i < l; i += 0)
+__l0:	for(let i = 0; i < l; i += 0)
 		{
 			const p = s.substring(i);
 
