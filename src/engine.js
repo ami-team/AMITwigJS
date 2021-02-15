@@ -54,7 +54,7 @@ amiTwig.engine = {
 			{
 				/*----------------------------------------------------------------------------------------------------*/
 
-				m = item.expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(.+)/)
+				m = item.expression.match(/((?:[a-zA-Z_$][a-zA-Z0-9_$]*\.)*[a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(.+)/);
 
 				if(!m)
 				{
@@ -63,7 +63,25 @@ amiTwig.engine = {
 
 				/*----------------------------------------------------------------------------------------------------*/
 
-				dict[m[1]] = amiTwig.expr.cache.eval(m[2], item.line, dict);
+				const parts = m[1].split('.'), l = parts.length - 1;
+
+				let parent = parts[0] === 'window' ? window : dict;
+
+				for(var i = 0; i < l; i++)
+				{
+					if(parent[parts[i]])
+					{
+						parent = parent[parts[i]];
+					}
+					else
+					{
+						throw 'runtime error, line `' + item.line + '`, `' + m[1] + '` not declared';
+					}
+				}
+
+				/*----------------------------------------------------------------------------------------------------*/
+
+				parent[parts[i]] = amiTwig.expr.cache.eval(m[2], item.line, dict);
 
 				/*----------------------------------------------------------------------------------------------------*/
 
@@ -133,11 +151,11 @@ amiTwig.engine = {
 				let sym2;
 				let expr;
 
-				m = item.blocks[0].expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*,\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s+in\s+(.+)/)
+				m = item.blocks[0].expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*,\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s+in\s+(.+)/);
 
 				if(!m)
 				{
-					m = item.blocks[0].expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s+in\s+(.+)/)
+					m = item.blocks[0].expression.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s+in\s+(.+)/);
 
 					if(!m)
 					{

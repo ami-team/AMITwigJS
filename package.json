@@ -23,5 +23,6 @@
   "keywords": [
     "ami",
     "twig"
-  ]
+  ],
+  "dependencies": {}
 }

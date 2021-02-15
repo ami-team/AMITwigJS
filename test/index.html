@@ -75,7 +75,7 @@
 
 			try
 			{
-				var html = amiTwig.engine.render($('#twig').val(), {});
+				var html = amiTwig.engine.render($('#twig').val(), {}, {'foo': 'bar'});
 
 				/**/
 
