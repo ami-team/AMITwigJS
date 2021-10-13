@@ -58,6 +58,11 @@ let compiledTemplate = amiTwig.engine.compile(twigTemplate);
 let textResult = amiTwig.engine.render(compiledTemplate, optionalDict, optionalTwigTemplates);
 ```
 
+Developers
+==========
+
+* [Jérôme ODIER](https://annuaire.in2p3.fr/4121-4467/jerome-odier) ([CNRS/LPSC](http://lpsc.in2p3.fr/))
+
 [License]:http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.txt
 [License img]:https://img.shields.io/badge/license-CeCILL--C-blue.svg
 
