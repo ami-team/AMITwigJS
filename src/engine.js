@@ -65,9 +65,22 @@ amiTwig.engine = {
 
 				const parts = m[1].split('.'), l = parts.length - 1;
 
-				let parent = parts[0] === 'window' ? window : dict;
+				let parent, j;
 
-				for(var i = 0; i < l; i++)
+				if(parts[0] === 'window')
+				{
+					parent = window;
+					j = 1;
+				}
+				else
+				{
+					parent = dict;
+					j = 0;
+				}
+
+				/*----------------------------------------------------------------------------------------------------*/
+
+				for(var i = j; i < l; i++)
 				{
 					if(parent[parts[i]])
 					{

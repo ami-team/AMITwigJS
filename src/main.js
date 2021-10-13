@@ -23,7 +23,7 @@ var amiTwig = {
 /* exports.amiTwig                                                                                                    */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-if(typeof exports !== 'undefined')
+if(typeof module !== 'undefined' && typeof module.exports !== 'undefined')
 {
 	amiTwig.fs = require('fs');
 
