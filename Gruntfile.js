@@ -89,7 +89,7 @@ module.exports = function(grunt) {
 					"sourceMapStyle": "inline",
 
 					"stripBanners": true,
-					"banner": "'use strict';\n\n",
+					"banner": "(function() {\n'use strict';\n\n", "footer": "})();",
 
 					"process": function(src) {
 

@@ -67,14 +67,26 @@ amiTwig.engine = {
 
 				let parent, j;
 
-				if(parts[0] === 'window')
-				{
-					parent = window;
+				if(parts[0] === 'window'
+				   ||
+				   parts[0] === 'global'
+				 ) {
+					/**/ if(typeof window !== 'undefined') {
+						parent = window;
+					}
+					else if(typeof global !== 'undefined') {
+						parent = global;
+					}
+					else {
+						throw 'internal error';
+					}
+
 					j = 1;
 				}
 				else
 				{
 					parent = dict;
+
 					j = 0;
 				}
 
