@@ -3,7 +3,7 @@
 	"description": "AMI Twig Engine",
 	"author": "The AMI Team, Jerome Odier <jerome.odier@lpsc.in2p3.fr>",
 	"license": "CECILL-C",
-	"version": "1.0.0",
+	"version": "1.2.0",
 	"main": "./dist/ami-twig.es6.js",
 	"keywords": [
 		"AMI",
