@@ -83,13 +83,11 @@ module.exports = function(grunt) {
 		/*------------------------------------------------------------------------------------------------------------*/
 
 		"concat": {
-			"src": {
+			"index": {
 				"options": {
-					"sourceMap": true,
-					"sourceMapStyle": "inline",
+					"sourceMap": false,
 
 					"stripBanners": true,
-					"banner": "(function() {\n'use strict';\n\n", "footer": "})();",
 
 					"process": function(src) {
 
@@ -97,8 +95,6 @@ module.exports = function(grunt) {
 						          .replace(/\"use strict\"\s*;\n*/g, "")
 						          .replace(/{{CURRENT_YEAR}}/g, CURRENT_YEAR)
 						          .replace(/{{TWIG_VERSION}}/g, TWIG_VERSION)
-						          .replace('import amiTwig from \'./main.js\';', '')
-						          .replace('export default amiTwig;', '')
 						;
 					}
 				},
@@ -113,8 +109,26 @@ module.exports = function(grunt) {
 					"src/stdlib.js",
 					"src/interpreter.js",
 				],
-				"dest": "dist/ami-twig.es6.js"
+				"dest": "./index.js"
 			},
+			"dist": {
+				"options": {
+					"sourceMap": false,
+
+					"stripBanners": true,
+
+					"banner": "(function() {\n'use strict';\n\n", "footer": "})();",
+
+					"process": function(src) {
+
+						return src.replace('export default amiTwig;', '// export default amiTwig;');
+					}
+				},
+				"src": [
+					"./index.js"
+				],
+				"dest": "dist/ami-twig.es6.js"
+			}
 		},
 
 		/*------------------------------------------------------------------------------------------------------------*/
