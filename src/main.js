@@ -21,13 +21,21 @@ const amiTwig = {
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/**/ if(typeof module !== 'undefined' && typeof module.exports !== 'undefined')
+/**/ if(typeof module === 'object' && typeof module.exports === 'object')
 {
 	module.exports.amiTwig = amiTwig;
+}
+else if(typeof define === 'function' && (define.amd || define.cmd))
+{
+	define('amiTwig', function() { return amiTwig; });
 }
 else if(typeof window !== 'undefined')
 {
 	window.amiTwig = amiTwig;
+}
+else if(typeof global !== 'undefined')
+{
+	global.amiTwig = amiTwig;
 }
 
 /*--------------------------------------------------------------------------------------------------------------------*/
