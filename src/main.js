@@ -21,11 +21,7 @@ const amiTwig = {
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/**/ if(typeof module === 'object' && typeof module.exports === 'object')
-{
-	module.exports.amiTwig = amiTwig;
-}
-else if(typeof window !== 'undefined')
+/**/ if(typeof window !== 'undefined')
 {
 	window.amiTwig = amiTwig;
 }
@@ -33,5 +29,9 @@ else if(typeof global !== 'undefined')
 {
 	global.amiTwig = amiTwig;
 }
+
+/*--------------------------------------------------------------------------------------------------------------------*/
+
+export default amiTwig;
 
 /*--------------------------------------------------------------------------------------------------------------------*/
