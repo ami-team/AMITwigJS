@@ -97,6 +97,7 @@ module.exports = function(grunt) {
 						          .replace(/\"use strict\"\s*;\n*/g, "")
 						          .replace(/{{CURRENT_YEAR}}/g, CURRENT_YEAR)
 						          .replace(/{{TWIG_VERSION}}/g, TWIG_VERSION)
+						          .replace("export default amiTwig;", "")
 						;
 					}
 				},
