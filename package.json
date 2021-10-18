@@ -4,7 +4,7 @@
 	"author": "The AMI Team, Jerome Odier <jerome.odier@lpsc.in2p3.fr>",
 	"license": "CECILL-C",
 	"version": "1.2.0",
-	"main": "./dist/ami-twig.es6.js",
+	"main": "./index.js",
 	"keywords": [
 		"AMI",
 		"AWF",
