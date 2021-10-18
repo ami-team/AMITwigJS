@@ -89,7 +89,7 @@ module.exports = function(grunt) {
 					"sourceMapStyle": "inline",
 
 					"stripBanners": true,
-					"banner": "(function() {\n'use strict';\n\n", "footer": "})();",
+					"banner": "(function() {\n'use strict';\n\n", "footer": " return amiTwig; })();",
 
 					"process": function(src) {
 
@@ -97,7 +97,6 @@ module.exports = function(grunt) {
 						          .replace(/\"use strict\"\s*;\n*/g, "")
 						          .replace(/{{CURRENT_YEAR}}/g, CURRENT_YEAR)
 						          .replace(/{{TWIG_VERSION}}/g, TWIG_VERSION)
-						          .replace("export default amiTwig;", "")
 						;
 					}
 				},

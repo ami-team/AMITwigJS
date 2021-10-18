@@ -19,8 +19,6 @@ const amiTwig = {
 	version: '{{TWIG_VERSION}}'
 };
 
-export default amiTwig;
-
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 /**/ if(typeof window !== 'undefined')
