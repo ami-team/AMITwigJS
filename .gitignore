@@ -2,9 +2,9 @@
 .DS_Store?
 
 .idea/
+/AMITwigJS.iml
 
 doc/
 node_modules/
 
 package-lock.json
-
