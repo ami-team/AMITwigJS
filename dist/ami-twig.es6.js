@@ -77,7 +77,7 @@ amiTwig.tokenizer = {
 
 		let word = '', token, c;
 
-__l0:		while(i < l)
+__l0:	while(i < l)
 		{
 			c = code.charAt(0);
 
@@ -205,7 +205,7 @@ __l0:		while(i < l)
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	_alnum: [
+	_alphanum: [
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -233,9 +233,9 @@ __l0:		while(i < l)
 
 		return isNaN(charCode2)
 		       ||
-		       this._alnum[charCode2] === 0
+		       this._alphanum[charCode2] === 0
 		       ||
-		       this._alnum[charCode1] === 0
+		       this._alphanum[charCode1] === 0
 		;
 	},
 
@@ -1207,7 +1207,7 @@ amiTwig.expr.Compiler.prototype = {
 		/* SYNTAX ERROR                                                                                               */
 		/*------------------------------------------------------------------------------------------------------------*/
 
-		throw 'syntax error, line `' + this.line + '`, syntax error or tuncated expression';
+		throw 'syntax error, line `' + this.line + '`, syntax error or truncated expression';
 
 		/*------------------------------------------------------------------------------------------------------------*/
 	},
@@ -1611,9 +1611,9 @@ amiTwig.tmpl.Compiler = function(tmpl) {
 amiTwig.tmpl.Compiler.prototype = {
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	STATEMENT_RE: /\{%\s*([a-zA-Z]+)\s*((?:.|\n)*?)\s*%\}/,
+	STATEMENT_RE: /{%\s*([a-zA-Z]+)\s*((?:.|\n)*?)\s*%}/,
 
-	COMMENT_RE: /\{#\s*((?:.|\n)*?)\s*#\}/g,
+	COMMENT_RE: /{#\s*((?:.|\n)*?)\s*#}/g,
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
@@ -1909,7 +1909,7 @@ amiTwig.tmpl.Compiler.prototype = {
 amiTwig.engine = {
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	VARIABLE_RE: /\{\{\s*(.*?)\s*\}\}/g,
+	VARIABLE_RE: /{{\s*(.*?)\s*}}/g,
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
@@ -1985,7 +1985,9 @@ amiTwig.engine = {
 
 				/*----------------------------------------------------------------------------------------------------*/
 
-				for(var i = j; i < l; i++)
+				let i;
+
+				for(i = j; i < l; i++)
 				{
 					if(parent[parts[i]])
 					{
@@ -2117,12 +2119,12 @@ amiTwig.engine = {
 					   &&
 					   typeName !== '[object String]'
 					 ) {
-						throw 'syntax error, line `' + item.line + '`, right operande not iterable';
+						throw 'syntax error, line `' + item.line + '`, right operand not iterable';
 					}
 
 					if(sym2)
 					{
-						throw 'syntax error, line `' + item.line + '`, right operande not an object';
+						throw 'syntax error, line `' + item.line + '`, right operand not an object';
 					}
 				}
 
@@ -2366,7 +2368,7 @@ amiTwig.expr.cache = {
 
 		/*------------------------------------------------------------------------------------------------------------*/
 
-		if(!_) _ = {};
+		_ = _ || {};
 
 		return f.call(_, _);
 
@@ -2880,7 +2882,7 @@ amiTwig.stdlib = {
 		const m = oldStrs.length;
 		const n = newStrs.length;
 
-		if(m != n)
+		if(m !== n)
 		{
 			throw 'internal error';
 		}
@@ -3453,7 +3455,7 @@ amiTwig.expr.interpreter = {
 
 			default:
 				/*----------------------------------------------------------------------------------------------------*/
-				/* UNIARY OPERATOR                                                                                    */
+				/* UNARY OPERATOR                                                                                     */
 				/*----------------------------------------------------------------------------------------------------*/
 
 				if(node.nodeLeft === null
@@ -3552,7 +3554,7 @@ amiTwig.expr.interpreter = {
 
 	eval: function(expr, _)
 	{
-		if(!_) _ = {};
+		_ = _ || {};
 
 		return eval(this.getJS(expr)).call(_, _);
 	},

@@ -260,7 +260,7 @@ amiTwig.expr.interpreter = {
 
 			default:
 				/*----------------------------------------------------------------------------------------------------*/
-				/* UNIARY OPERATOR                                                                                    */
+				/* UNARY OPERATOR                                                                                     */
 				/*----------------------------------------------------------------------------------------------------*/
 
 				if(node.nodeLeft === null
@@ -359,7 +359,7 @@ amiTwig.expr.interpreter = {
 
 	eval: function(expr, _)
 	{
-		if(!_) _ = {};
+		_ = _ || {};
 
 		return eval(this.getJS(expr)).call(_, _);
 	},

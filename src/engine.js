@@ -16,7 +16,7 @@
 amiTwig.engine = {
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	VARIABLE_RE: /\{\{\s*(.*?)\s*\}\}/g,
+	VARIABLE_RE: /{{\s*(.*?)\s*}}/g,
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
@@ -92,7 +92,9 @@ amiTwig.engine = {
 
 				/*----------------------------------------------------------------------------------------------------*/
 
-				for(var i = j; i < l; i++)
+				let i;
+
+				for(i = j; i < l; i++)
 				{
 					if(parent[parts[i]])
 					{
@@ -224,12 +226,12 @@ amiTwig.engine = {
 					   &&
 					   typeName !== '[object String]'
 					 ) {
-						throw 'syntax error, line `' + item.line + '`, right operande not iterable';
+						throw 'syntax error, line `' + item.line + '`, right operand not iterable';
 					}
 
 					if(sym2)
 					{
-						throw 'syntax error, line `' + item.line + '`, right operande not an object';
+						throw 'syntax error, line `' + item.line + '`, right operand not an object';
 					}
 				}
 

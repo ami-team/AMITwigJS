@@ -972,7 +972,7 @@ amiTwig.expr.Compiler.prototype = {
 		/* SYNTAX ERROR                                                                                               */
 		/*------------------------------------------------------------------------------------------------------------*/
 
-		throw 'syntax error, line `' + this.line + '`, syntax error or tuncated expression';
+		throw 'syntax error, line `' + this.line + '`, syntax error or truncated expression';
 
 		/*------------------------------------------------------------------------------------------------------------*/
 	},

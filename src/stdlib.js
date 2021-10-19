@@ -511,7 +511,7 @@ amiTwig.stdlib = {
 		const m = oldStrs.length;
 		const n = newStrs.length;
 
-		if(m != n)
+		if(m !== n)
 		{
 			throw 'internal error';
 		}

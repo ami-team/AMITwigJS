@@ -32,7 +32,7 @@ amiTwig.tokenizer = {
 
 		let word = '', token, c;
 
-__l0:		while(i < l)
+__l0:	while(i < l)
 		{
 			c = code.charAt(0);
 
@@ -160,7 +160,7 @@ __l0:		while(i < l)
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	_alnum: [
+	_alphanum: [
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -188,9 +188,9 @@ __l0:		while(i < l)
 
 		return isNaN(charCode2)
 		       ||
-		       this._alnum[charCode2] === 0
+		       this._alphanum[charCode2] === 0
 		       ||
-		       this._alnum[charCode1] === 0
+		       this._alphanum[charCode1] === 0
 		;
 	},
 
