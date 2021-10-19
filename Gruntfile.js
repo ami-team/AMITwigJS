@@ -9,8 +9,23 @@ module.exports = function(grunt) {
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
+	const MINI_BANNER = `/*!
+ * AMI Twig Engine
+ *
+ * Copyright © 2014-${CURRENT_YEAR} CNRS / LPSC
+ *
+ * Licensed under CeCILL-C:
+ * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
+ * http://www.cecill.info/licences/Licence_CeCILL-C_V1-fr.html
+ *
+ */`;
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
 	const BANNER = `/*!
- * Copyright © 2021-2021 CNRS/LPSC
+ * AMI Twig Engine
+ *
+ * Copyright © 2014-${CURRENT_YEAR} CNRS/LPSC
  *
  * Author: Jérôme ODIER (jerome.odier@lpsc.in2p3.fr)
  *
@@ -18,8 +33,7 @@ module.exports = function(grunt) {
  *               https://www.github.com/ami-team/AMITwigJS/
  *
  * This software is a computer program whose purpose is to provide a
- * JavaScript implementation for both NodeJS and browsers of the
- * SensioLabs's TWIG template engine.
+ * JavaScript implementation of the SensioLabs's TWIG template engine.
  *
  * This software is governed by the CeCILL-C license under French law and
  * abiding by the rules of distribution of free software. You can use,
@@ -52,7 +66,7 @@ module.exports = function(grunt) {
 		"Opera >= 30"
 	];
 
-	grunt.log.writeln('Building AWF for: ' + browserslist.join(', '));
+	grunt.log.writeln("Building AWF for: " + browserslist.join(", "));
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
@@ -86,15 +100,15 @@ module.exports = function(grunt) {
 			"index": {
 				"options": {
 					"sourceMap": false,
+					"stripBanners": false,
 
-					"stripBanners": true,
+					"banner": BANNER + "\n\n",
 
 					"process": function(src) {
 
-						return src.replace(/\'use strict\'\s*;\n*/g, "")
-						          .replace(/\"use strict\"\s*;\n*/g, "")
-						          .replace(/{{CURRENT_YEAR}}/g, CURRENT_YEAR)
+						return src.replace(/{{CURRENT_YEAR}}/g, CURRENT_YEAR)
 						          .replace(/{{TWIG_VERSION}}/g, TWIG_VERSION)
+						          .replace(MINI_BANNER + "\n\n", "")
 						;
 					}
 				},
@@ -114,18 +128,29 @@ module.exports = function(grunt) {
 			"dist": {
 				"options": {
 					"sourceMap": false,
+					"stripBanners": false,
 
-					"stripBanners": true,
-
-					"banner": "(function() {\n'use strict';\n\n", "footer": "})();",
+					"banner": BANNER + "\n\n" + "(function() {\n'use strict';\n\n", "footer": "})();",
 
 					"process": function(src) {
 
-						return src.replace('export default amiTwig;', '// export default amiTwig;');
+						return src.replace("export default amiTwig;", "//export default amiTwig;")
+						          .replace(/{{CURRENT_YEAR}}/g, CURRENT_YEAR)
+						          .replace(/{{TWIG_VERSION}}/g, TWIG_VERSION)
+						          .replace(MINI_BANNER + "\n\n", "")
+						;
 					}
 				},
 				"src": [
-					"./index.js"
+					"src/main.js",
+					"src/tokenizer.js",
+					"src/expression_compiler.js",
+					"src/template_compiler.js",
+					"src/engine.js",
+					"src/cache.js",
+					"src/ajax.js",
+					"src/stdlib.js",
+					"src/interpreter.js",
 				],
 				"dest": "dist/ami-twig.es6.js"
 			}
@@ -148,7 +173,7 @@ module.exports = function(grunt) {
 					"sourceMaps": "inline",
 					"compact": false,
 					"minified": false,
-					"shouldPrintComment": (txt) => /Copyright/.test(txt),
+					"shouldPrintComment": () => (txt) => /Copyright/.test(txt),
 					"presets": [["@babel/preset-env", {
 						"debug": false,
 						"loose": true,

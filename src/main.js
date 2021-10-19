@@ -1,15 +1,13 @@
 /*!
  * AMI Twig Engine
  *
- * Copyright (c) 2014-{{YEAR}} CNRS / LPSC
+ * Copyright © 2014-{{CURRENT_YEAR}} CNRS / LPSC
  *
- * This file must be used under the terms of the CeCILL-C:
+ * Licensed under CeCILL-C:
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
  * http://www.cecill.info/licences/Licence_CeCILL-C_V1-fr.html
  *
  */
-
-'use strict';
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* amiTwig                                                                                                            */
