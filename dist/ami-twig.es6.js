@@ -2152,10 +2152,10 @@ amiTwig.engine = {
 
 						/*--------------------------------------------------------------------------------------------*/
 
-						for(const [key, val] of iterValue)
+						for(const i in iterValue)
 						{
-							dict[sym1] = key;
-							dict[sym2] = val;
+							dict[sym1] = /*-----*/(i);
+							dict[sym2] = iterValue[i];
 
 							dict.loop.first = (k === (0 - 0));
 							dict.loop.last = (k === (l - 1));
@@ -2193,9 +2193,9 @@ amiTwig.engine = {
 
 						/*--------------------------------------------------------------------------------------------*/
 
-						for(const val of iterValue)
+						for(const i in iterValue)
 						{
-							dict[sym1] = val;
+							dict[sym1] = iterValue[i];
 
 							dict.loop.first = (k === (0 - 0));
 							dict.loop.last = (k === (l - 1));
@@ -2448,6 +2448,13 @@ amiTwig.stdlib = {
 	'isString': function(x)
 	{
 		return Object.prototype.toString.call(x) === '[object String]';
+	},
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	'isDate': function(x)
+	{
+		return Object.prototype.toString.call(x) === '[object Date]';
 	},
 
 	/*----------------------------------------------------------------------------------------------------------------*/
@@ -3124,6 +3131,27 @@ __l0:	for(let i = 0; i < l; i += 0)
 		x = Number.MAX_SAFE_INTEGER;
 
 		return Math.floor(x * y);
+	},
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+	/* DATE                                                                                                           */
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	'filter_date': function(date, format, timezone)
+	{
+		if(typeof moment !== 'undefined' && (this.isDate(date) || this.isString(date)) && this.isString(format))
+		{
+			if(typeof moment.tz !== 'undefined' && this.isString(timezone))
+			{
+				return moment(date).tz(timezone).format(format);
+			}
+			else
+			{
+				return moment(date).format(format);
+			}
+		}
+
+		return '';
 	},
 
 	/*----------------------------------------------------------------------------------------------------------------*/

@@ -9,6 +9,7 @@
 
 	"globals": {
 		"define": false,
+		"moment": false,
 		"JSPath": false
 	},
 

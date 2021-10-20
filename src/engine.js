@@ -259,10 +259,10 @@ amiTwig.engine = {
 
 						/*--------------------------------------------------------------------------------------------*/
 
-						for(const [key, val] of iterValue)
+						for(const i in iterValue)
 						{
-							dict[sym1] = key;
-							dict[sym2] = val;
+							dict[sym1] = /*-----*/(i);
+							dict[sym2] = iterValue[i];
 
 							dict.loop.first = (k === (0 - 0));
 							dict.loop.last = (k === (l - 1));
@@ -300,9 +300,9 @@ amiTwig.engine = {
 
 						/*--------------------------------------------------------------------------------------------*/
 
-						for(const val of iterValue)
+						for(const i in iterValue)
 						{
-							dict[sym1] = val;
+							dict[sym1] = iterValue[i];
 
 							dict.loop.first = (k === (0 - 0));
 							dict.loop.last = (k === (l - 1));

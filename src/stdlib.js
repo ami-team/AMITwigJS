@@ -81,6 +81,13 @@ amiTwig.stdlib = {
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
+	'isDate': function(x)
+	{
+		return Object.prototype.toString.call(x) === '[object Date]';
+	},
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
 	'isArray': function(x)
 	{
 		return Object.prototype.toString.call(x) === '[object Array]';
@@ -753,6 +760,27 @@ __l0:	for(let i = 0; i < l; i += 0)
 		x = Number.MAX_SAFE_INTEGER;
 
 		return Math.floor(x * y);
+	},
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+	/* DATE                                                                                                           */
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	'filter_date': function(date, format, timezone)
+	{
+		if(typeof moment !== 'undefined' && (this.isDate(date) || this.isString(date)) && this.isString(format))
+		{
+			if(typeof moment.tz !== 'undefined' && this.isString(timezone))
+			{
+				return moment(date).tz(timezone).format(format);
+			}
+			else
+			{
+				return moment(date).format(format);
+			}
+		}
+
+		return '';
 	},
 
 	/*----------------------------------------------------------------------------------------------------------------*/
