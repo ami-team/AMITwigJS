@@ -1,5 +1,5 @@
 /*!
- * AMI Twig Engine
+ * AMI Twig Engine {{TWIG_VERSION}}
  *
  * Copyright © 2014-{{CURRENT_YEAR}} CNRS / LPSC
  *

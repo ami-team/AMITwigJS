@@ -1,5 +1,5 @@
 /*!
- * AMI Twig Engine
+ * AMI Twig Engine 1.2.0
  *
  * Copyright © 2014-2021 CNRS/LPSC
  *
@@ -21,7 +21,6 @@
  * knowledge of the CeCILL-C license and that you accept its terms.
  *
  */
-
 (function() {
 'use strict';
 

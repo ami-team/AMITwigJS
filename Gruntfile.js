@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	const MINI_BANNER = `/*!
- * AMI Twig Engine
+ * AMI Twig Engine ${TWIG_VERSION}
  *
  * Copyright © 2014-${CURRENT_YEAR} CNRS / LPSC
  *
@@ -27,7 +27,7 @@ module.exports = function(grunt) {
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	const BANNER = `/*!
- * AMI Twig Engine
+ * AMI Twig Engine ${TWIG_VERSION}
  *
  * Copyright © 2014-${CURRENT_YEAR} CNRS/LPSC
  *
@@ -131,7 +131,7 @@ module.exports = function(grunt) {
 					"sourceMap": false,
 					"stripBanners": false,
 
-					"banner": BANNER + "\n\n" + "(function() {\n'use strict';\n\n", "footer": "})();",
+					"banner": BANNER + "\n" + "(function() {\n'use strict';\n\n", "footer": "})();",
 
 					"process": function(src) {
 
