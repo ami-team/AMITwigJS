@@ -815,7 +815,7 @@ amiTwig.expr.Compiler.prototype = {
 
 			node = this.parseDot1(true);
 
-			for(temp = node; temp.nodeType === amiTwig.expr.tokens.DOT; temp = temp.nodeLeft);
+			for(temp = node; temp.nodeType === amiTwig.expr.tokens.DOT; temp = temp.nodeLeft) {} // eslint-disable-line no-empty
 
 			temp.list.unshift(left);
 
@@ -835,11 +835,11 @@ amiTwig.expr.Compiler.prototype = {
 
 		if(node)
 		{
+			let temp;
+
 			/*--------------------------------------------------------------------------------------------------------*/
 
-			let temp = node;
-
-			for(; temp.nodeType === amiTwig.expr.tokens.DOT; temp = temp.nodeLeft);
+			for(temp = node; temp.nodeType === amiTwig.expr.tokens.DOT; temp = temp.nodeLeft) {} // eslint-disable-line no-empty
 
 			/*--------------------------------------------------------------------------------------------------------*/
 

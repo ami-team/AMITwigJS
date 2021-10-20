@@ -23,6 +23,7 @@
 	"homepage": "https://github.com/ami-team/AMITwigJS/",
 	"devDependencies": {
 		"@babel/core": "^7.15.5",
+		"@babel/eslint-parser": "^7.15.8",
 		"@babel/preset-env": "^7.15.6",
 		"grunt": "^1.4.1",
 		"grunt-babel": "^8.0.0",

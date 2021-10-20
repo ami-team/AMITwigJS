@@ -1,11 +1,20 @@
 {
+	"root": true,
+
+	"extends": "eslint:recommended",
+
+	"parser": "@babel/eslint-parser",
+
+	"parserOptions": {
+		"requireConfigFile": false,
+		"sourceType": "module"
+	},
+
 	"env": {
 		"browser": true,
 		"node": true,
 		"es6": true
 	},
-
-	"extends": "eslint:recommended",
 
 	"globals": {
 		"define": false,
@@ -15,11 +24,6 @@
 
 	"rules": {
 		"no-mixed-spaces-and-tabs": 0,
-
-		"no-unused-vars": [
-			1,
-			{"vars": "local", "args": "after-used"}
-		],
 
 		"quotes": [
 			2,
