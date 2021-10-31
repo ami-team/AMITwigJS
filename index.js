@@ -2427,9 +2427,11 @@ amiTwig.stdlib = {
 
 		const typeName = Object.prototype.toString.call(x);
 
-		return (typeName === '[object Array]' && x.length === 0)
+		return ((typeName === '[object Array]') && x.length === 0)
 		       ||
-		       (typeName === '[object Object]' && Object.keys(x).length === 0)
+		       ((typeName === '[object Set]' || typeName === '[object WeakSet]') && x.size === 0)
+		       ||
+		       ((typeName === '[object Object]' || typeName === '[object Map]' || typeName === '[object WeakMap]') && Object.keys(x).length === 0)
 		;
 	},
 
@@ -2437,7 +2439,12 @@ amiTwig.stdlib = {
 
 	'isNumber': function(x)
 	{
-		return Object.prototype.toString.call(x) === '[object Number]';
+		const typeName = Object.prototype.toString.call(x);
+
+		return typeName === '[object Number]'
+		       ||
+		       typeName === '[object BigInt]'
+		;
 	},
 
 	/*----------------------------------------------------------------------------------------------------------------*/
@@ -2470,6 +2477,32 @@ amiTwig.stdlib = {
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
+	'isSet': function(x)
+	{
+		const typeName = Object.prototype.toString.call(x);
+
+		return typeName === '[object Set]'
+		       ||
+		       typeName === '[object WeakSet]'
+		;
+	},
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
+	'isMap': function(x)
+	{
+		const typeName = Object.prototype.toString.call(x);
+
+		return typeName === '[object Object]'
+		       ||
+		       typeName === '[object Map]'
+		       ||
+		       typeName === '[object WeakMap]'
+		;
+	},
+
+	/*----------------------------------------------------------------------------------------------------------------*/
+
 	'isIterable': function(x)
 	{
 		const typeName = Object.prototype.toString.call(x);
@@ -2479,6 +2512,14 @@ amiTwig.stdlib = {
 		       typeName === '[object Array]'
 		       ||
 		       typeName === '[object Object]'
+		       ||
+		       typeName === '[object Set]'
+		       ||
+		       typeName === '[object WeakSet]'
+		       ||
+		       typeName === '[object Map]'
+		       ||
+		       typeName === '[object WeakMap]'
 		;
 	},
 
@@ -2509,9 +2550,14 @@ amiTwig.stdlib = {
 			return y.indexOf(x) >= 0;
 		}
 
-		if(this.isObject(y))
+		if(this.isSet(y))
 		{
-			return x in y;
+			return y.has(x);
+		}
+
+		if(this.isMap(y))
+		{
+			return Object.prototype.hasOwnProperty.call(y, x);
 		}
 
 		return false;
@@ -2579,11 +2625,18 @@ amiTwig.stdlib = {
 		if(this.isString(x)
 		   ||
 		   this.isArray(x)
+		   ||
+		   this.isSet(x)
 		 ) {
 			return x.length;
 		}
 
-		if(this.isObject(x))
+		if(this.isSet(x))
+		{
+			return x.size;
+		}
+
+		if(this.isMap(x))
 		{
 			return Object.keys(x).length;
 		}
@@ -2654,7 +2707,28 @@ amiTwig.stdlib = {
 						return null;
 					}
 
-					for(const j in item) L.push(item[j]);
+					item.forEach(x => L.push(x));
+				}
+
+				return L;
+			}
+
+			/*--------------------------------------------------------------------------------------------------------*/
+
+			if(this.isSet(arguments[0]))
+			{
+				const L = [];
+
+				for(const i in arguments)
+				{
+					const item = arguments[i];
+
+					if(!this.isSet(item))
+					{
+						return null;
+					}
+
+					item.forEach(x => L.add(x));
 				}
 
 				return L;
@@ -2712,7 +2786,7 @@ amiTwig.stdlib = {
 
 	'filter_keys': function(x)
 	{
-		return this.isObject(x) ? Object.keys(x) : [];
+		return this.isMap(x) ? Object.keys(x) : [];
 	},
 
 	/*----------------------------------------------------------------------------------------------------------------*/
@@ -2989,8 +3063,8 @@ __l0:	for(let i = 0; i < l; i += 0)
 
 	'filter_replace': function(s, dict)
 	{
-		return this.isString(s) && this.isObject(dict) ? this._replace(s, Object.keys(dict), Object.values(dict))
-		                                               : ''
+		return this.isString(s) && this.isMap(dict) ? this._replace(s, Object.keys(dict), Object.values(dict))
+		                                            : ''
 		;
 	},
 
@@ -3105,7 +3179,7 @@ __l0:	for(let i = 0; i < l; i += 0)
 		{
 			if(this.isArray(x)
 			   ||
-			   this.isObject(x)
+			   this.isMap(x)
 			 ) {
 			 	const X = Object.keys(x);
 
