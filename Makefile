@@ -1,7 +1,7 @@
 all:
 	mkdir -p dist
 
-	grunt build
+	./node_modules/grunt-cli/bin/grunt build
 
 test: all
 	node test/test.js
